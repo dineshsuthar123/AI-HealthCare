@@ -2,8 +2,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 
 interface LocaleLayoutProps {
   children: ReactNode;
@@ -28,12 +26,8 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+      <div className="min-h-screen">
+        {children}
       </div>
     </NextIntlClientProvider>
   );
