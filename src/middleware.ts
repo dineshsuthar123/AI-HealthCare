@@ -1,26 +1,14 @@
 import createMiddleware from 'next-intl/middleware';
-import { NextRequest, NextResponse } from 'next/server';
 
-const locales = ['en', 'es', 'fr', 'pt', 'hi', 'ar', 'sw'];
-const defaultLocale = 'en';
-// Create the next-intl middleware handler
-const intlMiddleware = createMiddleware({ locales, defaultLocale, localePrefix: 'always' });
+export default createMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'es', 'fr', 'pt', 'hi', 'ar', 'sw'],
 
-export default function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  // If API route is prefixed with locale (e.g. /en/api/...), rewrite to /api/...
-  const localeApiMatch = pathname.match(new RegExp(`^/(${locales.join('|')})/api(/.*)`));
-  if (localeApiMatch) {
-    const [, , rest] = localeApiMatch;
-    const url = req.nextUrl.clone();
-    url.pathname = `/api${rest}`;
-    return NextResponse.rewrite(url);
-  }
-  // Otherwise, handle localization for pages
-  return intlMiddleware(req);
-}
+  // Used when no locale matches
+  defaultLocale: 'en'
+});
 
 export const config = {
-  // Match all pages and root, except Next.js internals and static files
-  matcher: ['/', '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)']
+  // Match only internationalized pathnames
+  matcher: ['/', '/((?!api|_next|_vercel|.*\\..*).*)']
 };
