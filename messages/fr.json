@@ -1,0 +1,123 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "symptom_checker": "Vérificateur de Symptômes",
+    "telemedicine": "Télémédecine",
+    "dashboard": "Tableau de Bord",
+    "profile": "Profil",
+    "sign_in": "Se Connecter",
+    "sign_out": "Se Déconnecter"
+  },
+  "home": {
+    "title": "Soins de Santé Alimentés par l'IA pour Tous",
+    "subtitle": "Accédez à des conseils de santé de qualité à tout moment, partout",
+    "hero_description": "Notre plateforme alimentée par l'IA fournit la vérification des symptômes, des services de télémédecine et des conseils de santé en plusieurs langues, conçue spécialement pour les communautés mal desservies.",
+    "get_started": "Commencer",
+    "learn_more": "En Savoir Plus",
+    "features": {
+      "symptom_checker": {
+        "title": "Vérificateur de Symptômes IA",
+        "description": "Obtenez des évaluations de santé instantanées avec une technologie IA avancée"
+      },
+      "telemedicine": {
+        "title": "Services de Télémédecine",
+        "description": "Connectez-vous avec des professionnels de la santé à distance via des appels vidéo"
+      },
+      "multilingual": {
+        "title": "Support Multilingue",
+        "description": "Accédez aux conseils de santé dans votre langue préférée"
+      },
+      "sms_support": {
+        "title": "Support SMS",
+        "description": "Obtenez une assistance santé même sans accès Internet"
+      },
+      "analytics": {
+        "title": "Analyses de Santé",
+        "description": "Suivez les tendances de santé communautaire et les modèles d'épidémie"
+      },
+      "emergency": {
+        "title": "Alertes d'Urgence",
+        "description": "Recevez des alertes immédiates pour les situations de santé critiques"
+      }
+    }
+  },
+  "symptom_checker": {
+    "title": "Vérificateur de Symptômes IA",
+    "description": "Décrivez vos symptômes et obtenez une évaluation de santé alimentée par l'IA",
+    "start_assessment": "Commencer l'Évaluation",
+    "describe_symptoms": "Décrivez vos symptômes",
+    "symptoms_placeholder": "ex., fièvre, mal de tête, toux",
+    "severity": "Sévérité (1-10)",
+    "duration": "Durée",
+    "location": "Emplacement sur le corps",
+    "additional_info": "Informations Supplémentaires",
+    "submit": "Analyser les Symptômes",
+    "risk_levels": {
+      "low": "Risque Faible",
+      "moderate": "Risque Modéré",
+      "high": "Risque Élevé",
+      "critical": "Risque Critique"
+    },
+    "urgency_levels": {
+      "immediate": "Attention immédiate nécessaire",
+      "urgent": "Urgent - voir un médecin aujourd'hui",
+      "semi_urgent": "Voir un médecin dans 24-48 heures",
+      "non_urgent": "Surveiller les symptômes, voir un médecin si aggravation"
+    }
+  },
+  "telemedicine": {
+    "title": "Services de Télémédecine",
+    "book_appointment": "Prendre Rendez-vous",
+    "upcoming_appointments": "Rendez-vous à Venir",
+    "past_appointments": "Rendez-vous Passés",
+    "available_doctors": "Médecins Disponibles",
+    "select_time": "Sélectionner l'Heure",
+    "appointment_type": "Type de Rendez-vous",
+    "consultation": "Consultation Générale",
+    "follow_up": "Suivi",
+    "emergency": "Urgence",
+    "mental_health": "Santé Mentale"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord Santé",
+    "overview": "Aperçu",
+    "recent_assessments": "Évaluations Récentes",
+    "health_trends": "Tendances Santé",
+    "community_health": "Santé Communautaire",
+    "alerts": "Alertes Santé",
+    "statistics": "Statistiques"
+  },
+  "auth": {
+    "sign_in": "Se Connecter",
+    "sign_up": "S'Inscrire",
+    "email": "Email",
+    "password": "Mot de Passe",
+    "confirm_password": "Confirmer le Mot de Passe",
+    "name": "Nom Complet",
+    "phone": "Numéro de Téléphone",
+    "forgot_password": "Mot de passe oublié ?",
+    "create_account": "Créer un Compte",
+    "already_have_account": "Vous avez déjà un compte ?",
+    "dont_have_account": "Vous n'avez pas de compte ?"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Sauvegarder",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "confirm": "Confirmer"
+  },
+  "alerts": {
+    "emergency_call": "🚨 Appelez les services d'urgence immédiatement",
+    "seek_urgent_care": "⚠️ Cherchez des soins médicaux urgents",
+    "monitor_symptoms": "👁️ Surveillez les symptômes de près",
+    "general_advice": "💡 Conseils généraux de santé"
+  }
+}

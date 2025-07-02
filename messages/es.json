@@ -1,0 +1,123 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "symptom_checker": "Verificador de Síntomas",
+    "telemedicine": "Telemedicina",
+    "dashboard": "Panel",
+    "profile": "Perfil",
+    "sign_in": "Iniciar Sesión",
+    "sign_out": "Cerrar Sesión"
+  },
+  "home": {
+    "title": "Atención Médica Impulsada por IA para Todos",
+    "subtitle": "Accede a orientación de salud de calidad en cualquier momento y lugar",
+    "hero_description": "Nuestra plataforma impulsada por IA proporciona verificación de síntomas, servicios de telemedicina y orientación de salud en múltiples idiomas, diseñada especialmente para comunidades desatendidas.",
+    "get_started": "Comenzar",
+    "learn_more": "Aprender Más",
+    "features": {
+      "symptom_checker": {
+        "title": "Verificador de Síntomas IA",
+        "description": "Obtén evaluaciones de salud instantáneas con tecnología IA avanzada"
+      },
+      "telemedicine": {
+        "title": "Servicios de Telemedicina",
+        "description": "Conéctate con profesionales de la salud remotamente via videollamadas"
+      },
+      "multilingual": {
+        "title": "Soporte Multiidioma",
+        "description": "Accede a orientación de salud en tu idioma preferido"
+      },
+      "sms_support": {
+        "title": "Soporte por SMS",
+        "description": "Obtén asistencia de salud incluso sin acceso a internet"
+      },
+      "analytics": {
+        "title": "Análisis de Salud",
+        "description": "Rastrea tendencias de salud comunitaria y patrones de brotes"
+      },
+      "emergency": {
+        "title": "Alertas de Emergencia",
+        "description": "Recibe alertas inmediatas para situaciones críticas de salud"
+      }
+    }
+  },
+  "symptom_checker": {
+    "title": "Verificador de Síntomas IA",
+    "description": "Describe tus síntomas y obtén una evaluación de salud impulsada por IA",
+    "start_assessment": "Iniciar Evaluación",
+    "describe_symptoms": "Describe tus síntomas",
+    "symptoms_placeholder": "ej., fiebre, dolor de cabeza, tos",
+    "severity": "Severidad (1-10)",
+    "duration": "Duración",
+    "location": "Ubicación en el cuerpo",
+    "additional_info": "Información Adicional",
+    "submit": "Analizar Síntomas",
+    "risk_levels": {
+      "low": "Riesgo Bajo",
+      "moderate": "Riesgo Moderado",
+      "high": "Riesgo Alto",
+      "critical": "Riesgo Crítico"
+    },
+    "urgency_levels": {
+      "immediate": "Atención inmediata necesaria",
+      "urgent": "Urgente - ver médico hoy",
+      "semi_urgent": "Ver médico en 24-48 horas",
+      "non_urgent": "Monitorear síntomas, ver médico si empeora"
+    }
+  },
+  "telemedicine": {
+    "title": "Servicios de Telemedicina",
+    "book_appointment": "Agendar Cita",
+    "upcoming_appointments": "Citas Próximas",
+    "past_appointments": "Citas Pasadas",
+    "available_doctors": "Doctores Disponibles",
+    "select_time": "Seleccionar Hora",
+    "appointment_type": "Tipo de Cita",
+    "consultation": "Consulta General",
+    "follow_up": "Seguimiento",
+    "emergency": "Emergencia",
+    "mental_health": "Salud Mental"
+  },
+  "dashboard": {
+    "title": "Panel de Salud",
+    "overview": "Resumen",
+    "recent_assessments": "Evaluaciones Recientes",
+    "health_trends": "Tendencias de Salud",
+    "community_health": "Salud Comunitaria",
+    "alerts": "Alertas de Salud",
+    "statistics": "Estadísticas"
+  },
+  "auth": {
+    "sign_in": "Iniciar Sesión",
+    "sign_up": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirm_password": "Confirmar Contraseña",
+    "name": "Nombre Completo",
+    "phone": "Número de Teléfono",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "create_account": "Crear Cuenta",
+    "already_have_account": "¿Ya tienes una cuenta?",
+    "dont_have_account": "¿No tienes una cuenta?"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "confirm": "Confirmar"
+  },
+  "alerts": {
+    "emergency_call": "🚨 Llama a servicios de emergencia inmediatamente",
+    "seek_urgent_care": "⚠️ Busca atención médica urgente",
+    "monitor_symptoms": "👁️ Monitorea los síntomas de cerca",
+    "general_advice": "💡 Consejo general de salud"
+  }
+}
