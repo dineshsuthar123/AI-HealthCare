@@ -1,89 +1,53 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    sparse: true,
-  },
-  role: {
-    type: String,
-    enum: ['patient', 'doctor', 'admin', 'health_worker'],
-    default: 'patient',
-  },
-  profile: {
-    dateOfBirth: Date,
-    gender: {
-      type: String,
-      enum: ['male', 'female', 'other', 'prefer_not_to_say'],
+const UserSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
     },
-    location: {
-      country: String,
-      state: String,
-      city: String,
-      latitude: Number,
-      longitude: Number,
+    email: {
+        type: String,
+        required: true,
+        unique: true,
     },
-    emergencyContact: {
-      name: String,
-      phone: String,
-      relationship: String,
+    password: {
+        type: String,
+        required: false, // Not required for OAuth users
+    },
+    role: {
+        type: String,
+        enum: ['patient', 'provider', 'admin'],
+        default: 'patient',
+    },
+    profile: {
+        age: Number,
+        gender: String,
+        phone: String,
+        location: String,
+        emergencyContact: {
+            name: String,
+            phone: String,
+            relationship: String,
+        },
     },
     medicalHistory: [{
-      condition: String,
-      diagnosedDate: Date,
-      status: {
-        type: String,
-        enum: ['active', 'resolved', 'chronic'],
-        default: 'active',
-      },
+        condition: String,
+        diagnosis: String,
+        date: Date,
+        severity: String,
     }],
-    allergies: [String],
-    medications: [{
-      name: String,
-      dosage: String,
-      frequency: String,
-      startDate: Date,
-      endDate: Date,
-    }],
-    languages: [String],
-    preferredLanguage: {
-      type: String,
-      default: 'en',
+    preferences: {
+        language: {
+            type: String,
+            default: 'en',
+        },
+        notifications: {
+            email: { type: Boolean, default: true },
+            sms: { type: Boolean, default: false },
+        },
     },
-  },
-  settings: {
-    notifications: {
-      email: { type: Boolean, default: true },
-      sms: { type: Boolean, default: false },
-      push: { type: Boolean, default: true },
-    },
-    privacy: {
-      shareDataForResearch: { type: Boolean, default: false },
-      allowAnonymousAnalytics: { type: Boolean, default: true },
-    },
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-  verificationToken: String,
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
 }, {
-  timestamps: true,
+    timestamps: true,
 });
 
-export const User = mongoose.models.User || mongoose.model('User', userSchema);
+export default mongoose.models.User || mongoose.model('User', UserSchema);

@@ -1,44 +1,70 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Heart, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { signIn } from 'next-auth/react';
+import { Heart, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function SignInPage() {
+export default function SignUpPage() {
     const router = useRouter();
     const t = useTranslations('Auth');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
 
-    const handleSignIn = async (e: React.FormEvent) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError('');
 
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            const result = await signIn('credentials', {
-                redirect: false,
-                email,
-                password,
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                }),
             });
 
-            if (result?.error) {
-                setError(result.error);
-                setIsLoading(false);
-                return;
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Registration failed');
             }
 
+            // Sign in the user after successful registration
+            await signIn('credentials', {
+                redirect: false,
+                email: formData.email,
+                password: formData.password,
+            });
+
             router.push('/dashboard');
-        } catch (error) {
-            setError('An unexpected error occurred.');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Registration failed');
             setIsLoading(false);
         }
     };
@@ -52,14 +78,14 @@ export default function SignInPage() {
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">
-                        {t('signIn.title')}
+                        {t('signUp.title')}
                     </CardTitle>
                     <CardDescription className="text-center">
-                        {t('signIn.subtitle')}
+                        {t('signUp.subtitle')}
                     </CardDescription>
                 </CardHeader>
 
-                <form onSubmit={handleSignIn}>
+                <form onSubmit={handleSignUp}>
                     <CardContent className="space-y-4">
                         {error && (
                             <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm">
@@ -68,44 +94,77 @@ export default function SignInPage() {
                         )}
 
                         <div className="space-y-2">
-                            <label htmlFor="email" className="text-sm font-medium">
-                                {t('signIn.emailLabel')}
+                            <label htmlFor="name" className="text-sm font-medium">
+                                {t('signUp.nameLabel')}
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                 <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder={t('signIn.emailPlaceholder')}
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    placeholder={t('signUp.namePlaceholder')}
                                     className="pl-10"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.name}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label htmlFor="password" className="text-sm font-medium">
-                                    {t('signIn.passwordLabel')}
-                                </label>
-                                <Link
-                                    href="/auth/forgot-password"
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                                >
-                                    {t('signIn.forgotPassword')}
-                                </Link>
+                            <label htmlFor="email" className="text-sm font-medium">
+                                {t('signUp.emailLabel')}
+                            </label>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                <Input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder={t('signUp.emailPlaceholder')}
+                                    className="pl-10"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="text-sm font-medium">
+                                {t('signUp.passwordLabel')}
+                            </label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                 <Input
                                     id="password"
+                                    name="password"
                                     type="password"
-                                    placeholder={t('signIn.passwordPlaceholder')}
+                                    placeholder={t('signUp.passwordPlaceholder')}
                                     className="pl-10"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    minLength={8}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="confirmPassword" className="text-sm font-medium">
+                                {t('signUp.confirmPasswordLabel')}
+                            </label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                <Input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type="password"
+                                    placeholder={t('signUp.confirmPasswordPlaceholder')}
+                                    className="pl-10"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -115,11 +174,11 @@ export default function SignInPage() {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    {t('signIn.signingIn')}
+                                    {t('signUp.creating')}
                                 </>
                             ) : (
                                 <>
-                                    {t('signIn.submit')}
+                                    {t('signUp.submit')}
                                     <ArrowRight className="ml-2 h-4 w-4" />
                                 </>
                             )}
@@ -131,7 +190,7 @@ export default function SignInPage() {
                             </div>
                             <div className="relative flex justify-center text-sm">
                                 <span className="bg-white px-2 text-gray-500">
-                                    {t('signIn.orContinue')}
+                                    {t('signUp.orContinue')}
                                 </span>
                             </div>
                         </div>
@@ -164,19 +223,19 @@ export default function SignInPage() {
                                     fill="#EA4335"
                                 />
                             </svg>
-                            {t('signIn.continueWithGoogle')}
+                            {t('signUp.continueWithGoogle')}
                         </Button>
                     </CardContent>
                 </form>
 
                 <CardFooter className="flex justify-center">
                     <div className="text-sm text-gray-600">
-                        {t('signIn.noAccount')}{' '}
+                        {t('signUp.alreadyHaveAccount')}{' '}
                         <Link
-                            href="/auth/signup"
+                            href="/auth/signin"
                             className="font-medium text-blue-600 hover:text-blue-800"
                         >
-                            {t('signIn.createAccount')}
+                            {t('signUp.signIn')}
                         </Link>
                     </div>
                 </CardFooter>

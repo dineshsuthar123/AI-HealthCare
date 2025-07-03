@@ -1,123 +1,54 @@
 {
-  "navigation": {
-    "home": "Home",
-    "symptom_checker": "Symptom Checker",
-    "telemedicine": "Telemedicine",
-    "dashboard": "Dashboard",
-    "profile": "Profile",
-    "sign_in": "Sign In",
-    "sign_out": "Sign Out"
-  },
-  "home": {
-    "title": "AI-Powered Healthcare for Everyone",
-    "subtitle": "Access quality healthcare guidance anytime, anywhere",
-    "hero_description": "Our AI-powered platform provides symptom checking, telemedicine services, and health guidance in multiple languages, designed especially for underserved communities.",
-    "get_started": "Get Started",
-    "learn_more": "Learn More",
-    "features": {
-      "symptom_checker": {
-        "title": "AI Symptom Checker",
-        "description": "Get instant health assessments powered by advanced AI technology"
-      },
-      "telemedicine": {
-        "title": "Telemedicine Services",
-        "description": "Connect with healthcare professionals remotely via video calls"
-      },
-      "multilingual": {
-        "title": "Multilingual Support",
-        "description": "Access healthcare guidance in your preferred language"
-      },
-      "sms_support": {
-        "title": "SMS Support",
-        "description": "Get health assistance even without internet access"
-      },
-      "analytics": {
-        "title": "Health Analytics",
-        "description": "Track community health trends and outbreak patterns"
-      },
-      "emergency": {
-        "title": "Emergency Alerts",
-        "description": "Receive immediate alerts for critical health situations"
-      }
-    }
-  },
-  "symptom_checker": {
-    "title": "AI Symptom Checker",
-    "description": "Describe your symptoms and get an AI-powered health assessment",
-    "start_assessment": "Start Assessment",
-    "describe_symptoms": "Describe your symptoms",
-    "symptoms_placeholder": "e.g., fever, headache, cough",
-    "severity": "Severity (1-10)",
-    "duration": "Duration",
-    "location": "Location on body",
-    "additional_info": "Additional Information",
-    "submit": "Analyze Symptoms",
-    "risk_levels": {
-      "low": "Low Risk",
-      "moderate": "Moderate Risk",
-      "high": "High Risk",
-      "critical": "Critical Risk"
+    "Index": {
+        "title": "नमस्ते दुनिया!"
     },
-    "urgency_levels": {
-      "immediate": "Immediate attention needed",
-      "urgent": "Urgent - see doctor today",
-      "semi_urgent": "See doctor within 24-48 hours",
-      "non_urgent": "Monitor symptoms, see doctor if worsening"
+    "Header": {
+        "home": "होम",
+        "symptomChecker": "लक्षण जांचकर्ता",
+        "consultations": "परामर्श",
+        "dashboard": "डैशबोर्ड",
+        "signIn": "साइन इन",
+        "signUp": "साइन अप",
+        "signOut": "साइन आउट"
+    },
+    "Home": {
+        "hero": {
+            "title": "सभी के लिए एआई-संचालित स्वास्थ्य सेवा",
+            "subtitle": "एआई-संचालित लक्षण जांच, टेलीमेडिसिन सेवाओं और बहुभाषी समर्थन के साथ कम सेवा वाले समुदायों की सेवा के लिए डिज़ाइन किया गया व्यापक स्वास्थ्य सेवा प्लेटफॉर्म।",
+            "cta": {
+                "primary": "लक्षण जांचें",
+                "secondary": "परामर्श बुक करें"
+            }
+        },
+        "features": {
+            "title": "पूर्ण स्वास्थ्य सेवा समाधान",
+            "subtitle": "उन्नत चिकित्सा प्रौद्योगिकी हर किसी के लिए, हर जगह सुलभ",
+            "symptomChecker": {
+                "title": "एआई लक्षण जांचकर्ता",
+                "description": "जोखिम मूल्यांकन के साथ उन्नत एमएल-संचालित लक्षण विश्लेषण"
+            },
+            "telemedicine": {
+                "title": "टेलीमेडिसिन",
+                "description": "स्वास्थ्य सेवा पेशेवरों के साथ सुरक्षित वीडियो परामर्श"
+            },
+            "smsSupport": {
+                "title": "एसएमएस समर्थन",
+                "description": "सीमित इंटरनेट वाले क्षेत्रों के लिए एसएमएस के माध्यम से स्वास्थ्य सहायता"
+            },
+            "analytics": {
+                "title": "स्वास्थ्य विश्लेषिकी",
+                "description": "सामुदायिक स्वास्थ्य ट्रैकिंग और प्रकोप निगरानी"
+            }
+        },
+        "stats": {
+            "availability": "उपलब्ध",
+            "languages": "भाषाएँ",
+            "secure": "सुरक्षित"
+        },
+        "cta": {
+            "title": "स्वास्थ्य सेवा को बदलने के लिए तैयार हैं?",
+            "subtitle": "हजारों लोगों से जुड़ें जो अपनी स्वास्थ्य आवश्यकताओं के लिए हमारे प्लेटफॉर्म पर भरोसा करते हैं",
+            "button": "आज ही शुरू करें"
+        }
     }
-  },
-  "telemedicine": {
-    "title": "Telemedicine Services",
-    "book_appointment": "Book Appointment",
-    "upcoming_appointments": "Upcoming Appointments",
-    "past_appointments": "Past Appointments",
-    "available_doctors": "Available Doctors",
-    "select_time": "Select Time",
-    "appointment_type": "Appointment Type",
-    "consultation": "General Consultation",
-    "follow_up": "Follow-up",
-    "emergency": "Emergency",
-    "mental_health": "Mental Health"
-  },
-  "dashboard": {
-    "title": "Health Dashboard",
-    "overview": "Overview",
-    "recent_assessments": "Recent Assessments",
-    "health_trends": "Health Trends",
-    "community_health": "Community Health",
-    "alerts": "Health Alerts",
-    "statistics": "Statistics"
-  },
-  "auth": {
-    "sign_in": "Sign In",
-    "sign_up": "Sign Up",
-    "email": "Email",
-    "password": "Password",
-    "confirm_password": "Confirm Password",
-    "name": "Full Name",
-    "phone": "Phone Number",
-    "forgot_password": "Forgot Password?",
-    "create_account": "Create Account",
-    "already_have_account": "Already have an account?",
-    "dont_have_account": "Don't have an account?"
-  },
-  "common": {
-    "loading": "Loading...",
-    "error": "An error occurred",
-    "success": "Success",
-    "cancel": "Cancel",
-    "save": "Save",
-    "edit": "Edit",
-    "delete": "Delete",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "close": "Close",
-    "confirm": "Confirm"
-  },
-  "alerts": {
-    "emergency_call": "🚨 Call emergency services immediately",
-    "seek_urgent_care": "⚠️ Seek urgent medical care",
-    "monitor_symptoms": "👁️ Monitor symptoms closely",
-    "general_advice": "💡 General health advice"
-  }
 }

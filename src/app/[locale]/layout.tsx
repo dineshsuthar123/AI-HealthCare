@@ -1,38 +1,45 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { ReactNode } from 'react';
+import { getMessages, getLocale } from 'next-intl/server';
+import AuthProvider from '@/components/providers/session-provider';
+import Header from '@/components/layout/header';
+import '../globals.css';
+import { Inter } from 'next/font/google';
 
-interface LocaleLayoutProps {
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+
+export async function generateMetadata() {
+    return {
+        title: {
+            default: "AI-HealthCare",
+            template: "%s | AI-HealthCare",
+        },
+        description: "AI-powered healthcare platform with symptom checking, telemedicine, and multilingual support.",
+        metadataBase: new URL('https://ai-healthcare.vercel.app'),
+    };
 }
-
-const locales = ['en', 'es', 'fr', 'pt', 'hi', 'ar', 'sw'];
 
 export default async function LocaleLayout({
-  children,
-  params
-}: LocaleLayoutProps) {
-  const { locale } = await params;
-  
-  // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale)) {
-    notFound();
-  }
+    children
+}: {
+    children: React.ReactNode;
+}) {
+    const locale = await getLocale();
+    const messages = await getMessages();
 
-  // Providing all messages to the client side is the easiest way to get started
-  const messages = await getMessages();
-
-  return (
-    <NextIntlClientProvider messages={messages}>
-      <div className="min-h-screen">
-        {children}
-      </div>
-    </NextIntlClientProvider>
-  );
-}
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+    return (
+        <html lang={locale} suppressHydrationWarning>
+            <body className={`${inter.variable} font-sans min-h-screen antialiased`}>
+                <NextIntlClientProvider locale={locale} messages={messages}>
+                    <AuthProvider>
+                        <div className="relative flex min-h-screen flex-col">
+                            <Header />
+                            <main className="flex-1">
+                                {children}
+                            </main>
+                        </div>
+                    </AuthProvider>
+                </NextIntlClientProvider>
+            </body>
+        </html>
+    );
 }
