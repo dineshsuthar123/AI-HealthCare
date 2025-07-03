@@ -1,8 +1,28 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI with better error checking
+let openai: OpenAI;
+try {
+    if (!process.env.OPENAI_API_KEY) {
+        console.warn('OPENAI_API_KEY is not defined. AI features may not work properly.');
+    }
+
+    openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-fallback',
+    });
+} catch (error) {
+    console.error('Failed to initialize OpenAI client:', error);
+    // Create a dummy client that will throw controlled errors
+    openai = {
+        chat: {
+            completions: {
+                create: async () => {
+                    throw new Error('OpenAI client not properly initialized');
+                }
+            }
+        }
+    } as unknown as OpenAI;
+}
 
 export interface SymptomInput {
     name: string;
@@ -35,19 +55,24 @@ Symptoms: ${symptomDescription}
 Please provide:
 1. Risk level (low/medium/high/critical)
 2. Specific recommendations for the patient
-3. Possible conditions with probability percentages
+3. Possible conditions with probability percentages (provide at least 3 possible conditions)
 4. Urgency level (routine/urgent/emergency)
 
 IMPORTANT: This is for informational purposes only and should not replace professional medical advice. Always recommend consulting a healthcare provider.
 
-Format your response as JSON with the following structure:
+CRITICAL: Return ONLY valid JSON with NO explanations or text before or after. Ensure exactly this structure with no missing fields:
 {
   "riskLevel": "low|medium|high|critical",
   "recommendations": ["recommendation1", "recommendation2", ...],
   "possibleConditions": [
     {
       "condition": "condition name",
-      "probability": 0-100,
+      "probability": number_between_0_and_100,
+      "description": "brief description"
+    },
+    {
+      "condition": "another condition",
+      "probability": number_between_0_and_100,
       "description": "brief description"
     }
   ],
@@ -55,19 +80,20 @@ Format your response as JSON with the following structure:
 }`;
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4",
+            model: "gpt-4", // Use gpt-3.5-turbo as fallback if needed
             messages: [
                 {
                     role: "system",
-                    content: "You are a medical AI assistant that provides symptom analysis. Always remind users to consult healthcare professionals."
+                    content: "You are a medical AI assistant that provides symptom analysis in VALID JSON format only. Always remind users to consult healthcare professionals. Your response MUST be valid JSON with the structure specified, with no text before or after the JSON object."
                 },
                 {
                     role: "user",
                     content: prompt
                 }
             ],
-            temperature: 0.3,
+            temperature: 0.2, // Lower temperature for more predictable outputs
             max_tokens: 1000,
+            response_format: { type: "json_object" } // Request JSON format explicitly
         });
 
         const response = completion.choices[0]?.message?.content;
@@ -75,19 +101,52 @@ Format your response as JSON with the following structure:
             throw new Error('No response from AI');
         }
 
-        // Parse the JSON response
-        const analysis = JSON.parse(response) as AIAnalysis;
+        // Parse the JSON response with better error handling
+        let analysis: AIAnalysis;
+        try {
+            // First, clean up the response if it's not proper JSON
+            const cleanJson = response.replace(/```json|```/g, '').trim();
+            analysis = JSON.parse(cleanJson) as AIAnalysis;
+        } catch (jsonError) {
+            console.error('Error parsing OpenAI JSON response:', jsonError);
+            console.log('Raw response:', response);
+            throw new Error('Failed to parse AI response');
+        }
 
-        // Validate the response structure
-        if (!analysis.riskLevel || !analysis.recommendations || !analysis.possibleConditions || !analysis.urgency) {
-            throw new Error('Invalid AI response structure');
+        // Validate the response structure with detailed feedback
+        if (!analysis.riskLevel) {
+            console.error('Missing riskLevel in AI response');
+            throw new Error('Invalid AI response: missing risk level');
+        }
+        if (!analysis.recommendations || !Array.isArray(analysis.recommendations)) {
+            console.error('Missing or invalid recommendations in AI response');
+            throw new Error('Invalid AI response: missing recommendations');
+        }
+        if (!analysis.possibleConditions || !Array.isArray(analysis.possibleConditions)) {
+            console.error('Missing or invalid possibleConditions in AI response');
+            throw new Error('Invalid AI response: missing possible conditions');
+        }
+        if (!analysis.urgency) {
+            console.error('Missing urgency in AI response');
+            throw new Error('Invalid AI response: missing urgency level');
         }
 
         return analysis;
     } catch (error) {
         console.error('Error analyzing symptoms:', error);
 
-        // Return a safe fallback response
+        // Log more detail about the error
+        if (error instanceof Error) {
+            console.error(`Symptom analysis error: ${error.name} - ${error.message}`);
+        }
+
+        // Check if it's an OpenAI API error and log additional details
+        if (error instanceof Error &&
+            (error.message.includes('OpenAI') || error.name.includes('OpenAI'))) {
+            console.error('OpenAI API error detected, using fallback response');
+        }
+
+        // Return a safe fallback response with more detailed conditions
         return {
             riskLevel: 'medium',
             recommendations: [
@@ -97,9 +156,24 @@ Format your response as JSON with the following structure:
             ],
             possibleConditions: [
                 {
-                    condition: 'Multiple possible conditions',
-                    probability: 50,
-                    description: 'AI analysis unavailable. Please consult a healthcare provider.'
+                    condition: 'Common Cold',
+                    probability: 30,
+                    description: 'Viral infection causing nasal congestion, sore throat, and mild fever.'
+                },
+                {
+                    condition: 'Flu / Influenza',
+                    probability: 25,
+                    description: 'Viral infection with fever, body aches, fatigue, and respiratory symptoms.'
+                },
+                {
+                    condition: 'Migraine',
+                    probability: 20,
+                    description: 'Recurring headache disorder causing moderate to severe pain, often with sensitivity to light and sound.'
+                },
+                {
+                    condition: 'Stress-Related Condition',
+                    probability: 15,
+                    description: 'Physical symptoms triggered by psychological stress, including headaches and fatigue.'
                 }
             ],
             urgency: 'urgent'

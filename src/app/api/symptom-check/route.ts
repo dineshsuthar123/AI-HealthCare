@@ -8,12 +8,17 @@ import { BadRequestError, handleApiError, logApiError } from '@/lib/api-error';
 import { z } from 'zod';
 
 // Validation schema for symptom check request
+const SymptomInputSchema = z.object({
+    name: z.string().min(1, 'Symptom name is required'),
+    severity: z.enum(['mild', 'moderate', 'severe']),
+    duration: z.string().min(1, 'Duration is required'),
+    description: z.string().optional(),
+});
+
 const SymptomCheckSchema = z.object({
-    symptoms: z.array(z.string()).nonempty({
+    symptoms: z.array(SymptomInputSchema).nonempty({
         message: 'At least one symptom is required',
     }),
-    language: z.string().optional(),
-    additionalInfo: z.string().optional(),
 });
 
 /**
@@ -42,17 +47,13 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { symptoms, language, additionalInfo } = validationResult.data;
+        const { symptoms } = validationResult.data;
 
         // Log symptom check for analytics (privacy-preserving)
         console.info(`Symptom check requested with ${symptoms.length} symptoms${session?.user ? ' by authenticated user' : ''}`);
 
         // Analyze symptoms using AI
-        const analysis = await analyzeSymptoms(
-            symptoms,
-            language || 'en',
-            additionalInfo
-        );
+        const analysis = await analyzeSymptoms(symptoms);
 
         // Save to database if user is logged in
         if (session?.user) {
@@ -62,8 +63,6 @@ export async function POST(request: NextRequest) {
                 userId: session.user.id,
                 symptoms,
                 aiAnalysis: analysis,
-                additionalInfo: additionalInfo || '',
-                language: language || 'en',
                 status: 'completed',
                 createdAt: new Date()
             });

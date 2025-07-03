@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/symptom-check/route';
 import * as auth from 'next-auth';
 import * as mongodb from '@/lib/mongodb';
@@ -33,13 +33,27 @@ global.console.error = jest.fn();
 
 describe('Symptom Check API', () => {
     let req: NextRequest;
+    const mockSymptoms = [
+        {
+            name: 'headache',
+            severity: 'mild',
+            duration: '1 week',
+            description: 'happens quite regularly'
+        },
+        {
+            name: 'fever',
+            severity: 'moderate',
+            duration: '2 days',
+            description: 'started after headache'
+        }
+    ];
 
     beforeEach(() => {
         jest.clearAllMocks();
 
         // Create a mock request with headers for NextRequest
         req = {
-            json: jest.fn().mockResolvedValue({ symptoms: ['fever', 'cough', 'headache'] }),
+            json: jest.fn().mockResolvedValue({ symptoms: mockSymptoms }),
             headers: {
                 get: jest.fn().mockImplementation((name) => {
                     if (name === 'user-agent') return 'test-user-agent';
@@ -78,7 +92,7 @@ describe('Symptom Check API', () => {
         const responseData = await response.json();
 
         // Verify AI analyzer was called with correct symptoms
-        expect(symptomAnalyzer.analyzeSymptoms).toHaveBeenCalledWith(['fever', 'cough', 'headache'], 'en', undefined);
+        expect(symptomAnalyzer.analyzeSymptoms).toHaveBeenCalledWith(mockSymptoms);
 
         // Verify database connection was established
         expect(mongodb.default).toHaveBeenCalled();
@@ -125,26 +139,6 @@ describe('Symptom Check API', () => {
         // Should return analysis
         expect(response.status).toBe(200);
         expect(responseData).toHaveProperty('analysis');
-    });
-
-    test('includes additional parameters when provided', async () => {
-        // Override the mock to include language and additional info
-        (req.json as jest.Mock).mockResolvedValueOnce({
-            symptoms: ['fever', 'cough'],
-            language: 'es',
-            additionalInfo: 'Recent travel to tropical region'
-        });
-
-        const response = await POST(req);
-
-        // Verify AI analyzer was called with all parameters
-        expect(symptomAnalyzer.analyzeSymptoms).toHaveBeenCalledWith(
-            ['fever', 'cough'],
-            'es',
-            'Recent travel to tropical region'
-        );
-
-        expect(response.status).toBe(200);
     });
 
     test('handles internal server errors', async () => {
