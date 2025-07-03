@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
@@ -11,6 +11,12 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { data: session } = useSession();
     const t = useTranslations('Header');
+    const [isClient, setIsClient] = useState(false);
+
+    // This helps prevent hydration errors by ensuring rendering happens only client-side
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const navigation = [
         { name: t('home'), href: '/' },
@@ -18,6 +24,30 @@ export default function Header() {
         { name: t('consultations'), href: '/consultations' },
         { name: t('dashboard'), href: '/dashboard' },
     ];
+
+    // Render a simplified header skeleton during SSR to prevent hydration mismatch
+    if (!isClient) {
+        return (
+            <header className="bg-white shadow-sm border-b">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-16">
+                        <div className="flex items-center">
+                            <div className="flex items-center space-x-2">
+                                <Heart className="h-8 w-8 text-blue-600" />
+                                <span className="font-bold text-xl text-gray-900">
+                                    AI Healthcare
+                                </span>
+                            </div>
+                        </div>
+                        <div className="hidden md:block w-auto bg-gray-100 h-8 rounded-md"></div>
+                        <div className="md:hidden">
+                            <div className="w-6 h-6 bg-gray-100 rounded-md"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        );
+    }
 
     return (
         <header className="bg-white shadow-sm border-b">

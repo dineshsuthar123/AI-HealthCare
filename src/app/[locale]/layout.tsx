@@ -1,9 +1,9 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
 import AuthProvider from '@/components/providers/session-provider';
-import Header from '@/components/layout/Header';
 import '../globals.css';
 import { Inter } from 'next/font/google';
+import ClientHeaderWrapper from '@/components/layout/client-header-wrapper';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -32,7 +32,7 @@ export default async function LocaleLayout({
                 <NextIntlClientProvider locale={locale} messages={messages}>
                     <AuthProvider>
                         <div className="relative flex min-h-screen flex-col">
-                            <Header />
+                            <ClientHeaderWrapper />
                             <main className="flex-1">
                                 {children}
                             </main>

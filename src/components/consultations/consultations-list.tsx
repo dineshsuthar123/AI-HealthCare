@@ -78,7 +78,7 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                         <div>
                             <p className="font-medium">{consultation.reason}</p>
                             <p className="text-sm text-gray-500">
-                                {formatDate(consultation.scheduledFor)} • {formatTime(consultation.scheduledFor)}
+                                {formatDate(new Date(consultation.scheduledFor))} • {formatTime(new Date(consultation.scheduledFor))}
                             </p>
                             <div className="mt-1">
                                 <span className={`inline-block px-2 py-1 text-xs rounded-full ${getConsultationTypeStyle(consultation.type)}`}>
