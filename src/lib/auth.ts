@@ -6,16 +6,26 @@ import bcrypt from 'bcryptjs';
 import connectDB from './mongodb';
 import { User } from '@/models/User';
 
-const client = new MongoClient(process.env.MONGODB_URI!);
-const clientPromise = client.connect().catch(err => {
-  console.warn('MongoDB connection failed:', err.message);
-  // Return a mock promise that resolves to a client that won't work
-  // This prevents the app from crashing during development
-  return client;
-});
+let client: MongoClient | null = null;
+let clientPromise: Promise<MongoClient>;
+
+if (process.env.MONGODB_URI) {
+  client = new MongoClient(process.env.MONGODB_URI);
+  clientPromise = client.connect().catch(err => {
+    console.warn('MongoDB connection failed:', err.message);
+    // Return a mock promise that resolves to a client that won't work
+    // This prevents the app from crashing during development
+    return client!;
+  });
+} else {
+  console.warn('MONGODB_URI is not defined in environment variables.');
+  // Create a mock client to prevent unhandled promise rejections
+  client = new MongoClient('mongodb://localhost:27017/mock-db');
+  clientPromise = Promise.resolve(client);
+}
 
 export const authOptions: NextAuthOptions = {
-  adapter: process.env.MONGODB_URI ? MongoDBAdapter(clientPromise) as any : undefined, // Type assertion to fix compatibility issues
+  adapter: process.env.MONGODB_URI ? (MongoDBAdapter(clientPromise) as import('next-auth/adapters').Adapter) : undefined, // Type assertion to fix compatibility issues
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -59,8 +69,13 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role;
-        token.isVerified = (user as any).isVerified;
+        type UserType = {
+          role: string;
+          isVerified: boolean;
+        };
+        const typedUser = user as UserType;
+        token.role = typedUser.role;
+        token.isVerified = typedUser.isVerified;
       }
       return token;
     },

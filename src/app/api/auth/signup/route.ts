@@ -49,10 +49,10 @@ export async function POST(request: NextRequest) {
     await user.save();
 
     // Remove password from response
-    const { password, ...userWithoutPassword } = user.toObject();
+    const { ...userWithoutPassword } = user.toObject();
 
     return NextResponse.json(
-      { 
+      {
         message: 'User created successfully',
         user: userWithoutPassword
       },
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Signup error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },

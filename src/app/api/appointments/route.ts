@@ -8,7 +8,7 @@ import { User } from '@/models/User';
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -16,13 +16,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { 
-      doctorId, 
-      appointmentDate, 
-      type, 
-      symptoms, 
+    const {
+      doctorId,
+      appointmentDate,
+      type,
+      symptoms,
       chiefComplaint,
-      duration = 30 
+      duration = 30
     } = await request.json();
 
     if (!doctorId || !appointmentDate || !type) {
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -105,8 +105,8 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    let query: any = {};
-    
+    const query: Record<string, unknown> = {};
+
     // Build query based on user role
     if (session.user.role === 'doctor') {
       query.doctorId = session.user.id;

@@ -3,18 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Edit, 
-  Save, 
-  X, 
-  Shield, 
-  Bell, 
-  Globe, 
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Edit,
+  Save,
+  X,
+  Shield,
+  Globe,
   Heart,
   FileText,
   Download,
@@ -89,7 +87,7 @@ export default function ProfilePage() {
       loadProfile();
       loadHealthRecords();
     }
-  }, [session]);
+  }, [session, loadProfile]);
 
   const loadProfile = async () => {
     setLoading(true);
@@ -190,7 +188,7 @@ export default function ProfilePage() {
     try {
       // In real app, make API call to update profile
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+
       // Update session if name or email changed
       if (profile.name !== session?.user?.name || profile.email !== session?.user?.email) {
         await update({
@@ -216,11 +214,11 @@ export default function ProfilePage() {
         healthRecords,
         exportDate: new Date().toISOString(),
       };
-      
+
       const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
         type: 'application/json',
       });
-      
+
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -229,7 +227,7 @@ export default function ProfilePage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       setSuccess(t('success.dataExported'));
     } catch (error) {
       setError(t('errors.exportData'));
@@ -242,7 +240,7 @@ export default function ProfilePage() {
     try {
       // In real app, call API to delete account
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Sign out and redirect
       window.location.href = '/auth/signin';
     } catch (error) {
@@ -383,11 +381,10 @@ export default function ProfilePage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                    activeTab === tab.id
+                  className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
+                    }`}
                 >
                   <tab.icon className="w-4 h-4" />
                   <span>{tab.label}</span>
@@ -418,6 +415,8 @@ export default function ProfilePage() {
                         value={profile.name}
                         onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                         disabled={!isEditing}
+                        placeholder={t('placeholders.name')}
+                        title={t('titles.name')}
                       />
                     </div>
                     <div>
@@ -429,6 +428,8 @@ export default function ProfilePage() {
                         value={profile.email}
                         onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                         disabled={!isEditing}
+                        placeholder={t('placeholders.email')}
+                        title={t('titles.email')}
                       />
                     </div>
                     <div>
@@ -440,6 +441,8 @@ export default function ProfilePage() {
                         value={profile.phone || ''}
                         onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                         disabled={!isEditing}
+                        placeholder={t('placeholders.phone')}
+                        title={t('titles.phone')}
                       />
                     </div>
                     <div>
@@ -451,6 +454,7 @@ export default function ProfilePage() {
                         value={profile.dateOfBirth || ''}
                         onChange={(e) => setProfile({ ...profile, dateOfBirth: e.target.value })}
                         disabled={!isEditing}
+                        title={t('titles.dateOfBirth')}
                       />
                     </div>
                   </div>
@@ -463,9 +467,11 @@ export default function ProfilePage() {
                       onChange={(e) => setProfile({ ...profile, address: e.target.value })}
                       disabled={!isEditing}
                       rows={3}
+                      placeholder={t('placeholders.address')}
+                      title={t('titles.address')}
                     />
                   </div>
-                  
+
                   {/* Emergency Contact */}
                   <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">{t('personal.emergencyContact')}</h3>
@@ -484,6 +490,8 @@ export default function ProfilePage() {
                             },
                           })}
                           disabled={!isEditing}
+                          placeholder={t('placeholders.emergencyName')}
+                          title={t('titles.emergencyName')}
                         />
                       </div>
                       <div>
@@ -501,6 +509,8 @@ export default function ProfilePage() {
                             },
                           })}
                           disabled={!isEditing}
+                          placeholder={t('placeholders.emergencyPhone')}
+                          title={t('titles.emergencyPhone')}
                         />
                       </div>
                       <div>
@@ -517,6 +527,8 @@ export default function ProfilePage() {
                             },
                           })}
                           disabled={!isEditing}
+                          placeholder={t('placeholders.relationship')}
+                          title={t('titles.relationship')}
                         />
                       </div>
                     </div>
@@ -548,6 +560,7 @@ export default function ProfilePage() {
                       })}
                       disabled={!isEditing}
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-50"
+                      title="User Selection"
                     >
                       <option value="">{t('medical.selectBloodType')}</option>
                       <option value="A+">A+</option>
@@ -607,6 +620,7 @@ export default function ProfilePage() {
                             }
                           }
                         }}
+                        title={t('titles.allergy')}
                       />
                     )}
                   </div>
@@ -657,6 +671,7 @@ export default function ProfilePage() {
                             }
                           }
                         }}
+                        title={t('titles.medication')}
                       />
                     )}
                   </div>
@@ -707,6 +722,7 @@ export default function ProfilePage() {
                             }
                           }
                         }}
+                        title={t('titles.condition')}
                       />
                     )}
                   </div>

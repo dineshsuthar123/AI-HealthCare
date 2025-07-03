@@ -17,8 +17,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
-  Area,
 } from 'recharts';
 import {
   Activity,
@@ -26,12 +24,8 @@ import {
   TrendingUp,
   TrendingDown,
   Calendar,
-  Clock,
   AlertTriangle,
   Heart,
-  Brain,
-  Stethoscope,
-  Globe,
   MessageSquare,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -93,10 +87,10 @@ export default function DashboardPage() {
   useEffect(() => {
     const loadDashboardData = async () => {
       setLoading(true);
-      
+
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock health metrics
       setHealthMetrics([
         {
@@ -220,7 +214,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8 dashboard-container">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -231,8 +225,9 @@ export default function DashboardPage() {
             </div>
             <div className="mt-4 sm:mt-0">
               <select
+                title="Time Range"
                 value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value as any)}
+                onChange={(e) => setTimeRange(e.target.value as '7d' | '30d' | '90d' | '1y')}
                 className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="7d">{t('timeRange.7d')}</option>
@@ -257,10 +252,9 @@ export default function DashboardPage() {
                       {metric.unit && <span className="text-sm text-gray-500 ml-1">{metric.unit}</span>}
                     </p>
                   </div>
-                  <div className={`p-2 rounded-full ${
-                    metric.trend === 'up' ? 'bg-green-100' : 
+                  <div className={`p-2 rounded-full ${metric.trend === 'up' ? 'bg-green-100' :
                     metric.trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
-                  }`}>
+                    }`}>
                     {metric.trend === 'up' ? (
                       <TrendingUp className="w-5 h-5 text-green-600" />
                     ) : metric.trend === 'down' ? (
@@ -271,10 +265,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="mt-2">
-                  <span className={`text-sm ${
-                    metric.change > 0 ? 'text-green-600' : 
+                  <span className={`text-sm ${metric.change > 0 ? 'text-green-600' :
                     metric.change < 0 ? 'text-red-600' : 'text-gray-600'
-                  }`}>
+                    }`}>
                     {metric.change > 0 ? '+' : ''}{metric.change}%
                   </span>
                   <span className="text-sm text-gray-500 ml-1">
@@ -291,7 +284,7 @@ export default function DashboardPage() {
           {[
             { label: t('usage.totalUsers'), value: usageStats.totalUsers, icon: Users, color: 'bg-blue-500' },
             { label: t('usage.activeUsers'), value: usageStats.activeUsers, icon: Activity, color: 'bg-green-500' },
-            { label: t('usage.symptomChecks'), value: usageStats.symptomChecks, icon: Stethoscope, color: 'bg-purple-500' },
+            { label: t('usage.symptomChecks'), value: usageStats.symptomChecks, icon: Heart, color: 'bg-purple-500' },
             { label: t('usage.appointments'), value: usageStats.appointments, icon: Calendar, color: 'bg-orange-500' },
             { label: t('usage.smsInteractions'), value: usageStats.smsInteractions, icon: MessageSquare, color: 'bg-teal-500' },
             { label: t('usage.emergencyAlerts'), value: usageStats.emergencyAlerts, icon: AlertTriangle, color: 'bg-red-500' },
@@ -326,7 +319,7 @@ export default function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" tickFormatter={(value) => new Date(value).toLocaleDateString()} />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     labelFormatter={(value) => new Date(value).toLocaleDateString()}
                     formatter={(value: number, name: string) => [value, t(`symptoms.${name}`)]}
                   />
@@ -392,8 +385,8 @@ export default function DashboardPage() {
                 <div className="lg:ml-4 mt-4 lg:mt-0">
                   {languageUsage.map((lang, index) => (
                     <div key={index} className="flex items-center space-x-2 mb-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: lang.color }}
                       ></div>
                       <span className="text-sm">{lang.language}</span>

@@ -2,24 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { signIn, getSession } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Heart, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
+import { Heart, Mail, Lock, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SignInPage() {
-  const t = useTranslations('auth');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,7 +31,6 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
     setSuccess(null);
 
     try {
@@ -59,7 +55,7 @@ export default function SignInPage() {
           setPassword('');
         } else {
           const error = await response.json();
-          setError(error.message || 'Failed to create account');
+          setSuccess(error.message || 'Failed to create account');
         }
       } else {
         // Sign in existing user
@@ -70,13 +66,13 @@ export default function SignInPage() {
         });
 
         if (result?.error) {
-          setError('Invalid email or password');
+          setSuccess('Invalid email or password');
         } else if (result?.ok) {
           router.push('/');
         }
       }
-    } catch (error) {
-      setError('An unexpected error occurred');
+    } catch {
+      setSuccess('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -102,20 +98,13 @@ export default function SignInPage() {
               {isSignUp ? 'Create Account' : 'Sign In'}
             </CardTitle>
             <CardDescription className="text-center">
-              {isSignUp 
+              {isSignUp
                 ? 'Join our healthcare platform to get started'
                 : 'Access your healthcare dashboard'
               }
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {error && (
-              <Alert className="mb-4 border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">{error}</AlertDescription>
-              </Alert>
-            )}
-
             {success && (
               <Alert className="mb-4 border-green-200 bg-green-50">
                 <CheckCircle className="h-4 w-4 text-green-600" />
@@ -209,12 +198,11 @@ export default function SignInPage() {
                   type="button"
                   onClick={() => {
                     setIsSignUp(!isSignUp);
-                    setError(null);
                     setSuccess(null);
                   }}
                   className="text-blue-600 hover:text-blue-500 text-sm font-medium"
                 >
-                  {isSignUp 
+                  {isSignUp
                     ? 'Already have an account? Sign in'
                     : "Don't have an account? Sign up"
                   }
