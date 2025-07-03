@@ -170,5 +170,34 @@
         "disclaimer": "Medical Disclaimer: This AI analysis is for informational purposes only and should not replace professional medical advice. Please consult with a healthcare provider for proper diagnosis and treatment.",
         "bookConsultation": "Book Consultation",
         "saveResults": "Save Results"
+    },
+    "Dashboard": {
+        "pageTitle": "Patient Dashboard",
+        "loading": "Loading your dashboard...",
+        "welcomeBack": "Welcome back, {name}",
+        "healthOverview": "Here's an overview of your health activity",
+        "quickActions": "Quick Actions",
+        "quickActionsDesc": "Common tasks and features",
+        "startSymptomCheck": "Start Symptom Check",
+        "bookConsultation": "Book Consultation",
+        "viewMedicalRecords": "View Medical Records",
+        "emergencyContacts": "Emergency Contacts",
+        "recentActivities": "Recent Activities",
+        "recentActivitiesDesc": "Your latest health interactions",
+        "healthInsights": "Health Insights",
+        "healthInsightsDesc": "Personalized recommendations based on your health data",
+        "recommendation": "Recommendation",
+        "goodProgress": "Good Progress",
+        "reminder": "Reminder",
+        "stats": {
+            "healthChecks": "Health Checks",
+            "completedThisMonth": "Completed this month",
+            "consultations": "Consultations",
+            "scheduledAppointments": "Scheduled appointments",
+            "healthScore": "Health Score",
+            "basedOnAssessments": "Based on recent assessments",
+            "reports": "Reports",
+            "medicalDocuments": "Medical documents"
+        }
     }
 }

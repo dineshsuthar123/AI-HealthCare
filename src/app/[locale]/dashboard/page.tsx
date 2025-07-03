@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/navigation';
 import { Activity, Calendar, FileText, Users, Heart, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ export default function DashboardPage() {
     const t = useTranslations('Dashboard');
 
     if (status === 'loading') {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+        return <div className="flex justify-center items-center min-h-screen">{t('loading')}</div>;
     }
 
     if (!session) {
@@ -22,31 +22,31 @@ export default function DashboardPage() {
 
     const stats = [
         {
-            title: 'Health Checks',
+            title: t('stats.healthChecks'),
             value: '12',
             icon: Activity,
-            description: 'Completed this month',
+            description: t('stats.completedThisMonth'),
             trend: '+2 from last month',
         },
         {
-            title: 'Consultations',
+            title: t('stats.consultations'),
             value: '3',
             icon: Calendar,
-            description: 'Scheduled appointments',
+            description: t('stats.scheduledAppointments'),
             trend: 'Next: Tomorrow 2:00 PM',
         },
         {
-            title: 'Health Score',
+            title: t('stats.healthScore'),
             value: '85%',
             icon: Heart,
-            description: 'Based on recent assessments',
+            description: t('stats.basedOnAssessments'),
             trend: '+5% improvement',
         },
         {
-            title: 'Reports',
+            title: t('stats.reports'),
             value: '8',
             icon: FileText,
-            description: 'Medical documents',
+            description: t('stats.medicalDocuments'),
             trend: '2 new this week',
         },
     ];
@@ -84,10 +84,10 @@ export default function DashboardPage() {
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900">
-                        Welcome back, {session.user?.name}!
+                        {t('welcomeBack', { name: session.user?.name })}
                     </h1>
                     <p className="text-lg text-gray-600 mt-2">
-                        Here's your health overview for today
+                        {t('healthOverview')}
                     </p>
                 </div>
 
@@ -118,31 +118,31 @@ export default function DashboardPage() {
                     {/* Quick Actions */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Quick Actions</CardTitle>
+                            <CardTitle>{t('quickActions')}</CardTitle>
                             <CardDescription>
-                                Common health tasks and features
+                                {t('quickActionsDesc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <Link href="/symptom-checker">
                                 <Button className="w-full justify-start" variant="outline">
                                     <Activity className="mr-2 h-4 w-4" />
-                                    Start Symptom Check
+                                    {t('startSymptomCheck')}
                                 </Button>
                             </Link>
                             <Link href="/consultations">
                                 <Button className="w-full justify-start" variant="outline">
                                     <Calendar className="mr-2 h-4 w-4" />
-                                    Book Consultation
+                                    {t('bookConsultation')}
                                 </Button>
                             </Link>
                             <Button className="w-full justify-start" variant="outline">
                                 <FileText className="mr-2 h-4 w-4" />
-                                View Medical Records
+                                {t('viewMedicalRecords')}
                             </Button>
                             <Button className="w-full justify-start" variant="outline">
                                 <Users className="mr-2 h-4 w-4" />
-                                Emergency Contacts
+                                {t('emergencyContacts')}
                             </Button>
                         </CardContent>
                     </Card>
@@ -150,9 +150,9 @@ export default function DashboardPage() {
                     {/* Recent Activities */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Recent Activities</CardTitle>
+                            <CardTitle>{t('recentActivities')}</CardTitle>
                             <CardDescription>
-                                Your latest health interactions
+                                {t('recentActivitiesDesc')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -175,8 +175,8 @@ export default function DashboardPage() {
                                         </div>
                                         <div className="flex-shrink-0">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${activity.status === 'completed'
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-blue-100 text-blue-800'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-blue-100 text-blue-800'
                                                 }`}>
                                                 {activity.status}
                                             </span>
@@ -193,17 +193,17 @@ export default function DashboardPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center">
                             <TrendingUp className="mr-2 h-5 w-5" />
-                            Health Insights
+                            {t('healthInsights')}
                         </CardTitle>
                         <CardDescription>
-                            Personalized recommendations based on your health data
+                            {t('healthInsightsDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             <div className="p-4 bg-blue-50 rounded-lg">
                                 <h4 className="font-medium text-blue-900 mb-2">
-                                    🎯 Recommendation
+                                    🎯 {t('recommendation')}
                                 </h4>
                                 <p className="text-blue-800 text-sm">
                                     Based on your recent symptoms, consider scheduling a follow-up consultation with your primary care physician.
@@ -211,7 +211,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="p-4 bg-green-50 rounded-lg">
                                 <h4 className="font-medium text-green-900 mb-2">
-                                    ✅ Good Progress
+                                    ✅ {t('goodProgress')}
                                 </h4>
                                 <p className="text-green-800 text-sm">
                                     Your health score has improved by 5% this month. Keep up the good work with your medication adherence!
@@ -219,10 +219,10 @@ export default function DashboardPage() {
                             </div>
                             <div className="p-4 bg-yellow-50 rounded-lg">
                                 <h4 className="font-medium text-yellow-900 mb-2">
-                                    ⚠️ Reminder
+                                    ⚠️ {t('reminder')}
                                 </h4>
                                 <p className="text-yellow-800 text-sm">
-                                    Don't forget to take your evening medication. Set up notifications in your profile settings.
+                                    Dont forget to take your evening medication. Set up notifications in your profile settings.
                                 </p>
                             </div>
                         </div>

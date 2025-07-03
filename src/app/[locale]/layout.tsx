@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
 import AuthProvider from '@/components/providers/session-provider';
-import Header from '@/components/layout/header';
+import Header from '@/components/layout/Header';
 import '../globals.css';
 import { Inter } from 'next/font/google';
 
