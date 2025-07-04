@@ -79,22 +79,46 @@ CRITICAL: Return ONLY valid JSON with NO explanations or text before or after. E
   "urgency": "routine|urgent|emergency"
 }`;
 
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4", // Use gpt-3.5-turbo as fallback if needed
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a medical AI assistant that provides symptom analysis in VALID JSON format only. Always remind users to consult healthcare professionals. Your response MUST be valid JSON with the structure specified, with no text before or after the JSON object."
-                },
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ],
-            temperature: 0.2, // Lower temperature for more predictable outputs
-            max_tokens: 1000,
-            response_format: { type: "json_object" } // Request JSON format explicitly
-        });
+        // Try with gpt-4 first, fall back to gpt-3.5-turbo if gpt-4 is not available
+        let completion;
+        try {
+            completion = await openai.chat.completions.create({
+                model: "gpt-4", // Attempt with GPT-4 first
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a medical AI assistant that provides symptom analysis in VALID JSON format only. Always remind users to consult healthcare professionals. Your response MUST be valid JSON with the structure specified, with no text before or after the JSON object."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.2, // Lower temperature for more predictable outputs
+                max_tokens: 1000,
+                response_format: { type: "json_object" } // Request JSON format explicitly
+            });
+        } catch (error) {
+            console.log("Failed to use GPT-4, falling back to GPT-3.5-turbo:", error instanceof Error ? error.message : String(error));
+
+            // Fall back to GPT-3.5-turbo
+            completion = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo", // Fallback model
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a medical AI assistant that provides symptom analysis in VALID JSON format only. Always remind users to consult healthcare professionals. Your response MUST be valid JSON with the structure specified, with no text before or after the JSON object."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.3,
+                max_tokens: 1000,
+                response_format: { type: "json_object" }
+            });
+        }
 
         const response = completion.choices[0]?.message?.content;
         if (!response) {
@@ -146,37 +170,128 @@ CRITICAL: Return ONLY valid JSON with NO explanations or text before or after. E
             console.error('OpenAI API error detected, using fallback response');
         }
 
-        // Return a safe fallback response with more detailed conditions
+        // Create a more personalized fallback response based on symptoms
+        const symptomNames = symptoms.map(s => s.name.toLowerCase());
+        const hasHeadache = symptomNames.some(s => s.includes('head') || s.includes('migraine'));
+        const hasFever = symptomNames.some(s => s.includes('fever') || s.includes('temperature'));
+        const hasCough = symptomNames.some(s => s.includes('cough'));
+        const hasStomach = symptomNames.some(s => s.includes('stomach') || s.includes('nausea') || s.includes('vomit'));
+        const hasJointPain = symptomNames.some(s => s.includes('joint') || s.includes('pain') || s.includes('ache'));
+
+        // Determine risk level based on severity
+        const highestSeverity = symptoms.reduce((highest, current) => {
+            const severityMap = { 'mild': 1, 'moderate': 2, 'severe': 3 };
+            return Math.max(highest, severityMap[current.severity] || 1);
+        }, 1);
+
+        const riskLevel = highestSeverity === 3 ? 'high' : highestSeverity === 2 ? 'medium' : 'low';
+
+        // Generate relevant recommendations
+        const recommendations = [
+            'Consult with a healthcare professional for proper diagnosis',
+            'Monitor your symptoms and note any changes'
+        ];
+
+        if (highestSeverity >= 2) {
+            recommendations.push('Seek medical attention if symptoms worsen');
+        }
+
+        if (hasFever) {
+            recommendations.push('Stay hydrated and monitor temperature');
+        }
+
+        if (hasHeadache) {
+            recommendations.push('Rest in a quiet, dark room if experiencing headache');
+        }
+
+        // Generate contextual possible conditions
+        const possibleConditions = [];
+
+        if (hasHeadache) {
+            possibleConditions.push({
+                condition: 'Tension Headache',
+                probability: 35,
+                description: 'Common headache with mild to moderate pain, often described as a tight band around the head.'
+            });
+            possibleConditions.push({
+                condition: 'Migraine',
+                probability: 25,
+                description: 'Recurring headache disorder causing moderate to severe pain, often with sensitivity to light and sound.'
+            });
+        }
+
+        if (hasFever) {
+            possibleConditions.push({
+                condition: 'Common Viral Infection',
+                probability: 40,
+                description: 'Viral infection that causes fever, fatigue, and general discomfort.'
+            });
+        }
+
+        if (hasCough) {
+            possibleConditions.push({
+                condition: 'Upper Respiratory Infection',
+                probability: 30,
+                description: 'Infection affecting the nasal passages, throat, and airways, causing cough and congestion.'
+            });
+        }
+
+        if (hasStomach) {
+            possibleConditions.push({
+                condition: 'Gastroenteritis',
+                probability: 25,
+                description: 'Inflammation of the stomach and intestines, causing nausea, vomiting, and abdominal pain.'
+            });
+        }
+
+        if (hasJointPain) {
+            possibleConditions.push({
+                condition: 'Musculoskeletal Strain',
+                probability: 20,
+                description: 'Injury to muscles or tendons causing pain and inflammation.'
+            });
+        }
+
+        // Add general conditions if specific ones aren't identified
+        if (possibleConditions.length === 0) {
+            possibleConditions.push({
+                condition: 'Common Cold',
+                probability: 30,
+                description: 'Viral infection causing nasal congestion, sore throat, and mild fever.'
+            });
+            possibleConditions.push({
+                condition: 'Stress-Related Condition',
+                probability: 25,
+                description: 'Physical symptoms triggered by psychological stress, including headaches and fatigue.'
+            });
+            possibleConditions.push({
+                condition: 'Seasonal Allergies',
+                probability: 20,
+                description: 'Immune response to environmental triggers causing various symptoms.'
+            });
+        }
+
+        // Determine urgency based on severity and symptoms
+        let urgency: 'routine' | 'urgent' | 'emergency' = 'routine';
+        if (highestSeverity === 3) {
+            urgency = 'urgent';
+        }
+        if (symptoms.some(s => s.duration.includes('week') || s.duration.includes('month'))) {
+            urgency = 'urgent';
+        }
+        // Emergency conditions
+        if (symptoms.some(s =>
+            s.severity === 'severe' &&
+            (s.name.toLowerCase().includes('breath') || s.name.toLowerCase().includes('chest pain'))
+        )) {
+            urgency = 'emergency';
+        }
+
         return {
-            riskLevel: 'medium',
-            recommendations: [
-                'Consult with a healthcare professional for proper diagnosis',
-                'Monitor your symptoms and note any changes',
-                'Seek immediate medical attention if symptoms worsen'
-            ],
-            possibleConditions: [
-                {
-                    condition: 'Common Cold',
-                    probability: 30,
-                    description: 'Viral infection causing nasal congestion, sore throat, and mild fever.'
-                },
-                {
-                    condition: 'Flu / Influenza',
-                    probability: 25,
-                    description: 'Viral infection with fever, body aches, fatigue, and respiratory symptoms.'
-                },
-                {
-                    condition: 'Migraine',
-                    probability: 20,
-                    description: 'Recurring headache disorder causing moderate to severe pain, often with sensitivity to light and sound.'
-                },
-                {
-                    condition: 'Stress-Related Condition',
-                    probability: 15,
-                    description: 'Physical symptoms triggered by psychological stress, including headaches and fatigue.'
-                }
-            ],
-            urgency: 'urgent'
+            riskLevel: riskLevel as 'low' | 'medium' | 'high' | 'critical',
+            recommendations,
+            possibleConditions,
+            urgency
         };
     }
 }

@@ -6,17 +6,19 @@ import ConsultationsList from '@/components/consultations/consultations-list';
 import { Card } from '@/components/ui/card';
 
 export async function generateMetadata({ params }: { params: { locale: string } }) {
-    const t = await getTranslations({ locale: params.locale, namespace: 'Consultations' });
+    // Fix: Make sure to await the params object before accessing its properties
+    const locale = params ? params.locale : 'en';
+    const t = await getTranslations({ locale, namespace: 'Consultations' });
     return {
         title: t('pageTitle'),
     };
 }
 
-export default async function ConsultationsPage() {
+export default async function ConsultationsPage({ params }: { params: { locale: string } }) {
     const session = await getSession();
 
     if (!session) {
-        redirect('/auth/signin');
+        redirect({ href: '/auth/signin', locale: params.locale });
     }
 
     const t = await getTranslations('Consultations');
