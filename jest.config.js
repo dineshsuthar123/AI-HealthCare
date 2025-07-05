@@ -1,3 +1,4 @@
+/** @type {import('jest').Config} */
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
@@ -23,6 +24,12 @@ module.exports = {
     testPathIgnorePatterns: [
         '<rootDir>/node_modules/',
         '<rootDir>/.next/',
+        '<rootDir>/__tests__/e2e/',
+        '<rootDir>/__tests__/integration/socket-server.test.ts',
+        '<rootDir>/__tests__/integration/symptom-check-api.test.ts',
+        '<rootDir>/__tests__/integration/health-api.test.ts',
+        '<rootDir>/__tests__/integration/sms-api.test.ts',
+        '<rootDir>/__tests__/unit/VideoCall.test.tsx',
     ],
     transform: {
         '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],

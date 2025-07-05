@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 
 describe('Input Component', () => {
     it('renders an input correctly', () => {
-        render(<Input placeholder="Enter text" />);
+        render(<Input placeholder="Enter text" type="text" />);
         const input = screen.getByPlaceholderText('Enter text');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('type', 'text');

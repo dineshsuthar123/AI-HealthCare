@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { type SymptomInput, type AIAnalysis } from '@/lib/ai/symptom-analyzer';
 import { cn, getRiskColor, getUrgencyColor } from '@/lib/utils';
 import { Link } from '@/navigation';
+import { EmergencyContact } from '@/components/symptom-checker/emergency-contact';
 
 export default function SymptomCheckerPage() {
     const t = useTranslations('SymptomChecker');
@@ -27,9 +28,7 @@ export default function SymptomCheckerPage() {
     // This helps prevent hydration errors by ensuring forms render only client-side
     useEffect(() => {
         setIsClient(true);
-    }, []);
-
-    const addSymptom = () => {
+    }, []); const addSymptom = () => {
         if (currentSymptom.name && currentSymptom.duration) {
             setSymptoms([...symptoms, currentSymptom]);
             setCurrentSymptom({
@@ -46,22 +45,25 @@ export default function SymptomCheckerPage() {
     };
 
     const handleAnalyze = async () => {
-        if (symptoms.length === 0) {
-            setError('Please add at least one symptom to analyze.');
-            return;
-        }
-
         setIsAnalyzing(true);
         setError(null);
 
         try {
+            // Add AbortController with timeout to prevent UI freeze on slow responses
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
             console.log('Submitting symptoms for analysis:', symptoms);
 
             const result = await fetch('/api/symptom-check', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ symptoms }),
+                signal: controller.signal
             });
+
+            // Clear timeout
+            clearTimeout(timeoutId);
 
             const responseData = await result.json();
 
@@ -76,11 +78,24 @@ export default function SymptomCheckerPage() {
             }
 
             setAnalysis(responseData.analysis);
+
+            // Auto show emergency contact form for critical or emergency cases
+            if (responseData.analysis.riskLevel === 'critical' || responseData.analysis.urgency === 'emergency') {
+                setShowEmergencyForm(true);
+            }
         } catch (error) {
             console.error('Error analyzing symptoms:', error);
-            setError(error instanceof Error
-                ? error.message
-                : 'An unexpected error occurred while analyzing symptoms. Please try again later.');
+            let errorMessage = 'An unexpected error occurred while analyzing symptoms. Please try again later.';
+
+            if (error instanceof Error) {
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Analysis is taking longer than expected. Please try again with fewer symptoms.';
+                } else {
+                    errorMessage = error.message;
+                }
+            }
+
+            setError(errorMessage);
         } finally {
             setIsAnalyzing(false);
         }
@@ -242,8 +257,29 @@ export default function SymptomCheckerPage() {
                                 className="w-full mt-4"
                                 size="lg"
                             >
-                                {isAnalyzing ? t('analyzingButton') : t('analyzeButton')}
+                                {isAnalyzing ? (
+                                    <>
+                                        <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                                        {t('analyzingButton')}
+                                    </>
+                                ) : (
+                                    t('analyzeButton')
+                                )}
                             </Button>
+
+                            {isAnalyzing && (
+                                <div className="mt-4 p-3 bg-blue-50 text-blue-700 rounded-lg">
+                                    <div className="flex items-center">
+                                        <div className="mr-3">
+                                            <div className="animate-pulse h-6 w-6 rounded-full bg-blue-200"></div>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">Analysis in progress</p>
+                                            <p className="text-sm">This may take up to 15-30 seconds depending on the complexity of symptoms.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 )}
@@ -322,12 +358,33 @@ export default function SymptomCheckerPage() {
                                 )}
                             </div>
 
+                            {/* Follow-up Recommendation */}
+                            {analysis.followUpIn && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">{t('followUpRecommendation')}</h3>
+                                    <div className="p-3 bg-blue-50 text-blue-800 rounded-lg flex items-center">
+                                        <CheckCircle className="h-5 w-5 text-blue-600 mr-2 flex-shrink-0" />
+                                        <span>{t('followUpPrefixText')} <strong>{analysis.followUpIn}</strong></span>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Disclaimer */}
                             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                                 <div className="flex">
                                     <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0" />
                                     <div className="text-sm text-yellow-800">
                                         {t('disclaimer')}
+                                        {analysis.telemetry?.fallbackUsed && (
+                                            <p className="mt-1 text-xs text-yellow-600">
+                                                Note: This analysis was generated using our fallback system. For more accurate results, please try again later.
+                                            </p>
+                                        )}
+                                        {analysis.telemetry?.cached && (
+                                            <p className="mt-1 text-xs text-green-600">
+                                                This analysis was retrieved from our cache for faster results.
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -348,6 +405,12 @@ export default function SymptomCheckerPage() {
                                     {t('saveResults')}
                                 </Button>
                             </div>
+
+                            {/* Emergency Contact Component */}
+                            <EmergencyContact
+                                analysis={analysis}
+                                symptoms={symptoms.map(s => s.name)}
+                            />
                         </CardContent>
                     </Card>
                 )}

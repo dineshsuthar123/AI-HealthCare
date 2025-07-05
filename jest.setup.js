@@ -1,4 +1,5 @@
-import '@testing-library/jest-dom';
+require('@testing-library/jest-dom');
+const React = require('react');
 
 // Mock next/router
 jest.mock('next/navigation', () => ({
@@ -27,8 +28,9 @@ jest.mock('next-intl', () => ({
 }));
 
 // Mock MongoDB
-jest.mock('../src/lib/mongodb', () => ({
-    connectToDatabase: jest.fn().mockResolvedValue(true),
+jest.mock('@/lib/mongodb', () => ({
+    __esModule: true,
+    default: jest.fn().mockResolvedValue(true),
 }));
 
 // Mock OpenAI

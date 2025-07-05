@@ -8,13 +8,13 @@
         "consultations": "الاستشارات",
         "dashboard": "لوحة التحكم",
         "signIn": "تسجيل الدخول",
-        "signUp": "التسجيل",
+        "signUp": "إنشاء حساب",
         "signOut": "تسجيل الخروج"
     },
     "Home": {
         "hero": {
             "title": "رعاية صحية مدعومة بالذكاء الاصطناعي للجميع",
-            "subtitle": "منصة رعاية صحية شاملة مصممة لخدمة المجتمعات المحرومة من الخدمات من خلال فحص الأعراض المدعوم بالذكاء الاصطناعي وخدمات الطب عن بُعد والدعم متعدد اللغات.",
+            "subtitle": "منصة رعاية صحية شاملة مصممة لخدمة المجتمعات المحرومة مع فحص الأعراض المدعوم بالذكاء الاصطناعي وخدمات التطبيب عن بعد ودعم متعدد اللغات.",
             "cta": {
                 "primary": "فحص الأعراض",
                 "secondary": "حجز استشارة"
@@ -22,18 +22,18 @@
         },
         "features": {
             "title": "حلول رعاية صحية متكاملة",
-            "subtitle": "تكنولوجيا طبية متقدمة متاحة للجميع، في كل مكان",
+            "subtitle": "تكنولوجيا طبية متقدمة متاحة للجميع وفي كل مكان",
             "symptomChecker": {
                 "title": "فاحص الأعراض بالذكاء الاصطناعي",
-                "description": "تحليل الأعراض المدعوم بالتعلم الآلي المتقدم مع تقييم المخاطر"
+                "description": "تحليل متقدم للأعراض مع تقييم المخاطر"
             },
             "telemedicine": {
-                "title": "الطب عن بُعد",
-                "description": "استشارات فيديو آمنة مع متخصصي الرعاية الصحية"
+                "title": "التطبيب عن بعد",
+                "description": "استشارات فيديو آمنة مع متخصصين في الرعاية الصحية"
             },
             "smsSupport": {
                 "title": "دعم الرسائل القصيرة",
-                "description": "المساعدة الصحية عبر الرسائل القصيرة للمناطق ذات الإنترنت المحدود"
+                "description": "مساعدة صحية عبر الرسائل القصيرة للمناطق ذات الإنترنت المحدود"
             },
             "analytics": {
                 "title": "تحليلات الصحة",
@@ -46,9 +46,295 @@
             "secure": "آمن"
         },
         "cta": {
-            "title": "مستعد لتحويل الرعاية الصحية؟",
+            "title": "هل أنت مستعد لتحويل الرعاية الصحية؟",
             "subtitle": "انضم إلى الآلاف الذين يثقون بمنصتنا لاحتياجاتهم الصحية",
             "button": "ابدأ اليوم"
+        }
+    },
+    "Auth": {
+        "signIn": {
+            "title": "تسجيل الدخول إلى حسابك",
+            "subtitle": "أدخل بيانات اعتمادك للوصول إلى حسابك",
+            "emailLabel": "البريد الإلكتروني",
+            "emailPlaceholder": "أدخل بريدك الإلكتروني",
+            "passwordLabel": "كلمة المرور",
+            "passwordPlaceholder": "أدخل كلمة المرور",
+            "forgotPassword": "نسيت كلمة المرور؟",
+            "submit": "تسجيل الدخول",
+            "signingIn": "جاري تسجيل الدخول...",
+            "orContinue": "أو متابعة باستخدام",
+            "continueWithGoogle": "متابعة باستخدام جوجل",
+            "noAccount": "ليس لديك حساب؟",
+            "createAccount": "أنشئ حساباً الآن"
+        },
+        "signUp": {
+            "title": "إنشاء حساب",
+            "subtitle": "انضم إلى مجتمعنا للوصول إلى جميع الميزات",
+            "nameLabel": "الاسم الكامل",
+            "namePlaceholder": "أدخل اسمك الكامل",
+            "emailLabel": "البريد الإلكتروني",
+            "emailPlaceholder": "أدخل بريدك الإلكتروني",
+            "passwordLabel": "كلمة المرور",
+            "passwordPlaceholder": "أنشئ كلمة مرور (8 أحرف على الأقل)",
+            "confirmPasswordLabel": "تأكيد كلمة المرور",
+            "confirmPasswordPlaceholder": "أكد كلمة المرور الخاصة بك",
+            "roleLabel": "نوع المستخدم",
+            "rolePatient": "مريض",
+            "roleProvider": "مقدم رعاية صحية",
+            "agreeTerms": "بالتسجيل، أنت توافق على شروطنا وسياسة الخصوصية",
+            "submit": "إنشاء حساب",
+            "creating": "جاري إنشاء الحساب...",
+            "signingUp": "جاري إنشاء الحساب...",
+            "orContinue": "أو متابعة باستخدام",
+            "continueWithGoogle": "متابعة باستخدام جوجل",
+            "alreadyHaveAccount": "لديك حساب بالفعل؟",
+            "signIn": "سجل الدخول هنا"
+        }
+    },
+    "Consultations": {
+        "pageTitle": "استشارات التطبيب عن بعد",
+        "title": "الاستشارات",
+        "subtitle": "جدول وإدارة استشاراتك مع مقدمي الرعاية الصحية",
+        "upcomingConsultations": "الاستشارات القادمة",
+        "pastConsultations": "الاستشارات السابقة",
+        "bookConsultation": "حجز استشارة",
+        "loading": "جاري تحميل الاستشارات...",
+        "noUpcomingConsultations": "لا توجد استشارات قادمة",
+        "noPastConsultations": "لا توجد استشارات سابقة",
+        "joinConsultation": "انضم الآن",
+        "cancel": "إلغاء",
+        "viewDetails": "عرض التفاصيل",
+        "notAssigned": "لم يتم التعيين بعد",
+        "provider": "مقدم الخدمة",
+        "form": {
+            "reason": "سبب الاستشارة",
+            "reasonPlaceholder": "صف بإيجاز أعراضك أو مخاوفك",
+            "date": "التاريخ",
+            "time": "الوقت",
+            "type": "نوع الاستشارة",
+            "videoCall": "مكالمة فيديو",
+            "audioCall": "مكالمة صوتية",
+            "message": "رسالة نصية",
+            "bookNow": "حجز استشارة",
+            "booking": "جاري الحجز..."
+        },
+        "type": {
+            "video": "فيديو",
+            "audio": "صوت",
+            "message": "رسالة"
+        },
+        "status": {
+            "scheduled": "مجدولة",
+            "inProgress": "قيد التنفيذ",
+            "completed": "مكتملة",
+            "cancelled": "ملغاة"
+        }
+    },
+    "ConsultationRoom": {
+        "pageTitle": "غرفة الاستشارة",
+        "title": "استشارة التطبيب عن بعد",
+        "subtitle": "استشارة فيديو آمنة مع مقدم الرعاية الصحية الخاص بك",
+        "connecting": "جاري الاتصال بمقدم الرعاية الصحية الخاص بك...",
+        "endCall": "إنهاء المكالمة",
+        "toggleMute": "تبديل الميكروفون",
+        "toggleCamera": "تبديل الكاميرا",
+        "consultationDetails": "تفاصيل الاستشارة",
+        "consultationId": "المعرف",
+        "provider": "مقدم الخدمة",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "chat": "الدردشة",
+        "chatPlaceholder": "ستظهر رسائل الدردشة هنا",
+        "typeMessage": "اكتب رسالتك...",
+        "sendMessage": "إرسال الرسالة",
+        "startCall": "بدء المكالمة",
+        "answer": "الرد على المكالمة",
+        "calling": "جاري الاتصال...",
+        "readyToConnect": "جاهز لبدء الاستشارة",
+        "callEnded": "انتهت المكالمة",
+        "isCallingYou": "يتصل بك",
+        "retryConnection": "إعادة محاولة الاتصال"
+    },
+    "SymptomChecker": {
+        "pageTitle": "فاحص الأعراض بالذكاء الاصطناعي",
+        "title": "فاحص الأعراض بالذكاء الاصطناعي",
+        "subtitle": "أدخل أعراضك للحصول على تقييم صحي مدعوم بالذكاء الاصطناعي",
+        "addSymptoms": "أضف أعراضك",
+        "symptomNameLabel": "اسم العرض",
+        "symptomNamePlaceholder": "مثل: صداع، حمى، سعال",
+        "durationLabel": "المدة",
+        "durationPlaceholder": "مثل: يومين، أسبوع واحد",
+        "severityLabel": "الشدة",
+        "mild": "خفيفة",
+        "moderate": "متوسطة",
+        "severe": "شديدة",
+        "detailsLabel": "تفاصيل إضافية",
+        "detailsPlaceholder": "أي معلومات إضافية حول هذا العرض",
+        "addSymptomButton": "إضافة العرض",
+        "yourSymptoms": "أعراضك",
+        "analyzeButton": "تحليل الأعراض",
+        "analyzingButton": "جاري التحليل...",
+        "resultsTitle": "نتائج تحليل الذكاء الاصطناعي",
+        "riskAssessment": "تقييم المخاطر",
+        "urgencyLevel": "مستوى الإلحاح",
+        "recommendations": "التوصيات",
+        "possibleConditions": "الحالات المحتملة",
+        "followUpRecommendation": "توصية المتابعة",
+        "followUpPrefixText": "ينصح بمتابعة طبية",
+        "disclaimer": "إخلاء المسؤولية الطبية: هذا التحليل بالذكاء الاصطناعي هو لأغراض معلوماتية فقط ولا ينبغي أن يحل محل الاستشارة الطبية المهنية. يرجى استشارة مقدم رعاية صحية للحصول على تشخيص وعلاج مناسبين.",
+        "bookConsultation": "حجز استشارة",
+        "saveResults": "حفظ النتائج",
+        "notifyEmergencyContact": "إخطار جهة اتصال الطوارئ",
+        "emergencyContact": {
+            "title": "إخطار جهة اتصال الطوارئ",
+            "nameLabel": "اسم جهة الاتصال",
+            "namePlaceholder": "أدخل اسم جهة الاتصال",
+            "phoneLabel": "رقم الهاتف (مع رمز البلد)",
+            "phonePlaceholder": "مثال: +966512345678",
+            "phoneHelp": "يجب أن يتضمن رمز البلد (مثل: +966 للسعودية)",
+            "sendAlert": "إرسال التنبيه",
+            "cancel": "إلغاء",
+            "successMessage": "تم إخطار جهة اتصال الطوارئ.",
+            "errorMessage": "فشل في إرسال إشعار لجهة اتصال الطوارئ. يرجى المحاولة مرة أخرى أو الاتصال مباشرة بخدمات الطوارئ.",
+            "validationError": "يرجى تقديم كل من الاسم ورقم الهاتف لجهة اتصال الطوارئ"
+        }
+    },
+    "SmsSupport": {
+        "pageTitle": "دعم الصحة عبر الرسائل القصيرة",
+        "title": "دعم الصحة عبر الرسائل القصيرة",
+        "subtitle": "الوصول إلى دعم الرعاية الصحية عبر رسائل SMS للمناطق ذات الاتصال المحدود بالإنترنت",
+        "sendSmsTitle": "إرسال رسالة صحية قصيرة",
+        "sendSmsDescription": "أرسل رسائل SMS متعلقة بالصحة إلى المرضى أو مقدمي الرعاية الصحية",
+        "phoneNumberLabel": "رقم الهاتف",
+        "phoneNumberPlaceholder": "مثل: +1234567890",
+        "phoneNumberHelp": "استخدم التنسيق الدولي مع رمز البلد (مثل: +1 للولايات المتحدة، +966 للسعودية)",
+        "messageTemplates": "قوالب الرسائل",
+        "messageLabel": "الرسالة",
+        "messagePlaceholder": "اكتب رسالتك المتعلقة بالصحة هنا...",
+        "sendButton": "إرسال الرسالة",
+        "sending": "جاري الإرسال...",
+        "successMessage": "تم إرسال الرسالة بنجاح!",
+        "errorMessage": "فشل في إرسال الرسالة: {error}",
+        "howItWorksTitle": "كيف يعمل",
+        "howItWorks": {
+            "step1": "أدخل رقم هاتف المستلم بالتنسيق الدولي",
+            "step2": "اختر قالباً أو اكتب رسالة مخصصة",
+            "step3": "أرسل الرسالة وانتظر تأكيد التسليم",
+            "step4": "يمكن للمستلمين الرد للحصول على مزيد من المساعدة"
+        },
+        "supportedRegions": "المناطق المدعومة",
+        "regionsDescription": "خدمة الرسائل القصيرة متاحة في معظم دول العالم. قد تطبق رسوم الرسائل القياسية.",
+        "faqTitle": "الأسئلة الشائعة",
+        "faq": {
+            "q1": "هل معلوماتي الصحية آمنة عند إرسالها عبر الرسائل القصيرة؟",
+            "a1": "نعم، نحن نتبع معايير أمان الصناعة. ومع ذلك، فإن الرسائل القصيرة غير مشفرة افتراضياً، لذا نوصي بعدم مشاركة معلومات شديدة الحساسية.",
+            "q2": "كم من الوقت سيستغرق تلقي رد؟",
+            "a2": "تختلف أوقات الاستجابة حسب المنطقة وتوافر مقدمي الرعاية الصحية. يجب استخدام خدمات الطوارئ للقضايا العاجلة.",
+            "q3": "هل هناك رسوم لاستخدام خدمة الرسائل القصيرة؟",
+            "a3": "خدمتنا مجانية للاستخدام، ولكن قد تطبق رسوم الرسائل القياسية من مزود الخدمة الخاص بك."
+        },
+        "templates": {
+            "symptoms": "تقرير الأعراض",
+            "medication": "تذكير بالدواء",
+            "appointment": "متابعة الموعد"
+        },
+        "templateText": {
+            "symptoms": "يرجى الرد بأعراضك الحالية وشدتها (خفيفة/متوسطة/شديدة).",
+            "medication": "هذا تذكير لتناول الدواء الموصوف لك. يرجى التأكيد عند تناوله.",
+            "appointment": "كيف تشعر بعد موعدك الأخير؟ أي مخاوف أو أسئلة؟"
+        }
+    },
+    "Dashboard": {
+        "pageTitle": "لوحة تحكم المريض",
+        "loading": "جاري تحميل لوحة التحكم الخاصة بك...",
+        "welcomeBack": "مرحباً بعودتك، {name}",
+        "healthOverview": "إليك نظرة عامة على نشاطك الصحي",
+        "quickActions": "إجراءات سريعة",
+        "quickActionsDesc": "المهام والميزات الشائعة",
+        "startSymptomCheck": "بدء فحص الأعراض",
+        "bookConsultation": "حجز استشارة",
+        "viewMedicalRecords": "عرض السجلات الطبية",
+        "emergencyContacts": "جهات اتصال الطوارئ",
+        "recentActivities": "الأنشطة الأخيرة",
+        "recentActivitiesDesc": "تفاعلاتك الصحية الأخيرة",
+        "healthInsights": "رؤى صحية",
+        "healthInsightsDesc": "توصيات مخصصة بناءً على بياناتك الصحية",
+        "recommendation": "توصية",
+        "goodProgress": "تقدم جيد",
+        "reminder": "تذكير",
+        "stats": {
+            "healthChecks": "فحوصات صحية",
+            "completedThisMonth": "أكملت هذا الشهر",
+            "consultations": "استشارات",
+            "scheduledAppointments": "مواعيد مجدولة",
+            "healthScore": "درجة الصحة",
+            "basedOnAssessments": "بناءً على التقييمات الأخيرة",
+            "reports": "تقارير",
+            "medicalDocuments": "وثائق طبية"
+        }
+    },
+    "ProviderDashboard": {
+        "pageTitle": "لوحة تحكم مقدم الخدمة",
+        "loading": "جاري تحميل لوحة تحكم مقدم الخدمة...",
+        "welcomeBack": "مرحباً بعودتك، د. {name}",
+        "dashboardOverview": "إليك نظرة عامة على نشاط ممارستك",
+        "upcomingAppointments": "المواعيد القادمة",
+        "viewAllAppointments": "عرض جميع المواعيد",
+        "inHours": "في غضون {hours} ساعات",
+        "joinConsultation": "الانضمام إلى الاستشارة",
+        "patientsList": "قائمة المرضى",
+        "searchPatients": "البحث عن المرضى...",
+        "addPatient": "إضافة مريض",
+        "patient": "المريض",
+        "details": "التفاصيل",
+        "lastVisit": "آخر زيارة",
+        "nextAppointment": "الموعد القادم",
+        "actions": "الإجراءات",
+        "yearsOld": "سنة",
+        "noUpcomingAppointments": "لا توجد مواعيد قادمة",
+        "viewMedicalRecord": "عرض السجل",
+        "scheduleAppointment": "جدولة",
+        "messages": "الرسائل",
+        "composeMessage": "إنشاء رسالة",
+        "noMessages": "لا توجد رسائل في صندوق الوارد الخاص بك",
+        "startNewConversation": "بدء محادثة جديدة",
+        "reports": "التقارير",
+        "thisMonth": "هذا الشهر",
+        "lastMonth": "الشهر الماضي",
+        "last3Months": "آخر 3 أشهر",
+        "thisYear": "هذا العام",
+        "generateReport": "إنشاء تقرير",
+        "patientDemographics": "الديموغرافيا السكانية للمرضى",
+        "consultationMetrics": "مقاييس الاستشارة",
+        "clinicalAlerts": "التنبيهات السريرية",
+        "clinicalAlertsDescription": "قضايا طبية مهمة تتطلب اهتمامك",
+        "reviewLabResults": "مراجعة نتائج المختبر",
+        "viewPrescriptionHistory": "عرض تاريخ الوصفات الطبية",
+        "tabs": {
+            "appointments": "المواعيد",
+            "patients": "المرضى",
+            "messages": "الرسائل",
+            "reports": "التقارير"
+        },
+        "stats": {
+            "totalPatients": "إجمالي المرضى",
+            "activePatients": "المرضى النشطون تحت رعايتك",
+            "newThisWeek": "جديد هذا الأسبوع",
+            "appointmentsToday": "مواعيد اليوم",
+            "scheduledForToday": "مجدولة لليوم",
+            "nextAppointment": "الموعد القادم",
+            "consultationHours": "ساعات الاستشارة",
+            "hoursThisWeek": "ساعات هذا الأسبوع",
+            "fromLastWeek": "من الأسبوع الماضي",
+            "pendingReports": "تقارير معلقة",
+            "needsAttention": "تحتاج اهتمامك",
+            "urgent": "عاجل"
+        },
+        "alerts": {
+            "urgent": "نتائج مختبر غير طبيعية",
+            "urgentDescription": "المريض أحمد محمد لديه قيم مختبرية حرجة تتطلب اهتماماً فورياً.",
+            "warning": "تفاعل دوائي",
+            "warningDescription": "تم اكتشاف تفاعل دوائي محتمل للوصفة الجديدة للمريضة سارة عبدالله."
         }
     }
 }

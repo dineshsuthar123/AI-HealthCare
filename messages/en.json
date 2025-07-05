@@ -174,9 +174,25 @@
         "urgencyLevel": "Urgency Level",
         "recommendations": "Recommendations",
         "possibleConditions": "Possible Conditions",
+        "followUpRecommendation": "Follow-Up Recommendation",
+        "followUpPrefixText": "Consider medical follow-up",
         "disclaimer": "Medical Disclaimer: This AI analysis is for informational purposes only and should not replace professional medical advice. Please consult with a healthcare provider for proper diagnosis and treatment.",
         "bookConsultation": "Book Consultation",
-        "saveResults": "Save Results"
+        "saveResults": "Save Results",
+        "notifyEmergencyContact": "Notify Emergency Contact",
+        "emergencyContact": {
+            "title": "Notify Emergency Contact",
+            "nameLabel": "Contact Name",
+            "namePlaceholder": "Enter contact name",
+            "phoneLabel": "Phone Number (with country code)",
+            "phonePlaceholder": "e.g. +1234567890",
+            "phoneHelp": "Must include country code (e.g., +1 for US)",
+            "sendAlert": "Send Alert",
+            "cancel": "Cancel",
+            "successMessage": "Emergency contact has been notified.",
+            "errorMessage": "Failed to send emergency contact. Please try again or call emergency services directly.",
+            "validationError": "Please provide both name and phone number for emergency contact"
+        }
     },
     "SmsSupport": {
         "pageTitle": "SMS Health Support",

@@ -1,7 +1,7 @@
 import { Server as NetServer } from 'http';
 import { NextApiRequest } from 'next';
 import { Server as SocketIOServer } from 'socket.io';
-import { NextApiResponseServerIO } from '@/types';
+import { NextApiResponseServerIO } from '@/types/socket';
 
 export const config = {
     api: {
@@ -17,7 +17,7 @@ export default async function SocketHandler(
         console.log('Setting up socket.io server...');
 
         // Create a new Socket.io server
-        const httpServer: NetServer = res.socket.server as any;
+        const httpServer: NetServer = res.socket.server as unknown as NetServer;
         const io = new SocketIOServer(httpServer, {
             path: '/api/socket',
             addTrailingSlash: false,

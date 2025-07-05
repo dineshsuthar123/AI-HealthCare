@@ -141,15 +141,20 @@ describe('Symptom Check API', () => {
         expect(responseData).toHaveProperty('analysis');
     });
 
-    test('handles internal server errors', async () => {
+    test('handles internal server errors with fallback analysis', async () => {
         // Mock an error in the symptom analyzer
         (symptomAnalyzer.analyzeSymptoms as jest.Mock).mockRejectedValueOnce(new Error('AI service unavailable'));
 
         const response = await POST(req);
         const responseData = await response.json();
 
-        expect(response.status).toBe(500);
-        expect(responseData).toHaveProperty('error', 'Internal Server Error');
-        expect(responseData).toHaveProperty('code', 'INTERNAL_ERROR');
+        // Should still return a 200 OK with fallback analysis
+        expect(response.status).toBe(200);
+        expect(responseData).toHaveProperty('analysis');
+        expect(responseData.analysis).toHaveProperty('riskLevel');
+        expect(responseData.analysis).toHaveProperty('recommendations');
+        expect(responseData.analysis).toHaveProperty('possibleConditions');
+        expect(responseData.analysis).toHaveProperty('urgency');
+        expect(responseData).toHaveProperty('message', 'Symptoms analyzed successfully');
     });
 });

@@ -13,19 +13,19 @@
     },
     "Home": {
         "hero": {
-            "title": "Huduma za Afya Zinazotumia AI kwa Wote",
-            "subtitle": "Jukwaa kamili la huduma za afya lililobuniwa kutumikia jamii zisizohudumikiwa kwa kuchunguza dalili kwa AI, huduma za telemedicine, na msaada wa lugha nyingi.",
+            "title": "Huduma za Afya Zinazotumia AI kwa Kila Mtu",
+            "subtitle": "Jukwaa kamili la huduma za afya limetengenezwa kutoa huduma kwa jamii zisizopata huduma za kutosha pamoja na uchunguzi wa dalili unaoendeshwa na AI, huduma za telemedicine, na msaada wa lugha nyingi.",
             "cta": {
                 "primary": "Chunguza Dalili",
-                "secondary": "Panga Shauri"
+                "secondary": "Weka Ahadi ya Ushauri"
             }
         },
         "features": {
-            "title": "Suluhisho Kamili za Huduma za Afya",
-            "subtitle": "Teknolojia ya matibabu ya kisasa inayopatikana kwa kila mtu, kila mahali",
+            "title": "Suluhu Kamili za Huduma za Afya",
+            "subtitle": "Teknolojia ya kimatibabu ya kisasa inayopatikana kwa kila mtu, kila mahali",
             "symptomChecker": {
                 "title": "Mchunguzi wa Dalili wa AI",
-                "description": "Uchambuzi wa dalili wa ML wa kisasa na tathmini ya hatari"
+                "description": "Uchambuzi wa dalili wa kisasa na tathmini ya hatari"
             },
             "telemedicine": {
                 "title": "Telemedicine",
@@ -33,11 +33,11 @@
             },
             "smsSupport": {
                 "title": "Msaada wa SMS",
-                "description": "Usaidizi wa afya kupitia SMS kwa maeneo yenye internet yenye kikomo"
+                "description": "Msaada wa afya kupitia SMS kwa maeneo yenye mtandao mdogo"
             },
             "analytics": {
                 "title": "Uchanganuzi wa Afya",
-                "description": "Ufuatiliaji wa afya ya jamii na ufuatiliaji wa milipuko"
+                "description": "Ufuatiliaji wa afya ya jamii na uchunguzi wa milipuko"
             }
         },
         "stats": {
@@ -49,6 +49,292 @@
             "title": "Uko Tayari Kubadilisha Huduma za Afya?",
             "subtitle": "Jiunge na maelfu wanaotegemea jukwaa letu kwa mahitaji yao ya afya",
             "button": "Anza Leo"
+        }
+    },
+    "Auth": {
+        "signIn": {
+            "title": "Ingia Kwenye Akaunti Yako",
+            "subtitle": "Ingiza hati zako za utambulisho ili kupata akaunti yako",
+            "emailLabel": "Barua pepe",
+            "emailPlaceholder": "Ingiza barua pepe yako",
+            "passwordLabel": "Nenosiri",
+            "passwordPlaceholder": "Ingiza nenosiri lako",
+            "forgotPassword": "Umesahau nenosiri?",
+            "submit": "Ingia",
+            "signingIn": "Inaingia...",
+            "orContinue": "Au endelea na",
+            "continueWithGoogle": "Endelea na Google",
+            "noAccount": "Huna akaunti?",
+            "createAccount": "Tengeneza moja sasa"
+        },
+        "signUp": {
+            "title": "Tengeneza Akaunti",
+            "subtitle": "Jiunge na jamii yetu ili kupata vipengele vyote",
+            "nameLabel": "Jina Kamili",
+            "namePlaceholder": "Ingiza jina lako kamili",
+            "emailLabel": "Barua pepe",
+            "emailPlaceholder": "Ingiza barua pepe yako",
+            "passwordLabel": "Nenosiri",
+            "passwordPlaceholder": "Tengeneza nenosiri (angalau herufi 8)",
+            "confirmPasswordLabel": "Thibitisha Nenosiri",
+            "confirmPasswordPlaceholder": "Thibitisha nenosiri lako",
+            "roleLabel": "Aina ya Mtumiaji",
+            "rolePatient": "Mgonjwa",
+            "roleProvider": "Mtoa Huduma za Afya",
+            "agreeTerms": "Kwa kujisajili, unakubali Masharti na Sera yetu ya Faragha",
+            "submit": "Tengeneza Akaunti",
+            "creating": "Inaunda akaunti...",
+            "signingUp": "Inaunda akaunti...",
+            "orContinue": "Au endelea na",
+            "continueWithGoogle": "Endelea na Google",
+            "alreadyHaveAccount": "Una akaunti tayari?",
+            "signIn": "Ingia hapa"
+        }
+    },
+    "Consultations": {
+        "pageTitle": "Mashauriano ya Telemedicine",
+        "title": "Mashauriano",
+        "subtitle": "Panga na simamia mashauriano yako na watoa huduma za afya",
+        "upcomingConsultations": "Mashauriano Yajayo",
+        "pastConsultations": "Mashauriano ya Zamani",
+        "bookConsultation": "Weka Ahadi ya Ushauri",
+        "loading": "Inapakia mashauriano...",
+        "noUpcomingConsultations": "Hakuna mashauriano yajayo",
+        "noPastConsultations": "Hakuna mashauriano ya zamani",
+        "joinConsultation": "Jiunge Sasa",
+        "cancel": "Ghairi",
+        "viewDetails": "Tazama Maelezo",
+        "notAssigned": "Bado haijapangiwa",
+        "provider": "Mtoa Huduma",
+        "form": {
+            "reason": "Sababu ya Ushauri",
+            "reasonPlaceholder": "Eleza kwa ufupi dalili au wasiwasi wako",
+            "date": "Tarehe",
+            "time": "Saa",
+            "type": "Aina ya Ushauri",
+            "videoCall": "Simu ya Video",
+            "audioCall": "Simu ya Sauti",
+            "message": "Ujumbe wa Maandishi",
+            "bookNow": "Weka Ahadi ya Ushauri",
+            "booking": "Inaweka ahadi..."
+        },
+        "type": {
+            "video": "Video",
+            "audio": "Sauti",
+            "message": "Ujumbe"
+        },
+        "status": {
+            "scheduled": "Imepangwa",
+            "inProgress": "Inaendelea",
+            "completed": "Imekamilika",
+            "cancelled": "Imeghairiwa"
+        }
+    },
+    "ConsultationRoom": {
+        "pageTitle": "Chumba cha Ushauri",
+        "title": "Ushauri wa Telemedicine",
+        "subtitle": "Ushauri salama wa video na mtoa huduma wako wa afya",
+        "connecting": "Inaunganisha na mtoa huduma wako wa afya...",
+        "endCall": "Maliza Simu",
+        "toggleMute": "Badilisha Maikrofoni",
+        "toggleCamera": "Badilisha Kamera",
+        "consultationDetails": "Maelezo ya Ushauri",
+        "consultationId": "Kitambulisho",
+        "provider": "Mtoa Huduma",
+        "date": "Tarehe",
+        "time": "Saa",
+        "chat": "Mazungumzo",
+        "chatPlaceholder": "Ujumbe wa mazungumzo utaonekana hapa",
+        "typeMessage": "Andika ujumbe wako...",
+        "sendMessage": "Tuma Ujumbe",
+        "startCall": "Anza Simu",
+        "answer": "Jibu Simu",
+        "calling": "Inapiga simu...",
+        "readyToConnect": "Tayari kuanza ushauri",
+        "callEnded": "Simu imeisha",
+        "isCallingYou": "anakupigia simu",
+        "retryConnection": "Jaribu Kuunganisha Tena"
+    },
+    "SymptomChecker": {
+        "pageTitle": "Mchunguzi wa Dalili wa AI",
+        "title": "Mchunguzi wa Dalili wa AI",
+        "subtitle": "Ingiza dalili zako kwa tathmini ya afya inayoendeshwa na AI",
+        "addSymptoms": "Ongeza Dalili Zako",
+        "symptomNameLabel": "Jina la Dalili",
+        "symptomNamePlaceholder": "mfano, maumivu ya kichwa, homa, kikohozi",
+        "durationLabel": "Muda",
+        "durationPlaceholder": "mfano, siku 2, wiki 1",
+        "severityLabel": "Ukali",
+        "mild": "Kidogo",
+        "moderate": "Wastani",
+        "severe": "Kali",
+        "detailsLabel": "Maelezo ya Ziada",
+        "detailsPlaceholder": "Taarifa yoyote ya ziada kuhusu dalili hii",
+        "addSymptomButton": "Ongeza Dalili",
+        "yourSymptoms": "Dalili Zako",
+        "analyzeButton": "Changua Dalili",
+        "analyzingButton": "Inachanganua...",
+        "resultsTitle": "Matokeo ya Uchambuzi wa AI",
+        "riskAssessment": "Tathmini ya Hatari",
+        "urgencyLevel": "Kiwango cha Dharura",
+        "recommendations": "Mapendekezo",
+        "possibleConditions": "Hali Zinazowezekana",
+        "followUpRecommendation": "Mapendekezo ya Ufuatiliaji",
+        "followUpPrefixText": "Fikiria ufuatiliaji wa kimatibabu",
+        "disclaimer": "Onyo la Kimatibabu: Uchambuzi huu wa AI ni kwa madhumuni ya habari tu na hautakiwi kuchukua nafasi ya ushauri wa matibabu wa kitaalamu. Tafadhali wasiliana na mtoa huduma za afya kwa utambuzi na matibabu sahihi.",
+        "bookConsultation": "Weka Ahadi ya Ushauri",
+        "saveResults": "Hifadhi Matokeo",
+        "notifyEmergencyContact": "Arifu Mawasiliano ya Dharura",
+        "emergencyContact": {
+            "title": "Arifu Mawasiliano ya Dharura",
+            "nameLabel": "Jina la Mawasiliano",
+            "namePlaceholder": "Ingiza jina la mawasiliano",
+            "phoneLabel": "Namba ya Simu (pamoja na msimbo wa nchi)",
+            "phonePlaceholder": "mfano: +255xxxxxxxxx",
+            "phoneHelp": "Lazima ijumuishe msimbo wa nchi (mfano, +255 kwa Tanzania)",
+            "sendAlert": "Tuma Tahadhari",
+            "cancel": "Ghairi",
+            "successMessage": "Mawasiliano ya dharura yamearifu.",
+            "errorMessage": "Imeshindwa kutuma kwa mawasiliano ya dharura. Tafadhali jaribu tena au piga simu moja kwa moja kwa huduma za dharura.",
+            "validationError": "Tafadhali toa jina na namba ya simu kwa mawasiliano ya dharura"
+        }
+    },
+    "SmsSupport": {
+        "pageTitle": "Msaada wa Afya wa SMS",
+        "title": "Msaada wa Afya wa SMS",
+        "subtitle": "Fikia msaada wa huduma za afya kupitia ujumbe wa SMS kwa maeneo yenye mtandao mdogo",
+        "sendSmsTitle": "Tuma SMS ya Afya",
+        "sendSmsDescription": "Tuma ujumbe wa SMS unaohusu afya kwa wagonjwa au watoa huduma za afya",
+        "phoneNumberLabel": "Namba ya Simu",
+        "phoneNumberPlaceholder": "mfano, +1234567890",
+        "phoneNumberHelp": "Tumia muundo wa kimataifa pamoja na namba ya nchi (mfano, +1 kwa US, +254 kwa Kenya)",
+        "messageTemplates": "Violezo vya Ujumbe",
+        "messageLabel": "Ujumbe",
+        "messagePlaceholder": "Andika ujumbe wako unaohusiana na afya hapa...",
+        "sendButton": "Tuma SMS",
+        "sending": "Inatuma...",
+        "successMessage": "SMS imetumwa kwa mafanikio!",
+        "errorMessage": "Imeshindwa kutuma SMS: {error}",
+        "howItWorksTitle": "Jinsi Inavyofanya Kazi",
+        "howItWorks": {
+            "step1": "Ingiza namba ya simu ya mpokeaji kwa muundo wa kimataifa",
+            "step2": "Chagua kiolezo au andika ujumbe maalum",
+            "step3": "Tuma SMS na usubiri uthibitisho wa uwasilishaji",
+            "step4": "Wapokeaji wanaweza kujibu kupata msaada zaidi"
+        },
+        "supportedRegions": "Mikoa Inayoungwa Mkono",
+        "regionsDescription": "Huduma yetu ya SMS inapatikana katika nchi nyingi duniani kote. Viwango vya kawaida vya ujumbe vinaweza kutumika.",
+        "faqTitle": "Maswali Yanayoulizwa Mara kwa Mara",
+        "faq": {
+            "q1": "Je, taarifa yangu ya afya ni salama inapotumwa kupitia SMS?",
+            "a1": "Ndio, tunafuata viwango vya usalama vya tasnia. Hata hivyo, SMS haijafichwa kwa kawaida, kwa hiyo tunapendekeza kutoshirikisha taarifa nyeti sana.",
+            "q2": "Nitachukua muda gani kupokea jibu?",
+            "a2": "Muda wa majibu hutofautiana kulingana na eneo na upatikanaji wa watoa huduma za afya. Masuala ya haraka yanapaswa kutumia huduma za dharura.",
+            "q3": "Je, kuna ada za kutumia huduma ya SMS?",
+            "a3": "Huduma yetu ni bure kutumia, lakini viwango vya kawaida vya ujumbe kutoka kwa mtoa huduma wako vinaweza kutumika."
+        },
+        "templates": {
+            "symptoms": "Ripoti ya Dalili",
+            "medication": "Kikumbusho cha Dawa",
+            "appointment": "Ufuatiliaji wa Miadi"
+        },
+        "templateText": {
+            "symptoms": "Tafadhali jibu na dalili zako za sasa na ukali wake (kidogo/wastani/kali).",
+            "medication": "Hiki ni kikumbusho cha kuchukua dawa yako iliyoagizwa. Tafadhali thibitisha wakati umechukuliwa.",
+            "appointment": "Unajisikiaje baada ya miadi yako ya hivi karibuni? Una wasiwasi au maswali yoyote?"
+        }
+    },
+    "Dashboard": {
+        "pageTitle": "Dashibodi ya Mgonjwa",
+        "loading": "Inapakia dashibodi yako...",
+        "welcomeBack": "Karibu tena, {name}",
+        "healthOverview": "Hapa kuna muhtasari wa shughuli zako za afya",
+        "quickActions": "Vitendo vya Haraka",
+        "quickActionsDesc": "Kazi na vipengele vya kawaida",
+        "startSymptomCheck": "Anza Uchunguzi wa Dalili",
+        "bookConsultation": "Weka Ahadi ya Ushauri",
+        "viewMedicalRecords": "Tazama Rekodi za Matibabu",
+        "emergencyContacts": "Anwani za Dharura",
+        "recentActivities": "Shughuli za Hivi Karibuni",
+        "recentActivitiesDesc": "Mawasiliano yako ya hivi karibuni ya kiafya",
+        "healthInsights": "Maarifa ya Afya",
+        "healthInsightsDesc": "Mapendekezo yaliyobinafsishwa kulingana na data yako ya afya",
+        "recommendation": "Pendekezo",
+        "goodProgress": "Maendeleo Mazuri",
+        "reminder": "Kikumbusho",
+        "stats": {
+            "healthChecks": "Ukaguzi wa Afya",
+            "completedThisMonth": "Imekamilika mwezi huu",
+            "consultations": "Mashauriano",
+            "scheduledAppointments": "Miadi iliyopangwa",
+            "healthScore": "Alama ya Afya",
+            "basedOnAssessments": "Kulingana na tathmini za hivi karibuni",
+            "reports": "Ripoti",
+            "medicalDocuments": "Nyaraka za kimatibabu"
+        }
+    },
+    "ProviderDashboard": {
+        "pageTitle": "Dashibodi ya Mtoa Huduma",
+        "loading": "Inapakia dashibodi ya mtoa huduma...",
+        "welcomeBack": "Karibu tena, Dkt. {name}",
+        "dashboardOverview": "Hapa kuna muhtasari wa shughuli za kazi yako",
+        "upcomingAppointments": "Miadi Ijayo",
+        "viewAllAppointments": "Tazama Miadi Yote",
+        "inHours": "Katika saa {hours}",
+        "joinConsultation": "Jiunge kwenye Ushauri",
+        "patientsList": "Orodha ya Wagonjwa",
+        "searchPatients": "Tafuta wagonjwa...",
+        "addPatient": "Ongeza Mgonjwa",
+        "patient": "Mgonjwa",
+        "details": "Maelezo",
+        "lastVisit": "Ziara ya Mwisho",
+        "nextAppointment": "Miadi Ijayo",
+        "actions": "Vitendo",
+        "yearsOld": "miaka",
+        "noUpcomingAppointments": "Hakuna miadi ijayo",
+        "viewMedicalRecord": "Tazama Rekodi",
+        "scheduleAppointment": "Panga",
+        "messages": "Ujumbe",
+        "composeMessage": "Tunga Ujumbe",
+        "noMessages": "Hakuna ujumbe katika kikasha chako",
+        "startNewConversation": "Anza Mazungumzo Mapya",
+        "reports": "Ripoti",
+        "thisMonth": "Mwezi Huu",
+        "lastMonth": "Mwezi Uliopita",
+        "last3Months": "Miezi 3 Iliyopita",
+        "thisYear": "Mwaka Huu",
+        "generateReport": "Tengeneza Ripoti",
+        "patientDemographics": "Demografia ya Wagonjwa",
+        "consultationMetrics": "Vipimo vya Ushauri",
+        "clinicalAlerts": "Tahadhari za Kliniki",
+        "clinicalAlertsDescription": "Masuala muhimu ya kimatibabu yanayohitaji usikivu wako",
+        "reviewLabResults": "Pitia Matokeo ya Maabara",
+        "viewPrescriptionHistory": "Tazama Historia ya Maagizo",
+        "tabs": {
+            "appointments": "Miadi",
+            "patients": "Wagonjwa",
+            "messages": "Ujumbe",
+            "reports": "Ripoti"
+        },
+        "stats": {
+            "totalPatients": "Jumla ya Wagonjwa",
+            "activePatients": "Wagonjwa wanaoshughulikiwa",
+            "newThisWeek": "wapya wiki hii",
+            "appointmentsToday": "Miadi ya Leo",
+            "scheduledForToday": "Imepangwa kwa leo",
+            "nextAppointment": "Miadi ijayo",
+            "consultationHours": "Masaa ya Ushauri",
+            "hoursThisWeek": "Masaa wiki hii",
+            "fromLastWeek": "kutoka wiki iliyopita",
+            "pendingReports": "Ripoti Zinazongojea",
+            "needsAttention": "Zinahitaji usikivu wako",
+            "urgent": "haraka"
+        },
+        "alerts": {
+            "urgent": "Matokeo ya Maabara Yasiyokuwa ya Kawaida",
+            "urgentDescription": "Mgonjwa John Kimani ana vipimo vya maabara muhimu vinavyohitaji usikivu wa haraka.",
+            "warning": "Mwingiliano wa Dawa",
+            "warningDescription": "Mwingiliano wa dawa unaowezekana umegunduliwa kwa maagizo mapya ya mgonjwa Mary Wambui."
         }
     }
 }

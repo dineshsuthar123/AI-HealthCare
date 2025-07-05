@@ -31,7 +31,9 @@ describe('Card Component', () => {
             </Card>
         );
 
-        const card = screen.getByText('Test Content').closest('div');
+        // The Card is the parent of CardContent, so we need to go up two levels
+        const cardContent = screen.getByText('Test Content').closest('div');
+        const card = cardContent?.parentElement;
         expect(card).toHaveClass('test-class');
     });
 

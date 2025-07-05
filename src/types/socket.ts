@@ -1,7 +1,8 @@
 import { NextApiResponse } from 'next';
 import { Server as NetServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { Socket } from 'net';
+// Removed unused import
+// import { Socket } from 'net';
 
 export interface ServerIO extends NetServer {
     io?: SocketIOServer;

@@ -105,9 +105,12 @@ export function isTwilioConfigured() {
     return Boolean(client && twilioPhoneNumber);
 }
 
-export default {
+// Named export object to comply with ESLint rule
+const twilioService = {
     sendSMS,
     sendHealthReminder,
     sendEmergencyAlert,
     isTwilioConfigured,
 };
+
+export default twilioService;

@@ -60,7 +60,19 @@
             "urgent": "Abnormal Lab Results",
             "urgentDescription": "Patient John Smith has critical lab values requiring immediate attention.",
             "warning": "Medication Interaction",
-            "warningDescription": "Potential drug interaction detected for patient Maria Garcia's new prescription."
+            "warningDescription": "Potential drug interaction detected for patient Maria Garcia's new prescription.",
+            "emergency": "Emergency Alert",
+            "emergencyDescription": "Patient emergency contact notification was sent"
+        },
+        "emergencyContacts": {
+            "title": "Emergency Contacts",
+            "notificationSent": "Emergency notification sent to {name} at {phone}",
+            "patientEmergency": "Patient Emergency Alert",
+            "symptomReported": "Critical symptoms reported",
+            "viewDetails": "View Details",
+            "contactPatient": "Contact Patient",
+            "logAction": "Log Action",
+            "notifyHospital": "Notify Hospital"
         }
     }
 }

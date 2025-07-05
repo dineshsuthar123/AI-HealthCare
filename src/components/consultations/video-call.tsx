@@ -10,10 +10,10 @@ interface VideoCallProps {
     consultationId: string;
     userId: string;
     userName: string;
-    isProvider: boolean;
+    isProvider?: boolean;
 }
 
-export const VideoCall = ({ consultationId, userId, userName, isProvider = false }: VideoCallProps) => {
+export const VideoCall = ({ consultationId, userId, userName }: VideoCallProps) => {
     const t = useTranslations('ConsultationRoom');
     const [socket, setSocket] = useState<Socket | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null);
@@ -50,7 +50,7 @@ export const VideoCall = ({ consultationId, userId, userName, isProvider = false
                 stream.getTracks().forEach(track => track.stop());
             }
         };
-    }, []);
+    }, [stream]);
 
     // Set up media stream
     useEffect(() => {
@@ -115,7 +115,7 @@ export const VideoCall = ({ consultationId, userId, userName, isProvider = false
             socket.off('user-disconnected');
             socket.off('receive-message');
         };
-    }, [socket, consultationId, userId, callAccepted, callEnded]);
+    }, [socket, consultationId, userId, callAccepted, callEnded, stream]);
 
     // Auto-scroll chat when new messages arrive
     useEffect(() => {
