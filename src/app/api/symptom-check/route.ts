@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
                     symptomCheck.save()
                         .then(() => console.info(`Cached symptom check saved for user: ${session.user.id}`))
-                        .catch(err => console.error('Error saving cached symptom check:', err));
+                        .catch((err: Error) => console.error('Error saving cached symptom check:', err));
                 });
             }
 

@@ -23,6 +23,7 @@ export default function Header() {
         { name: t('symptomChecker'), href: '/symptom-checker' },
         { name: t('consultations'), href: '/consultations' },
         { name: t('dashboard'), href: '/dashboard' },
+        { name: t('healthRecords'), href: '/health-records' },
     ];
 
     // Render a simplified header skeleton during SSR to prevent hydration mismatch

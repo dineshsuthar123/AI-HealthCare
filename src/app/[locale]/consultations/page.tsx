@@ -1,27 +1,34 @@
-import { getTranslations } from 'next-intl/server';
-import { getSession } from '@/lib/auth';
-import { redirect } from '@/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import ConsultationForm from '@/components/consultations/consultation-form';
 import ConsultationsList from '@/components/consultations/consultations-list';
 import { Card } from '@/components/ui/card';
 
-export async function generateMetadata({ params }: { params: { locale: string } }) {
-    // Fix: Make sure to await the params object before accessing its properties
-    const locale = params ? params.locale : 'en';
-    const t = await getTranslations({ locale, namespace: 'Consultations' });
-    return {
-        title: t('pageTitle'),
-    };
-}
+export default function ConsultationsPage() {
+    const { data: session, status } = useSession();
+    const t = useTranslations('Consultations');
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
 
-export default async function ConsultationsPage({ params }: { params: { locale: string } }) {
-    const session = await getSession();
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/auth/signin');
+        } else if (status !== 'loading') {
+            setIsLoading(false);
+        }
+    }, [status, router]);
 
-    if (!session) {
-        redirect({ href: '/auth/signin', locale: params.locale });
+    if (isLoading) {
+        return <div className="container mx-auto px-4 py-8">Loading...</div>;
     }
 
-    const t = await getTranslations('Consultations');
+    if (!session) {
+        return null; // Router will redirect, this prevents flash of content
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">

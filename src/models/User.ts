@@ -36,6 +36,31 @@ const UserSchema = new mongoose.Schema({
         date: Date,
         severity: String,
     }],
+    recentActivities: [{
+        type: {
+            type: String,
+            enum: ['symptom_check', 'consultation', 'prescription', 'report', 'emergency'],
+        },
+        title: String,
+        description: String,
+        date: {
+            type: Date,
+            default: Date.now,
+        },
+        status: {
+            type: String,
+            enum: ['completed', 'pending', 'active', 'cancelled'],
+        },
+        referenceId: {
+            type: mongoose.Schema.Types.ObjectId,
+            refPath: 'recentActivities.referenceModel'
+        },
+        referenceModel: {
+            type: String,
+            enum: ['SymptomCheck', 'Consultation'],
+            default: 'SymptomCheck'
+        }
+    }],
     preferences: {
         language: {
             type: String,

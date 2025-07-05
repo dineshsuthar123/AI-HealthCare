@@ -8,11 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { type SymptomInput, type AIAnalysis } from '@/lib/ai/symptom-analyzer';
 import { cn, getRiskColor, getUrgencyColor } from '@/lib/utils';
-import { Link } from '@/navigation';
+import { useToast, ToastContainer } from '@/components/ui/toast';
 import { EmergencyContact } from '@/components/symptom-checker/emergency-contact';
+import { RecommendedAction } from '@/components/symptom-checker/recommended-action';
 
 export default function SymptomCheckerPage() {
     const t = useTranslations('SymptomChecker');
+    const { toasts, removeToast, success, error: showError } = useToast();
+
     const [symptoms, setSymptoms] = useState<SymptomInput[]>([]);
     const [currentSymptom, setCurrentSymptom] = useState<SymptomInput>({
         name: '',
@@ -24,11 +27,14 @@ export default function SymptomCheckerPage() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isClient, setIsClient] = useState(false);
+    const [showEmergencyForm, setShowEmergencyForm] = useState(false);
 
     // This helps prevent hydration errors by ensuring forms render only client-side
     useEffect(() => {
         setIsClient(true);
-    }, []); const addSymptom = () => {
+    }, []);
+
+    const addSymptom = () => {
         if (currentSymptom.name && currentSymptom.duration) {
             setSymptoms([...symptoms, currentSymptom]);
             setCurrentSymptom({
@@ -125,6 +131,12 @@ export default function SymptomCheckerPage() {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Toast Container */}
+                <ToastContainer
+                    toasts={toasts}
+                    removeToast={removeToast}
+                />
+
                 {/* Header */}
                 <div className="text-center mb-8">
                     <Stethoscope className="h-16 w-16 text-blue-600 mx-auto mb-4" />
@@ -389,17 +401,39 @@ export default function SymptomCheckerPage() {
                                 </div>
                             </div>
 
+                            {/* AI-Powered Recommended Action */}
+                            <RecommendedAction
+                                analysis={analysis}
+                                symptoms={symptoms}
+                            />
+
                             {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <Button asChild className="flex-1">
-                                    <Link href="/consultations">{t('bookConsultation')}</Link>
-                                </Button>
                                 <Button
                                     variant="outline"
                                     className="flex-1"
-                                    onClick={() => {
-                                        // Future enhancement: Save results to user profile
-                                        alert('Results saved successfully');
+                                    onClick={async () => {
+                                        try {
+                                            // Save analysis to backend
+                                            const response = await fetch('/api/symptom-check/save', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    symptoms,
+                                                    analysis,
+                                                    date: new Date().toISOString()
+                                                })
+                                            });
+
+                                            if (response.ok) {
+                                                success(t('resultsSaved') || 'Analysis saved successfully');
+                                            } else {
+                                                throw new Error('Failed to save results');
+                                            }
+                                        } catch (error) {
+                                            console.error('Error saving results:', error);
+                                            showError(t('savingError') || 'Failed to save results. Please try again.');
+                                        }
                                     }}
                                 >
                                     {t('saveResults')}
@@ -410,6 +444,8 @@ export default function SymptomCheckerPage() {
                             <EmergencyContact
                                 analysis={analysis}
                                 symptoms={symptoms.map(s => s.name)}
+                                showForm={showEmergencyForm}
+                                onClose={() => setShowEmergencyForm(false)}
                             />
                         </CardContent>
                     </Card>

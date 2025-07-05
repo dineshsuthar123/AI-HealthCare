@@ -21,7 +21,18 @@ export async function GET(request: NextRequest) {
         // Current date
         const now = new Date();
 
-        let query = {
+        // Define query interface
+        interface ConsultationQuery {
+            patientId: string;
+            scheduledFor?: { $lt?: Date; $gte?: Date };
+            status?: string | { $in?: string[]; $ne?: string; $nin?: string[] };
+            $or?: Array<{
+                scheduledFor?: { $lt?: Date; $gte?: Date };
+                status?: string | { $in?: string[]; $ne?: string; $nin?: string[] };
+            }>;
+        }
+
+        let query: ConsultationQuery = {
             patientId: session.user.id,
         };
 
@@ -87,7 +98,22 @@ export async function POST(request: NextRequest) {
         // Prepare consultation data
         const scheduledFor = new Date(`${data.date}T${data.time}`);
 
-        const consultationData = {
+        const consultationData: {
+            patientId: string;
+            reason: string;
+            type: string;
+            status: string;
+            scheduledFor: Date;
+            duration: number;
+            createdAt: Date;
+            aiTriageData?: {
+                riskLevel: string;
+                urgency: string;
+                autoScheduled: boolean;
+                triageTime: Date;
+            };
+            priority?: string;
+        } = {
             patientId: session.user.id,
             reason: data.reason,
             type: data.type || 'video',
@@ -96,6 +122,26 @@ export async function POST(request: NextRequest) {
             duration: 30, // Default duration in minutes
             createdAt: new Date(),
         };
+
+        // Add AI triage data if present
+        if (data.fromAITriage) {
+            consultationData.aiTriageData = {
+                riskLevel: data.riskLevel,
+                urgency: data.urgency,
+                autoScheduled: true,
+                triageTime: new Date()
+            };
+
+            // Prioritize high-risk consultations by flagging them
+            if (data.urgency === 'urgent' || data.urgency === 'emergency' ||
+                data.riskLevel === 'high' || data.riskLevel === 'critical') {
+                consultationData.priority = 'high';
+            } else if (data.riskLevel === 'medium') {
+                consultationData.priority = 'medium';
+            } else {
+                consultationData.priority = 'normal';
+            }
+        }
 
         // Create the consultation
         const newConsultation = await ConsultationModel.create(consultationData);

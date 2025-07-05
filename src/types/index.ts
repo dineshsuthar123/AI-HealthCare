@@ -43,6 +43,16 @@ export interface MedicalHistory {
     severity: string;
 }
 
+export interface RecentActivity {
+    type: 'symptom_check' | 'consultation' | 'prescription' | 'report' | 'emergency';
+    title: string;
+    description: string;
+    date: Date;
+    status: 'completed' | 'pending' | 'active' | 'cancelled';
+    referenceId?: string;
+    referenceModel?: 'SymptomCheck' | 'Consultation';
+}
+
 export interface Symptom {
     name: string;
     severity: 'mild' | 'moderate' | 'severe';

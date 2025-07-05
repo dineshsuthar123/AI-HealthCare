@@ -7,6 +7,13 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
@@ -53,6 +60,8 @@ const config: Config = {
       },
       animation: {
         "blob": "blob 7s infinite",
+        slideIn: 'slideIn 0.3s ease-out forwards',
+        slideOut: 'slideOut 0.3s ease-in forwards',
       },
       keyframes: {
         "blob": {
@@ -68,6 +77,14 @@ const config: Config = {
           "100%": {
             transform: "translate(0px, 0px) scale(1)",
           },
+        },
+        slideIn: {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideOut: {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(100%)', opacity: '0' },
         }
       },
     },

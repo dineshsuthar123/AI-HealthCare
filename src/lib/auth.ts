@@ -1,6 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import { Adapter } from 'next-auth/adapters';
 import { MongoClient } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import connectDB from './mongodb';
@@ -9,9 +10,8 @@ import { getServerSession } from 'next-auth';
 
 const client = new MongoClient(process.env.MONGODB_URI!);
 const clientPromise = client.connect();
-
 export const authOptions: NextAuthOptions = {
-    adapter: MongoDBAdapter(clientPromise),
+    adapter: MongoDBAdapter(clientPromise) as Adapter,
     providers: [
         CredentialsProvider({
             name: 'credentials',

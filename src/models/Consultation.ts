@@ -54,6 +54,33 @@ const ConsultationSchema = new mongoose.Schema({
         score: Number,
         feedback: String,
     },
+    // New fields for AI triage integration
+    priority: {
+        type: String,
+        enum: ['normal', 'medium', 'high'],
+        default: 'normal'
+    },
+    aiTriageData: {
+        riskLevel: {
+            type: String,
+            enum: ['low', 'medium', 'high', 'critical']
+        },
+        urgency: {
+            type: String,
+            enum: ['routine', 'urgent', 'emergency']
+        },
+        autoScheduled: {
+            type: Boolean,
+            default: false
+        },
+        triageTime: Date,
+        symptoms: [String],
+        triageSource: {
+            type: String,
+            enum: ['web', 'sms', 'manual'],
+            default: 'web'
+        }
+    }
 }, {
     timestamps: true,
 });

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Phone, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -8,14 +8,23 @@ import type { AIAnalysis } from '@/lib/ai/symptom-analyzer';
 interface EmergencyContactProps {
     analysis: AIAnalysis;
     symptoms: string[];
+    showForm?: boolean;
+    onClose?: () => void;
 }
 
-export function EmergencyContact({ analysis, symptoms }: EmergencyContactProps) {
+export function EmergencyContact({ analysis, symptoms, showForm, onClose }: EmergencyContactProps) {
     const t = useTranslations('SymptomChecker');
     const [showEmergencyForm, setShowEmergencyForm] = useState(false);
     const [emergencyContact, setEmergencyContact] = useState({ name: '', phone: '' });
     const [emergencyContactSent, setEmergencyContactSent] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Sync the internal state with the prop if provided
+    useEffect(() => {
+        if (showForm !== undefined) {
+            setShowEmergencyForm(showForm);
+        }
+    }, [showForm]);
 
     // Only show for critical or emergency cases
     if (analysis.riskLevel !== 'critical' && analysis.urgency !== 'emergency') {
@@ -24,6 +33,9 @@ export function EmergencyContact({ analysis, symptoms }: EmergencyContactProps) 
 
     const handleEmergencyContact = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Reset error state first
+        setError(null);
 
         if (!emergencyContact.name || !emergencyContact.phone) {
             setError(t('emergencyContact.validationError'));
@@ -87,7 +99,7 @@ export function EmergencyContact({ analysis, symptoms }: EmergencyContactProps) 
                                 <AlertTriangle className="h-5 w-5 mr-2" />
                                 {t('emergencyContact.title')}
                             </h4>
-                            <form onSubmit={handleEmergencyContact} className="space-y-3">
+                            <form onSubmit={handleEmergencyContact} className="space-y-3" data-testid="emergency-form">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         {t('emergencyContact.nameLabel')}
@@ -122,7 +134,7 @@ export function EmergencyContact({ analysis, symptoms }: EmergencyContactProps) 
                                     </p>
                                 </div>
                                 {error && (
-                                    <div className="text-red-500 text-sm">
+                                    <div className="text-red-500 text-sm" role="alert">
                                         {error}
                                     </div>
                                 )}
@@ -138,7 +150,10 @@ export function EmergencyContact({ analysis, symptoms }: EmergencyContactProps) 
                                         type="button"
                                         variant="outline"
                                         className="flex-1"
-                                        onClick={() => setShowEmergencyForm(false)}
+                                        onClick={() => {
+                                            setShowEmergencyForm(false);
+                                            if (onClose) onClose();
+                                        }}
                                     >
                                         {t('emergencyContact.cancel')}
                                     </Button>

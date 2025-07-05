@@ -127,8 +127,8 @@ export default function SMSSupport() {
                                                 key={template.id}
                                                 type="button"
                                                 className={`px-3 py-1 text-sm rounded-full ${selectedTemplate === template.id
-                                                        ? 'bg-blue-600 text-white'
-                                                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                                    ? 'bg-blue-600 text-white'
+                                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                                                     }`}
                                                 onClick={() => applyTemplate(template.id)}
                                             >
@@ -161,7 +161,7 @@ export default function SMSSupport() {
                                     >
                                         {result.success
                                             ? t('successMessage')
-                                            : t('errorMessage', { error: result.error })}
+                                            : t('errorMessage', { error: result.error || 'Unknown error' })}
                                     </div>
                                 )}
 

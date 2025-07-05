@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import HealthAnalyticsDashboard from '@/components/admin/health-analytics-dashboard';
 
 // Type definitions for our data
 interface User {
@@ -230,8 +231,8 @@ export default function AdminDashboardPage() {
                             <button
                                 onClick={() => setActiveTab('overview')}
                                 className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'overview'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 {t('tabs.overview')}
@@ -239,8 +240,8 @@ export default function AdminDashboardPage() {
                             <button
                                 onClick={() => setActiveTab('users')}
                                 className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'users'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 {t('tabs.users')}
@@ -248,8 +249,8 @@ export default function AdminDashboardPage() {
                             <button
                                 onClick={() => setActiveTab('analytics')}
                                 className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'analytics'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 {t('tabs.analytics')}
@@ -257,8 +258,8 @@ export default function AdminDashboardPage() {
                             <button
                                 onClick={() => setActiveTab('security')}
                                 className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'security'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 {t('tabs.security')}
@@ -266,8 +267,8 @@ export default function AdminDashboardPage() {
                             <button
                                 onClick={() => setActiveTab('settings')}
                                 className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'settings'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 {t('tabs.settings')}
@@ -483,6 +484,13 @@ export default function AdminDashboardPage() {
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    )}
+
+                    {/* Analytics Tab */}
+                    {activeTab === 'analytics' && (
+                        <div>
+                            <HealthAnalyticsDashboard />
                         </div>
                     )}
 

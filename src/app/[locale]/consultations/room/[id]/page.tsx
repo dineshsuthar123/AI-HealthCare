@@ -1,23 +1,34 @@
-import { getTranslations } from 'next-intl/server';
-import { getSession } from '@/lib/auth';
-import { redirect } from '@/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { VideoCall } from '@/components/consultations/video-call';
 
-export async function generateMetadata({ params }: { params: { locale: string, id: string } }) {
-    const t = await getTranslations({ locale: params.locale, namespace: 'ConsultationRoom' });
-    return {
-        title: t('pageTitle'),
-    };
-}
+export default function ConsultationRoomPage() {
+    const { data: session, status } = useSession();
+    const params = useParams();
+    const id = params.id as string;
+    const router = useRouter();
+    const t = useTranslations('ConsultationRoom');
+    const [isLoading, setIsLoading] = useState(true);
 
-export default async function ConsultationRoomPage({ params: { id, locale } }: { params: { id: string, locale: string } }) {
-    const session = await getSession();
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push('/auth/signin');
+        } else if (status !== 'loading') {
+            setIsLoading(false);
+        }
+    }, [status, router]);
 
-    if (!session) {
-        redirect({ href: '/auth/signin', locale });
+    if (isLoading) {
+        return <div className="container mx-auto px-4 py-8">Loading...</div>;
     }
 
-    const t = await getTranslations('ConsultationRoom');
+    if (!session) {
+        return null; // Router will redirect, this prevents flash of content
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">

@@ -40,8 +40,12 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
 
     const handleCancel = async (consultationId: string) => {
         try {
-            const response = await fetch(`/api/consultations/${consultationId}`, {
-                method: 'DELETE',
+            const response = await fetch(`/api/consultations/cancel`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: consultationId }),
             });
 
             if (!response.ok) {
