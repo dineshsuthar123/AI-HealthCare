@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 
-// Define proper types for the cached mongoose connection
-interface CachedConnection {
-    conn: mongoose.Connection | null;
-    promise: Promise<mongoose.Mongoose> | null;
+// Define the mongoose connection cache
+interface MongooseCache {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
 }
 
 // Define the global type
 declare global {
-    var mongoose: { conn: mongoose.Connection | null; promise: Promise<mongoose.Mongoose> | null } | undefined;
+    var mongooseCache: MongooseCache | undefined;
 }
 
 const MONGODB_URI = process.env.MONGODB_URI!;
@@ -20,10 +20,10 @@ if (!MONGODB_URI) {
 }
 
 // Initialize cached connection
-const cached: CachedConnection = global.mongoose || { conn: null, promise: null };
+const cached: MongooseCache = global.mongooseCache || { conn: null, promise: null };
 
-if (!global.mongoose) {
-    global.mongoose = cached;
+if (!global.mongooseCache) {
+    global.mongooseCache = cached;
 }
 
 async function connectDB() {

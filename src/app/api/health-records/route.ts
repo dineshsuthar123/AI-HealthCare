@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
         const filter: {
             userId: string;
             type?: string;
-        } = { userId };
+        } = { userId: userId || '' };
         if (type) {
             filter.type = type;
         }

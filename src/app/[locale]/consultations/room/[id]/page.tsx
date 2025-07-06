@@ -41,7 +41,7 @@ export default function ConsultationRoomPage() {
                 <div className="lg:col-span-2">
                     <VideoCall
                         consultationId={id}
-                        userId={session.user.id}
+                        userId={session.user.id || ''}
                         userName={session.user.name || 'User'}
                         isProvider={session.user.role === 'provider'}
                     />

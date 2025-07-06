@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         }
 
         let query: ConsultationQuery = {
-            patientId: session.user.id,
+            patientId: session.user.id || '',
         };
 
         if (isPast) {
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
             };
             priority?: string;
         } = {
-            patientId: session.user.id,
+            patientId: session.user.id || '',
             reason: data.reason,
             type: data.type || 'video',
             status: 'scheduled',

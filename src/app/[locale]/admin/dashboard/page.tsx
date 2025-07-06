@@ -146,7 +146,7 @@ export default function AdminDashboardPage() {
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900">
-                        {t('welcomeBack', { name: session.user?.name })}
+                        {t('welcomeBack', { name: session.user?.name || 'Admin' })}
                     </h1>
                     <p className="text-lg text-gray-600 mt-2">
                         {t('dashboardOverview')}

@@ -1,20 +1,37 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-// Re-export HTMLAttributes directly without empty interface to avoid lint warnings
-type CardProps = React.HTMLAttributes<HTMLDivElement>;
+// Extended card props with animation and styling options
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+    glass?: boolean;
+    glassDark?: boolean;
+    hover?: "lift" | "glow" | "border" | "none";
+    animated?: boolean;
+}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-    ({ className, ...props }, ref) => (
-        <div
-            ref={ref}
-            className={cn(
-                "rounded-lg border bg-card text-card-foreground shadow-sm",
-                className
-            )}
-            {...props}
-        />
-    )
+    ({ className, glass = false, glassDark = false, hover = "none", animated = false, ...props }, ref) => {
+        const baseClasses = cn(
+            "rounded-lg border bg-card text-card-foreground shadow-sm",
+            glass ? "glass" : "",
+            glassDark ? "glass-dark" : "",
+            animated ? "animate-fade-in" : "",
+            hover === "lift" ? "hover-lift transition-all duration-300" : "",
+            hover === "glow" ? "hover:glow transition-all duration-300" : "",
+            hover === "border" ? "hover:neon-border transition-all duration-300" : "",
+            className
+        );
+
+        return (
+            <div
+                ref={ref}
+                className={baseClasses}
+                {...props}
+            />
+        );
+    }
 );
 Card.displayName = "Card";
 

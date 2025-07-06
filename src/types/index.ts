@@ -1,26 +1,13 @@
 import 'next-auth';
 
+// Empty declaration to avoid conflicts with src/lib/auth.ts declarations
 declare module 'next-auth' {
-    interface Session {
-        user: {
-            id: string;
-            email: string;
-            name: string;
-            role: string;
-        };
-    }
-
-    interface User {
-        id: string;
-        email: string;
-        name: string;
-        role: string;
-    }
+    // Use the declarations from src/lib/auth.ts
 }
 
 declare module 'next-auth/jwt' {
     interface JWT {
-        role: string;
+        role: string | null;
     }
 }
 
