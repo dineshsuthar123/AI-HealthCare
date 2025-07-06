@@ -24,12 +24,9 @@ import {
     MotionConfig,
     LazyMotion,
     domAnimation,
-    AnimationPlaybackControls,
     useAnimationControls,
     useIsPresent,
-    useTime,
-    useVariants,
-    useViewportScroll
+    useTime
 } from 'framer-motion';
 
 // Re-export all the imports with named exports
@@ -56,12 +53,9 @@ export {
     MotionConfig,
     LazyMotion,
     domAnimation,
-    AnimationPlaybackControls,
     useAnimationControls,
     useIsPresent,
-    useTime,
-    useVariants,
-    useViewportScroll
+    useTime
 };
 
 // Add any other exports you need from framer-motion here

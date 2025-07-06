@@ -480,5 +480,28 @@
             "descriptionRequired": "Description is required",
             "dateRequired": "Date is required"
         }
+    },
+    "Notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all as read",
+        "noNotifications": "No notifications",
+        "viewAll": "View all notifications"
+    },
+    "Settings": {
+        "title": "Settings",
+        "general": "General",
+        "notifications": "Notifications",
+        "privacy": "Privacy",
+        "profile": "Profile",
+        "accessibility": "Accessibility",
+        "appearance": "Appearance",
+        "theme": "Theme",
+        "language": "Language",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "save": "Save Changes",
+        "cancel": "Cancel",
+        "reset": "Reset to Defaults"
     }
 }

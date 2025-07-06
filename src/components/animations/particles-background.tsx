@@ -442,8 +442,16 @@ export const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
     const [init, setInit] = useState(false);
 
     const particlesInit = async (engine: Engine) => {
-        await loadFull(engine);
-        setInit(true);
+        try {
+            // Try to load the full engine, but don't fail if it doesn't work
+            if (typeof loadFull === 'function') {
+                await loadFull(engine);
+            }
+            setInit(true);
+        } catch (error) {
+            console.warn('Failed to initialize particles engine:', error);
+            setInit(true); // Still set init to true to show basic particles
+        }
     };
 
     const getConfig = () => {
