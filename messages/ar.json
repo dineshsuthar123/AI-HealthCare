@@ -485,5 +485,8 @@
             "descriptionRequired": "الوصف مطلوب",
             "dateRequired": "التاريخ مطلوب"
         }
+    },
+    "button": {
+        "startNow": "ابدأ الآن"
     }
 }

@@ -188,3 +188,15 @@
         font-feature-settings: "rlig" 1, "calt" 1;
     }
 }
+
+.stat-gradient {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(to right, var(--stat-color-start), var(--stat-color-end));
+}
+
+.stat-value {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(to right, var(--stat-color-start), var(--stat-color-end));
+    opacity: 0;
+    transform: translateY(-2px);
+}

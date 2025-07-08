@@ -56,7 +56,9 @@ export default function HomePage() {
                             </div>
 
                             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900">
-                                <GlowingText text={t('hero.title')} className="font-bold" />
+                                <GlowingText className="font-bold">
+                                    {t('hero.title')}
+                                </GlowingText>
                             </h1>
 
                             <p className="text-xl text-gray-600 mb-8 max-w-3xl lg:mx-0 mx-auto">
@@ -69,6 +71,7 @@ export default function HomePage() {
                                     size="lg"
                                     glow
                                     animated
+                                    className="shadow-xl hover:scale-105 transition-transform"
                                     asChild
                                 >
                                     <Link href="/symptom-checker">
@@ -80,6 +83,7 @@ export default function HomePage() {
                                     variant="outline"
                                     size="lg"
                                     animated
+                                    className="border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors"
                                     asChild
                                 >
                                     <Link href="/consultations">
@@ -203,17 +207,20 @@ export default function HomePage() {
                             {t('cta.subtitle')}
                         </p>
 
-                        <Button
-                            variant="gradient"
-                            size="xl"
-                            glow
-                            animated
-                            asChild
-                        >
-                            <Link href="/auth/signup">
-                                {t('cta.button')}
-                            </Link>
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Button
+                                variant="gradient"
+                                size="lg"
+                                glow
+                                animated
+                                className="shadow-lg hover:shadow-xl hover:scale-110 transition-transform bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                                asChild
+                            >
+                                <Link href="/get-started">
+                                    {t('cta.button')}
+                                </Link>
+                            </Button>
+                        </div>
                     </FadeIn>
                 </div>
 

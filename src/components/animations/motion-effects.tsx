@@ -251,11 +251,11 @@ export const PulseElement: React.FC<PulseElementProps> = ({
 };
 
 interface GlowingTextProps {
-    text: string;
+    children: React.ReactNode;
     className?: string;
 }
 
-export const GlowingText: React.FC<GlowingTextProps> = ({ text, className = '' }) => {
+export const GlowingText: React.FC<GlowingTextProps> = ({ children, className = '' }) => {
     return (
         <motion.span
             className={`inline-block animate-gradient-text ${className}`}
@@ -275,7 +275,7 @@ export const GlowingText: React.FC<GlowingTextProps> = ({ text, className = '' }
                 ease: 'easeInOut',
             }}
         >
-            {text}
+            {children}
         </motion.span>
     );
 };

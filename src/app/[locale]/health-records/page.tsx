@@ -39,15 +39,19 @@ export default function HealthRecordsPage() {
         const params = new URLSearchParams(window.location.search);
         const editId = params.get('edit');
 
-        if (editId && records.length > 0) {
+        if (editId) {
             const record = records.find(r => r._id === editId);
             if (record) {
                 setEditingRecord(record);
             }
         }
-    }, [records]);
+    }, [records.length]); // Only re-run when the number of records changes
 
     // Fetch records on component mount
+    useEffect(() => {
+        fetchRecords();
+    }, []); // Ensure fetchRecords is only called once
+
     const fetchRecords = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -62,7 +66,7 @@ export default function HealthRecordsPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [showError, t]);
+    }, [showError, t]); // Dependencies remain unchanged
 
     // Filter records when search or type filter changes
     const filterRecords = useCallback(() => {
@@ -188,10 +192,27 @@ export default function HealthRecordsPage() {
         setEditingRecord(null);
     };
 
-    // Fetch records on component mount
-    useEffect(() => {
-        fetchRecords();
-    }, [fetchRecords]);
+    const handleShareRecord = async (id: string) => {
+        try {
+            const record = records.find(r => r._id === id);
+            if (!record) return;
+
+            // Here you would typically send the record ID to your backend
+            // to handle the sharing logic, e.g., sending an email to the provider
+            const response = await fetch(`/api/health-records/share/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ recordId: id })
+            });
+
+            if (!response.ok) throw new Error('Failed to share record');
+
+            success(t('shareSuccess'));
+        } catch (error) {
+            console.error('Error sharing health record:', error);
+            showError(t('shareError'));
+        }
+    };
 
     // Filter records when search or type filter changes
     useEffect(() => {
@@ -293,7 +314,14 @@ export default function HealthRecordsPage() {
                                         onEdit={handleEditRecord}
                                         onDelete={handleDeleteRecord}
                                         onToggleShare={handleToggleShare}
-                                    />
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => handleShareRecord(record._id)}
+                                        >
+                                            {t('shareWithProvider')}
+                                        </Button>
+                                    </HealthRecordCard>
                                 ))}
                             </div>
                         ) : (

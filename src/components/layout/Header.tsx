@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { FadeIn } from '@/components/animations/motion-effects';
 import NotificationsDropdown from '@/components/ui/notifications-dropdown';
 import SettingsModal from '@/components/ui/settings-modal';
+import LanguageSwitcher from '@/components/ui/language-switcher';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -133,6 +134,7 @@ export default function Header() {
                             <div className="flex items-center space-x-4">
                                 {/* Notification and Settings */}
                                 <div className="flex items-center space-x-2">
+                                    <LanguageSwitcher />
                                     <NotificationsDropdown
                                         isOpen={isNotificationsOpen}
                                         onToggle={() => setIsNotificationsOpen(!isNotificationsOpen)}
@@ -278,6 +280,9 @@ export default function Header() {
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3, delay: navigation.length * 0.05 }}
                             >
+                                <div className="px-3 py-2 mb-4">
+                                    <LanguageSwitcher variant="select" />
+                                </div>
                                 {session ? (
                                     <div className="px-3 py-2">
                                         <div className="flex items-center space-x-2 mb-3">

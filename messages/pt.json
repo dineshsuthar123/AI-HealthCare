@@ -485,5 +485,8 @@
             "descriptionRequired": "Descrição é obrigatória",
             "dateRequired": "Data é obrigatória"
         }
+    },
+    "button": {
+        "startNow": "Comece agora"
     }
 }

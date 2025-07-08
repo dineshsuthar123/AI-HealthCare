@@ -50,7 +50,8 @@
             "title": "Ready to Transform Healthcare?",
             "subtitle": "Join thousands who trust our platform for their health needs",
             "button": "Get Started Today"
-        }
+        },
+        "signUp": "Sign Up"
     },
     "Auth": {
         "signIn": {
@@ -279,6 +280,11 @@
         "recommendation": "Recommendation",
         "goodProgress": "Good Progress",
         "reminder": "Reminder",
+        "viewAllActivities": "View All Activities",
+        "healthRecommendation": "Based on your recent health assessments, we recommend the following:",
+        "learnMore": "Learn More",
+        "improvedScore": "Your health score has improved by 5% this week!",
+        "medicationReminder": "Don't forget to take your prescribed medication on time.",
         "stats": {
             "healthChecks": "Health Checks",
             "completedThisMonth": "Completed this month",
@@ -438,12 +444,14 @@
         "tryDifferentFilters": "Try different search terms or filters, or clear them to see all your records.",
         "searchPlaceholder": "Search records...",
         "allTypes": "All types",
+        "filterByType": "Filter by Type",
         "recordType": {
             "allergy": "Allergy",
             "medication": "Medication",
-            "condition": "Medical Condition",
+            "diagnosis": "Diagnosis",
+            "condition": "Condition",
             "vaccination": "Vaccination",
-            "lab": "Lab Result",
+            "lab": "Lab",
             "other": "Other"
         },
         "recordTitle": "Title",
@@ -503,5 +511,16 @@
         "save": "Save Changes",
         "cancel": "Cancel",
         "reset": "Reset to Defaults"
+    },
+    "Provider": {
+        "title": "Provider Page",
+        "description": "Share your health records with your healthcare provider.",
+        "record": "Record ID: {id}",
+        "share": "Share with Provider",
+        "shared": "Shared",
+        "shareWithProvider": "Share with Provider"
+    },
+    "button": {
+        "startNow": "Start Now"
     }
 }

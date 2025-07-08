@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
+import LanguageSwitcher from '@/components/ui/language-switcher';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -253,19 +254,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium mb-2">Language</label>
-                                                    <select
-                                                        value={settings.language}
-                                                        onChange={(e) => updateSettings('language', e.target.value)}
-                                                        className="w-full p-2 border border-gray-300 rounded-lg"
-                                                        aria-label="Select language"
-                                                    >
-                                                        {languages.map((lang) => (
-                                                            <option key={lang.code} value={lang.code}>
-                                                                {lang.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
+                                                    <LanguageSwitcher variant="select" />
                                                 </div>
                                             </div>
                                         </div>
@@ -285,6 +274,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             checked={value}
                                                             onChange={(e) => updateSettings(`notifications.${key}`, e.target.checked)}
                                                             className="rounded"
+                                                            aria-label={`Toggle ${key} notification`}
                                                         />
                                                     </div>
                                                 ))}
@@ -301,6 +291,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             checked={value}
                                                             onChange={(e) => updateSettings(`notifications.${key}`, e.target.checked)}
                                                             className="rounded"
+                                                            aria-label={`Toggle ${key} notification`}
                                                         />
                                                     </div>
                                                 ))}
@@ -331,6 +322,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             checked={value}
                                                             onChange={(e) => updateSettings(`privacy.${key}`, e.target.checked)}
                                                             className="rounded"
+                                                            aria-label={`Toggle ${key} privacy setting`}
                                                         />
                                                     </div>
                                                 ))}
@@ -349,6 +341,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                     <Input
                                                         value={settings.profile.name}
                                                         onChange={(e) => updateSettings('profile.name', e.target.value)}
+                                                        placeholder="Enter your full name"
+                                                        aria-label="Full Name"
                                                     />
                                                 </div>
                                                 <div>
@@ -357,6 +351,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                         type="email"
                                                         value={settings.profile.email}
                                                         onChange={(e) => updateSettings('profile.email', e.target.value)}
+                                                        placeholder="Enter your email address"
+                                                        aria-label="Email"
                                                     />
                                                 </div>
                                                 <div>
@@ -364,6 +360,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                     <Input
                                                         value={settings.profile.phone}
                                                         onChange={(e) => updateSettings('profile.phone', e.target.value)}
+                                                        placeholder="Enter your phone number"
+                                                        aria-label="Phone"
                                                     />
                                                 </div>
                                                 <div>
@@ -418,6 +416,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             checked={settings.accessibility.highContrast}
                                                             onChange={(e) => updateSettings('accessibility.highContrast', e.target.checked)}
                                                             className="rounded"
+                                                            aria-label="Toggle High Contrast Mode"
                                                         />
                                                     </div>
                                                     <div className="flex items-center justify-between">
@@ -427,6 +426,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             checked={settings.accessibility.reducedMotion}
                                                             onChange={(e) => updateSettings('accessibility.reducedMotion', e.target.checked)}
                                                             className="rounded"
+                                                            aria-label="Toggle Reduced Motion"
                                                         />
                                                     </div>
                                                     <div className="flex items-center justify-between">
@@ -436,6 +436,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             checked={settings.accessibility.soundEffects}
                                                             onChange={(e) => updateSettings('accessibility.soundEffects', e.target.checked)}
                                                             className="rounded"
+                                                            aria-label="Toggle Sound Effects"
                                                         />
                                                     </div>
                                                 </div>
@@ -460,6 +461,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 onClick={saveSettings}
                                 disabled={!hasChanges}
                                 variant="gradient"
+                                size="lg"
+                                className="w-full justify-center mt-4 shadow-lg hover:scale-105 transition-transform"
                             >
                                 Save Changes
                             </Button>

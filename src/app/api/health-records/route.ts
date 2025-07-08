@@ -5,7 +5,7 @@ import connectDB from '@/lib/mongodb';
 import HealthRecordModel from '@/models/HealthRecord';
 
 // Initialize DB connection
-connectDB();
+await connectDB();
 
 export async function GET(req: NextRequest) {
     try {

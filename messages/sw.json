@@ -214,7 +214,7 @@
         "lowRiskActionDescription": "Dalili zako zinaonekana kuwa za hatari ndogo, lakini tunapendekeza uzifuatilie. Ikiwa zitaendelea au kuwa mbaya zaidi, ushauri unaweza kuwa muhimu.",
         "bookRecommendedConsultation": "Weka Ushauri Uliopendekezwa",
         "bookingConsultation": "Kuweka Ushauri...",
-        "consultationBookedSuccess": "Ushauri wako umefanikiwa kuwekwa. Utaelekezwa kwenye ukurasa wa ushauri hivi karibuni.",
+        "consultationBookedSuccess": "Ushauri wako umefanikiwa kuweka. Utaelekezwa kwenye ukurasa wa ushauri hivi karibuni.",
         "consultationBookingError": "Hitilafu katika kuweka ushauri: {error}. Tafadhali jaribu tena au panga mwenyewe.",
         "resultsSaved": "Matokeo ya uchambuzi yamehifadhiwa kwa mafanikio",
         "savingError": "Imeshindwa kuhifadhi matokeo. Tafadhali jaribu tena."
@@ -485,5 +485,8 @@
             "descriptionRequired": "Maelezo yanahitajika",
             "dateRequired": "Tarehe inahitajika"
         }
+    },
+    "button": {
+        "startNow": "Anza sasa"
     }
 }

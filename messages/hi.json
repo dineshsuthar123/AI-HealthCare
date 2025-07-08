@@ -485,5 +485,8 @@
             "descriptionRequired": "विवरण आवश्यक है",
             "dateRequired": "तारीख आवश्यक है"
         }
+    },
+    "button": {
+        "startNow": "अभी शुरू करें"
     }
 }
