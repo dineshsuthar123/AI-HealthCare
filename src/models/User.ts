@@ -29,7 +29,57 @@ const UserSchema = new mongoose.Schema({
             phone: String,
             relationship: String,
         },
+        // Provider-specific fields
+        specialty: String,
+        yearsExperience: Number,
+        bio: String,
+        education: [{
+            institution: String,
+            degree: String,
+            year: Number
+        }],
+        services: [String],
+        reviews: [{
+            rating: Number,
+            comment: String,
+            from: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            date: {
+                type: Date,
+                default: Date.now
+            }
+        }],
+        averageRating: {
+            type: Number,
+            default: 0
+        }
     },
+    // Provider-patient relationship fields
+    assignedProvider: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    patients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    providerRequests: [{
+        provider: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        status: {
+            type: String,
+            enum: ['pending', 'approved', 'rejected'],
+            default: 'pending'
+        },
+        requestDate: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     medicalHistory: [{
         condition: String,
         diagnosis: String,

@@ -6,6 +6,17 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ({ className, type, ...props }, ref) => {
+        // Filter out any auto-generated attributes that might cause hydration issues
+        const safeProps = { ...props };
+        if (typeof window !== 'undefined') {
+            // Filter out form data processor IDs which cause hydration mismatches
+            Object.keys(safeProps).forEach(key => {
+                if (key.startsWith('fdprocessed')) {
+                    delete safeProps[key];
+                }
+            });
+        }
+
         return (
             <input
                 type={type}
@@ -14,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     className
                 )}
                 ref={ref}
-                {...props}
+                {...safeProps}
             />
         );
     }

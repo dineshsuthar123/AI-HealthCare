@@ -9,10 +9,12 @@ import { Heart, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/toast';
 
 export default function SignInPage() {
     const router = useRouter();
     const t = useTranslations('Auth');
+    const { success } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [email, setEmail] = useState('');
@@ -24,6 +26,9 @@ export default function SignInPage() {
         setError('');
 
         try {
+            // Pre-store session information to make subsequent loads faster
+            localStorage.setItem('userSession', JSON.stringify({ email, timestamp: Date.now() }));
+
             const result = await signIn('credentials', {
                 redirect: false,
                 email,
@@ -33,13 +38,22 @@ export default function SignInPage() {
             if (result?.error) {
                 setError(result.error);
                 setIsLoading(false);
+                localStorage.removeItem('userSession'); // Clear on error
                 return;
             }
 
-            router.push('/dashboard');
-        } catch (error) {
+            // Show success message
+            success('Sign in successful! Redirecting to dashboard...');
+
+            // Set a small delay for feedback before redirecting
+            setTimeout(() => {
+                router.push('/dashboard');
+            }, 500);
+        } catch (err) {
+            console.error('Sign in error:', err);
             setError('An unexpected error occurred.');
             setIsLoading(false);
+            localStorage.removeItem('userSession'); // Clear on error
         }
     };
 
@@ -111,7 +125,8 @@ export default function SignInPage() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full group relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg hover:shadow-xl transition-all duration-300" disabled={isLoading}>
+                            <span className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-all duration-300"></span>
                             {isLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -120,7 +135,7 @@ export default function SignInPage() {
                             ) : (
                                 <>
                                     {t('signIn.submit')}
-                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 duration-300" />
                                 </>
                             )}
                         </Button>

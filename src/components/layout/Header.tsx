@@ -7,10 +7,9 @@ import { Link } from '@/navigation';
 import { Menu, X, Heart, User, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
-import { FadeIn } from '@/components/animations/motion-effects';
 import NotificationsDropdown from '@/components/ui/notifications-dropdown';
 import SettingsModal from '@/components/ui/settings-modal';
-import LanguageSwitcher from '@/components/ui/language-switcher';
+import ReliableLanguageSwitcher from '@/components/ui/reliable-language-switcher';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,13 +37,40 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navigation = [
+    // Base navigation for all users
+    const baseNavigation = [
         { name: t('home'), href: '/' },
         { name: t('symptomChecker'), href: '/symptom-checker' },
-        { name: t('consultations'), href: '/consultations' },
-        { name: t('dashboard'), href: '/dashboard' },
-        { name: t('healthRecords'), href: '/health-records' },
     ];
+
+    // Role-specific navigation items
+    const roleBasedNavigation = {
+        patient: [
+            { name: t('consultations'), href: '/consultations' },
+            { name: t('dashboard'), href: '/dashboard' },
+            { name: t('healthRecords'), href: '/health-records' },
+        ],
+        provider: [
+            { name: t('myPatients'), href: '/provider/patients' },
+            { name: t('consultations'), href: '/provider/consultations' },
+            { name: t('dashboard'), href: '/provider/dashboard' },
+        ],
+        admin: [
+            { name: t('dashboard'), href: '/admin/dashboard' },
+            { name: t('providerAssignment'), href: '/admin/provider-assignment' },
+            { name: t('management'), href: '/admin/management' },
+        ]
+    };
+
+    // Determine which navigation items to show based on user role
+    const getUserNavigation = () => {
+        if (!session?.user) return baseNavigation;
+
+        const userRole = ((session.user as { role?: string })?.role) || 'patient';
+        return [...baseNavigation, ...(roleBasedNavigation[userRole as keyof typeof roleBasedNavigation] || roleBasedNavigation.patient)];
+    };
+
+    const navigation = getUserNavigation();
 
     // Render a simplified header skeleton during SSR to prevent hydration mismatch
     if (!isClient) {
@@ -134,7 +160,7 @@ export default function Header() {
                             <div className="flex items-center space-x-4">
                                 {/* Notification and Settings */}
                                 <div className="flex items-center space-x-2">
-                                    <LanguageSwitcher />
+                                    <ReliableLanguageSwitcher />
                                     <NotificationsDropdown
                                         isOpen={isNotificationsOpen}
                                         onToggle={() => setIsNotificationsOpen(!isNotificationsOpen)}
@@ -198,21 +224,22 @@ export default function Header() {
                             </div>
                         ) : (
                             <div className="flex items-center space-x-2">
+                                <ReliableLanguageSwitcher />
                                 <Link href="/auth/signin">
                                     <Button
-                                        variant="outline"
+                                        variant="glassmorphism"
                                         size="sm"
-                                        className="px-5 rounded-full"
+                                        className="px-5 rounded-full hover:bg-blue-50 transition-all duration-300 shadow-md"
                                         animated
                                     >
-                                        {t('signIn')}
+                                        <User className="w-4 h-4 mr-1" /> {t('signIn')}
                                     </Button>
                                 </Link>
                                 <Link href="/auth/signup">
                                     <Button
                                         variant="gradient"
                                         size="sm"
-                                        className="px-5 rounded-full"
+                                        className="px-5 rounded-full hover:scale-105 transition-all duration-300 shadow-lg"
                                         glow
                                         animated
                                     >
@@ -281,7 +308,7 @@ export default function Header() {
                                 transition={{ duration: 0.3, delay: navigation.length * 0.05 }}
                             >
                                 <div className="px-3 py-2 mb-4">
-                                    <LanguageSwitcher variant="select" />
+                                    <ReliableLanguageSwitcher variant="select" />
                                 </div>
                                 {session ? (
                                     <div className="px-3 py-2">
@@ -304,14 +331,23 @@ export default function Header() {
                                         </Button>
                                     </div>
                                 ) : (
-                                    <div className="px-3 py-2 space-y-2">
+                                    <div className="px-3 py-2 space-y-3">
                                         <Link href="/auth/signin" className="block">
-                                            <Button variant="outline" size="sm" className="w-full rounded-lg">
-                                                {t('signIn')}
+                                            <Button
+                                                variant="glassmorphism"
+                                                size="sm"
+                                                className="w-full rounded-lg flex items-center justify-center shadow-md"
+                                            >
+                                                <User className="w-4 h-4 mr-2" /> {t('signIn')}
                                             </Button>
                                         </Link>
                                         <Link href="/auth/signup" className="block">
-                                            <Button variant="gradient" size="sm" className="w-full rounded-lg">
+                                            <Button
+                                                variant="gradient"
+                                                size="sm"
+                                                className="w-full rounded-lg shadow-lg"
+                                                glow
+                                            >
                                                 {t('signUp')}
                                             </Button>
                                         </Link>

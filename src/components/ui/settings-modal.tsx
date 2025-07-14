@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
-import LanguageSwitcher from '@/components/ui/language-switcher';
+import ReliableLanguageSwitcher from '@/components/ui/reliable-language-switcher';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -254,7 +254,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <LanguageSwitcher variant="select" />
+                                                    <ReliableLanguageSwitcher variant="select" />
                                                 </div>
                                             </div>
                                         </div>

@@ -9,10 +9,12 @@ import { Heart, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/toast';
 
 export default function SignUpPage() {
     const router = useRouter();
     const t = useTranslations('Auth');
+    const { success } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
@@ -39,6 +41,9 @@ export default function SignUpPage() {
         }
 
         try {
+            // Pre-store session information to make subsequent loads faster
+            localStorage.setItem('userSession', JSON.stringify({ email: formData.email, name: formData.name, timestamp: Date.now() }));
+
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -52,8 +57,12 @@ export default function SignUpPage() {
             const data = await response.json();
 
             if (!response.ok) {
+                localStorage.removeItem('userSession'); // Clear on error
                 throw new Error(data.error || 'Registration failed');
             }
+
+            // Show success message
+            success('Account created successfully! Signing you in...');
 
             // Sign in the user after successful registration
             await signIn('credentials', {
@@ -62,9 +71,14 @@ export default function SignUpPage() {
                 password: formData.password,
             });
 
-            router.push('/dashboard');
+            // Set a small delay for feedback before redirecting
+            setTimeout(() => {
+                router.push('/dashboard');
+            }, 800);
         } catch (err) {
+            console.error('Registration error:', err);
             setError(err instanceof Error ? err.message : 'Registration failed');
+            localStorage.removeItem('userSession'); // Clear on error
             setIsLoading(false);
         }
     };
@@ -170,7 +184,8 @@ export default function SignUpPage() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full group relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg hover:shadow-xl transition-all duration-300" disabled={isLoading}>
+                            <span className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-all duration-300"></span>
                             {isLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -179,7 +194,7 @@ export default function SignUpPage() {
                             ) : (
                                 <>
                                     {t('signUp.submit')}
-                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 duration-300" />
                                 </>
                             )}
                         </Button>

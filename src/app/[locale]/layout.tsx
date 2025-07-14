@@ -4,6 +4,7 @@ import AuthProvider from '@/components/providers/session-provider';
 import '../globals.css';
 import { Inter } from 'next/font/google';
 import ClientHeaderWrapper from '@/components/layout/client-header-wrapper';
+import LocalePersistence from '@/components/locale-persistence';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -30,6 +31,7 @@ export default async function LocaleLayout({
         <html lang={locale} suppressHydrationWarning>
             <body className={`${inter.variable} font-sans min-h-screen antialiased`}>
                 <NextIntlClientProvider locale={locale} messages={messages}>
+                    <LocalePersistence />
                     <AuthProvider>
                         <div className="relative flex min-h-screen flex-col">
                             <ClientHeaderWrapper />

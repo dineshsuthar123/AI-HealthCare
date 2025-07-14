@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, usePathname } from '@/navigation';
 import { useLocale } from 'next-intl';
 import { Globe, Check, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
+import { clearIntlCache } from '@/lib/clear-intl-cache';
 
-interface LanguageSwitcherProps {
-    variant?: 'dropdown' | 'select';
-    showIcon?: boolean;
+interface SimpleLanguageSwitcherProps {
     className?: string;
 }
 
@@ -24,66 +22,56 @@ const languages = [
     { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' },
 ];
 
-export default function LanguageSwitcher({
-    variant = 'dropdown',
-    showIcon = true,
-    className
-}: LanguageSwitcherProps) {
+export default function SimpleLanguageSwitcher({ className }: SimpleLanguageSwitcherProps) {
     const [isOpen, setIsOpen] = useState(false);
     const locale = useLocale();
-    const router = useRouter();
-    const pathname = usePathname();
 
     const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]; const handleLanguageChange = (newLocale: string) => {
-        // Close dropdown
         setIsOpen(false);
 
-        // Store language preference in localStorage immediately
+        // Store language preference in localStorage
         if (typeof window !== 'undefined') {
-            localStorage.setItem('preferredLocale', newLocale);
-        }
+            try {
+                // Store the new locale preference
+                localStorage.setItem('preferredLocale', newLocale);
 
-        // Navigate to the same page but with new locale
-        try {
-            // Use the pathname from next-intl navigation
-            router.push(pathname, { locale: newLocale });
-        } catch (error) {
-            console.error('Error changing language:', error);
-            // Fallback: construct the URL manually
-            if (typeof window !== 'undefined') {
+                // Get the current path and construct new URL
                 const currentPath = window.location.pathname;
-                const segments = currentPath.split('/');
-                // Remove the first segment (which is the current locale)
-                const pathWithoutLocale = segments.slice(2).join('/');
+                const segments = currentPath.split('/').filter(Boolean);
+
+                // Remove the first segment (current locale)
+                // Make sure we handle the case where we're on the root path
+                const pathWithoutLocale = segments.length > 1 ? segments.slice(1).join('/') : '';
+
+                // Construct the new path with the selected locale
                 const newPath = `/${newLocale}${pathWithoutLocale ? '/' + pathWithoutLocale : ''}`;
-                console.log('Redirecting to:', newPath);
-                window.location.href = newPath;
+
+                console.log('Current path:', currentPath);
+                console.log('New path:', newPath);
+
+                // Add query params if they exist (but exclude our cache busting params)
+                const url = new URL(window.location.href);
+                url.searchParams.delete('_i18n_refresh');
+                url.searchParams.delete('_t');
+                const cleanSearch = url.search;
+
+                // Navigate to new locale
+                window.location.href = `${newPath}${cleanSearch}`;
+
+                // For extra reliability, reload after a short delay if the navigation didn't happen
+                setTimeout(() => {
+                    if (locale === newLocale) {
+                        console.log('Forcing reload to refresh translations');
+                        window.location.reload();
+                    }
+                }, 500);
+            } catch (error) {
+                console.error('Error during language switch:', error);
+                // Fallback to a simpler approach if something went wrong
+                window.location.href = `/${newLocale}`;
             }
         }
     };
-
-    if (variant === 'select') {
-        return (
-            <div className={cn("w-full", className)}>
-                <label className="block text-sm font-medium mb-2">Language</label>
-                <select
-                    value={locale}
-                    onChange={(e) => handleLanguageChange(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    aria-label="Select language"
-                >
-                    {languages.map((lang) => (
-                        <option key={lang.code} value={lang.code}>
-                            {lang.flag} {lang.name}
-                        </option>
-                    ))}
-                </select>
-                <p className="text-xs text-gray-500 mt-1">
-                    Language will change after selection
-                </p>
-            </div>
-        );
-    }
 
     return (
         <div className={cn("relative", className)}>
@@ -95,7 +83,7 @@ export default function LanguageSwitcher({
                 aria-label="Language selector"
                 aria-expanded={isOpen}
             >
-                {showIcon && <Globe className="h-4 w-4" />}
+                <Globe className="h-4 w-4" />
                 <span className="hidden sm:inline">{currentLanguage.flag}</span>
                 <span className="text-sm">{currentLanguage.name}</span>
                 <ChevronDown className={cn(

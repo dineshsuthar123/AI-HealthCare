@@ -180,7 +180,7 @@ export default function HealthRecordsPage() {
         }
     };
 
-    const handleEditRecord = (id: string) => {
+    const handleEditRecord: (id: string) => void = (id: string) => {
         const record = records.find(r => r._id === id);
         if (record) {
             setEditingRecord(record);
@@ -308,20 +308,22 @@ export default function HealthRecordsPage() {
                         ) : filteredRecords.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {filteredRecords.map(record => (
-                                    <HealthRecordCard
-                                        key={record._id}
-                                        record={record}
-                                        onEdit={handleEditRecord}
-                                        onDelete={handleDeleteRecord}
-                                        onToggleShare={handleToggleShare}
-                                    >
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => handleShareRecord(record._id)}
-                                        >
-                                            {t('shareWithProvider')}
-                                        </Button>
-                                    </HealthRecordCard>
+                                    <div key={record._id} className="flex flex-col">
+                                        <HealthRecordCard
+                                            record={record}
+                                            onEdit={handleEditRecord}
+                                            onDelete={handleDeleteRecord}
+                                            onToggleShare={handleToggleShare}
+                                        />
+                                        <div className="mt-2 flex justify-end">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => handleShareRecord(record._id)}
+                                            >
+                                                {t('shareWithProvider')}
+                                            </Button>
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
                         ) : (

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Test Fallback - 100% Reliable</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            color: #1a56db;
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 640px) {
+            .grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .link {
+            display: block;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #333;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .link:hover {
+            background-color: #f8f8f8;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .note {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #e8e8e8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Static Language Test Fallback</h1>
+
+        <div class="status">
+            <p><strong>Status:</strong> This page is 100% reliable as it's a static HTML file that bypasses Next.js
+                routing completely.</p>
+        </div>
+
+        <div class="note">
+            <p><strong>Note:</strong> This is a completely static HTML page that should work even if there are issues
+                with the Next.js application. Use the links below to test language translations.</p>
+        </div>
+
+        <div class="section">
+            <h2>Language Links</h2>
+            <p>Click on any of these links to go to the test translations page in different languages:</p>
+
+            <div class="grid">
+                <a href="/en/test-translations" class="link">🇺🇸 English</a>
+                <a href="/es/test-translations" class="link">🇪🇸 Español</a>
+                <a href="/fr/test-translations" class="link">🇫🇷 Français</a>
+                <a href="/pt/test-translations" class="link">🇧🇷 Português</a>
+                <a href="/ar/test-translations" class="link">🇸🇦 العربية</a>
+                <a href="/hi/test-translations" class="link">🇮🇳 हिन्दी</a>
+                <a href="/sw/test-translations" class="link">🇰🇪 Kiswahili</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Cache-Busting Links</h2>
+            <p>These links include timestamp parameters to bypass caching:</p>
+
+            <div class="grid">
+                <a href="/en/test-translations?_nocache=1" class="link">🇺🇸 English (No Cache)</a>
+                <a href="/es/test-translations?_nocache=1" class="link">🇪🇸 Español (No Cache)</a>
+                <a href="/fr/test-translations?_nocache=1" class="link">🇫🇷 Français (No Cache)</a>
+                <a href="/pt/test-translations?_nocache=1" class="link">🇧🇷 Português (No Cache)</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Fallback Options</h2>
+            <p>If you're having issues with the regular pages, try these:</p>
+
+            <div class="grid">
+                <a href="/test-fallback" class="link">Test Fallback Page</a>
+                <a href="/fallback" class="link">Alternative Fallback</a>
+                <a href="/" class="link">Home Page</a>
+                <a href="/en" class="link">English Home</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Troubleshooting</h2>
+            <p>Use these buttons to troubleshoot common issues:</p>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="clearStorage()">Clear LocalStorage</button>
+                <button onclick="addNoCacheAndReload()">Force Cache Refresh</button>
+                <button onclick="window.location.href='/'">Go to Home</button>
+            </div>
+        </div>
+
+        <script>
+            // Add current timestamp to page to show it's a fresh load
+            document.addEventListener('DOMContentLoaded', function () {
+                const now = new Date();
+                const timeElement = document.createElement('div');
+                timeElement.style.marginTop = '20px';
+                timeElement.style.fontSize = '12px';
+                timeElement.style.color = '#666';
+                timeElement.innerHTML = `<p>Page loaded at: ${now.toLocaleTimeString()} on ${now.toLocaleDateString()}</p>`;
+                document.querySelector('.container').appendChild(timeElement);
+            });
+
+            // Clear localStorage function
+            function clearStorage() {
+                try {
+                    localStorage.clear();
+                    alert('LocalStorage cleared successfully!');
+                    window.location.reload();
+                } catch (e) {
+                    alert('Error clearing localStorage: ' + e.message);
+                }
+            }
+
+            // Add cache-busting parameter and reload
+            function addNoCacheAndReload() {
+                const timestamp = Date.now();
+                window.location.href = window.location.pathname + '?_nocache=' + timestamp;
+            }
+        </script>
+    </div>
+</body>
+
+</html>
+<h2>Navigation</h2>
+<p><a href="/" class="link">Go to Home Page</a></p>
+<p><a href="/test-fallback" class="link">Go to Dynamic Fallback Page</a></p>
+</div>
+</div>
+</body>
+
+</html>
