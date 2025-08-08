@@ -77,12 +77,30 @@ Vercel is the recommended platform for deploying Next.js applications:
 
 4. **Configure environment variables** in the Vercel dashboard under Project Settings > Environment Variables.
 
+   Recommended variables (copy from `.env.example`):
+
+   | Name | Environment | Example |
+   |------|-------------|---------|
+   | MONGODB_URI | All | mongodb+srv://... |
+   | NEXTAUTH_URL | Production | https://your-domain.com |
+   | NEXTAUTH_URL | Preview | https://\${VERCEL_URL} |
+   | NEXTAUTH_SECRET | All | use a secure random string |
+   | OPENAI_API_KEY | All | sk-... |
+   | TWILIO_ACCOUNT_SID | All/Optional | AC... |
+   | TWILIO_AUTH_TOKEN | All/Optional | ... |
+   | TWILIO_PHONE_NUMBER | All/Optional | +1... |
+   | NEXT_PUBLIC_BASE_URL | Production | https://your-domain.com |
+
+   Notes:
+   - Set NEXTAUTH_URL per environment (Production: your domain, Preview: https://\${VERCEL_URL})
+   - Ensure MONGODB_URI allows connections from Vercel IPs (Atlas allows all by default if 0.0.0.0/0)
+
 5. **Set up MongoDB integration** in the Vercel dashboard.
 
 6. **Configure deployment settings**
-   - Set the Node.js version to 18.x or higher
-   - Enable "Automatically expose System Environment Variables"
-   - Set up any custom domains if needed
+   - Node.js: 18.x or higher
+   - Enable Edge/Serverless default (no custom server needed)
+   - Add your custom domain(s) and set primary domain
 
 7. **Set up preview deployments** (optional)
    - In your Vercel project settings, configure preview deployments for branches
