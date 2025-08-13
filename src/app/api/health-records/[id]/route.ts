@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 // Handle GET for a specific health record
 export async function GET(req: NextRequest) {
     try {
-    await connectDB();
+        await connectDB();
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {

@@ -6,7 +6,7 @@ import HealthRecordModel from '@/models/HealthRecord';
 
 export async function GET(req: NextRequest) {
     try {
-    await connectDB();
+        await connectDB();
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-    await connectDB();
+        await connectDB();
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {

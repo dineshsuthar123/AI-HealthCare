@@ -43,13 +43,17 @@ export default function Header() {
         { name: t('symptomChecker'), href: '/symptom-checker' },
     ];
 
+    // Common patient navigation (also shown to guests; protected pages will redirect to sign-in)
+    const patientCommonNavigation = [
+        { name: t('consultations'), href: '/consultations' },
+        { name: t('dashboard'), href: '/dashboard' },
+        { name: t('healthRecords'), href: '/health-records' },
+    ];
+
     // Role-specific navigation items
     const roleBasedNavigation = {
-        patient: [
-            { name: t('consultations'), href: '/consultations' },
-            { name: t('dashboard'), href: '/dashboard' },
-            { name: t('healthRecords'), href: '/health-records' },
-        ],
+        // Patient items are covered by patientCommonNavigation above
+        patient: [],
         provider: [
             { name: t('myPatients'), href: '/provider/patients' },
             { name: t('consultations'), href: '/provider/consultations' },
@@ -64,10 +68,18 @@ export default function Header() {
 
     // Determine which navigation items to show based on user role
     const getUserNavigation = () => {
-        if (!session?.user) return baseNavigation;
+        // Guests see base + patient common routes (protected pages handle auth redirects)
+        if (!session?.user) return [...baseNavigation, ...patientCommonNavigation];
 
         const userRole = ((session.user as { role?: string })?.role) || 'patient';
-        return [...baseNavigation, ...(roleBasedNavigation[userRole as keyof typeof roleBasedNavigation] || roleBasedNavigation.patient)];
+        if (userRole === 'patient') {
+            return [...baseNavigation, ...patientCommonNavigation];
+        }
+        // Providers and admins see role-specific menus
+        return [
+            ...baseNavigation,
+            ...(roleBasedNavigation[userRole as keyof typeof roleBasedNavigation] || []),
+        ];
     };
 
     const navigation = getUserNavigation();
