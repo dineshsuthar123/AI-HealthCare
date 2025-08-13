@@ -4,11 +4,9 @@ import { authOptions } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import HealthRecordModel from '@/models/HealthRecord';
 
-// Initialize DB connection
-await connectDB();
-
 export async function GET(req: NextRequest) {
     try {
+    await connectDB();
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {
@@ -74,6 +72,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
+    await connectDB();
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {

@@ -5,12 +5,10 @@ import connectDB from '@/lib/mongodb';
 import HealthRecordModel from '@/models/HealthRecord';
 import mongoose from 'mongoose';
 
-// Initialize DB connection
-connectDB();
-
 // Handle GET for a specific health record
 export async function GET(req: NextRequest) {
     try {
+    await connectDB();
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {

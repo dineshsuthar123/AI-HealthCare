@@ -33,10 +33,23 @@ declare module "next-auth/jwt" {
     }
 }
 
-const client = new MongoClient(process.env.MONGODB_URI!);
-const clientPromise = client.connect();
+// Lazily create a MongoDB client, but do not throw or connect at import time.
+let clientPromise: Promise<MongoClient> | null = null;
+function getAdapter(): Adapter | undefined {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+        // No adapter during build or when env missing; NextAuth will work with JWT only.
+        return undefined;
+    }
+    if (!clientPromise) {
+        const client = new MongoClient(uri);
+        clientPromise = client.connect();
+    }
+    return MongoDBAdapter(clientPromise) as Adapter;
+}
 export const authOptions: NextAuthOptions = {
-    adapter: MongoDBAdapter(clientPromise) as Adapter,
+    // Use adapter only when available to avoid build-time failures without env vars
+    adapter: getAdapter(),
     providers: [
         CredentialsProvider({
             name: 'credentials',
