@@ -10,7 +10,10 @@
         "healthRecords": "Registros de Salud",
         "signIn": "Iniciar Sesión",
         "signUp": "Registrarse",
-        "signOut": "Cerrar Sesión"
+        "signOut": "Cerrar Sesión",
+        "myPatients": "Mis Pacientes",
+        "providerAssignment": "Asignación de Proveedores",
+        "management": "Administración"
     },
     "Home": {
         "hero": {
@@ -18,7 +21,8 @@
             "subtitle": "Plataforma integral de atención médica diseñada para servir a comunidades desatendidas con verificación de síntomas impulsada por IA, servicios de telemedicina y soporte multilingüe.",
             "cta": {
                 "primary": "Verificar Síntomas",
-                "secondary": "Reservar Consulta"
+                "secondary": "Reservar Consulta",
+                "signUp": "Registrarse"
             }
         },
         "features": {
@@ -50,7 +54,8 @@
             "title": "¿Listo para Transformar la Atención Médica?",
             "subtitle": "Únete a miles que confían en nuestra plataforma para sus necesidades de salud",
             "button": "Comienza Hoy"
-        }
+        },
+        "signUp": "Registrarse"
     },
     "Auth": {
         "signIn": {
@@ -117,7 +122,11 @@
             "audioCall": "Llamada de Audio",
             "message": "Mensaje de Texto",
             "bookNow": "Programar Consulta",
-            "booking": "Programando..."
+            "booking": "Programando...",
+            "cancel": "Cancelar",
+            "consultationBooked": "¡Consulta Reservada!",
+            "redirecting": "Redirigiendo a tus consultas...",
+            "withProvider": "con"
         },
         "type": {
             "video": "Video",
@@ -284,6 +293,11 @@
         "recommendation": "Recomendación",
         "goodProgress": "Buen Progreso",
         "reminder": "Recordatorio",
+        "viewAllActivities": "Ver Todas las Actividades",
+        "healthRecommendation": "Según tus evaluaciones de salud recientes, recomendamos lo siguiente:",
+        "learnMore": "Aprender Más",
+        "improvedScore": "¡Tu puntuación de salud ha mejorado un 5% esta semana!",
+        "medicationReminder": "No olvides tomar tu medicación prescrita a tiempo.",
         "stats": {
             "healthChecks": "Chequeos de Salud",
             "completedThisMonth": "Completados este mes",
@@ -443,13 +457,15 @@
         "tryDifferentFilters": "Pruebe diferentes términos de búsqueda o filtros, o bórrelos para ver todos sus registros.",
         "searchPlaceholder": "Buscar registros...",
         "allTypes": "Todos los tipos",
+        "filterByType": "Filtrar por Tipo",
         "recordType": {
             "allergy": "Alergia",
             "medication": "Medicación",
             "condition": "Condición Médica",
             "vaccination": "Vacunación",
             "lab": "Resultado de Laboratorio",
-            "other": "Otro"
+            "other": "Otro",
+            "diagnosis": "Diagnóstico"
         },
         "recordTitle": "Título",
         "fieldType": "Tipo",
@@ -485,6 +501,100 @@
             "descriptionRequired": "La descripción es obligatoria",
             "dateRequired": "La fecha es obligatoria"
         }
+    },
+    "Notifications": {
+        "title": "Notificaciones",
+        "markAllRead": "Marcar todo como leído",
+        "noNotifications": "Sin notificaciones",
+        "viewAll": "Ver todas las notificaciones"
+    },
+    "Settings": {
+        "title": "Configuración",
+        "general": "General",
+        "notifications": "Notificaciones",
+        "privacy": "Privacidad",
+        "profile": "Perfil",
+        "accessibility": "Accesibilidad",
+        "appearance": "Apariencia",
+        "theme": "Tema",
+        "language": "Idioma",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "system": "Sistema",
+        "save": "Guardar Cambios",
+        "cancel": "Cancelar",
+        "reset": "Restablecer Valores"
+    },
+    "Admin": {
+        "accessDenied": "Acceso denegado",
+        "adminAccessRequired": "Se requiere acceso de administrador para ver esta página.",
+        "goBack": "Volver",
+        "providerAssignment": "Asignación de Proveedores",
+        "manageProviderPatientRelationships": "Gestionar relaciones proveedor-paciente y asignaciones",
+        "searchPatients": "Buscar pacientes por nombre o correo",
+        "allPatients": "Todos los Pacientes",
+        "assignedPatients": "Pacientes Asignados",
+        "unassignedPatients": "Pacientes No Asignados",
+        "reset": "Restablecer",
+        "patients": "Pacientes",
+        "totalPatients": "Total de Pacientes",
+        "assigned": "Asignado",
+        "unassigned": "No asignado",
+        "noPatients": "No se encontraron pacientes que coincidan con tus criterios",
+        "patientName": "Nombre del Paciente",
+        "email": "Correo electrónico",
+        "assignedProvider": "Proveedor Asignado",
+        "status": "Estado",
+        "actions": "Acciones",
+        "noProvider": "Sin proveedor asignado",
+        "changeProvider": "Cambiar Proveedor",
+        "removeProvider": "Eliminar Proveedor",
+        "assignProvider": "Asignar Proveedor",
+        "requested": "Solicitado",
+        "selectProviderFor": "Seleccionar un proveedor para",
+        "searchProviders": "Buscar proveedores por nombre o especialidad",
+        "patientCount": "Pacientes",
+        "availability": "Disponibilidad",
+        "cancel": "Cancelar",
+        "assigning": "Asignando...",
+        "confirmAssignment": "Confirmar Asignación"
+    },
+    "ProviderPatients": {
+        "title": "Mis Pacientes",
+        "description": "Gestiona tus pacientes asignados y solicitudes",
+        "stats": {
+            "totalPatients": "Total de Pacientes",
+            "patientsUnderYourCare": "Pacientes bajo tu cuidado",
+            "pendingRequests": "Solicitudes Pendientes",
+            "patientsRequestingYou": "Pacientes que te solicitan",
+            "availability": "Tu Disponibilidad",
+            "yourCurrentStatus": "Tu estado actual para nuevos pacientes",
+            "available": "Disponible"
+        },
+        "tabs": {
+            "assigned": "Pacientes Asignados",
+            "requests": "Solicitudes de Pacientes"
+        },
+        "assignedPatients": "Pacientes Asignados",
+        "searchPatients": "Buscar pacientes...",
+        "filter": "Filtrar",
+        "all": "Todos",
+        "recentlyAdded": "Recientemente Agregados",
+        "alphabetical": "Alfabético",
+        "noAssignedPatients": "No hay pacientes asignados actualmente",
+        "patientName": "Nombre del Paciente",
+        "email": "Correo electrónico",
+        "age": "Edad",
+        "gender": "Género",
+        "actions": "Acciones",
+        "viewRecords": "Ver Registros",
+        "scheduleConsultation": "Programar Consulta",
+        "patientRequests": "Solicitudes de Pacientes",
+        "requestsDescription": "Pacientes que te han solicitado como su proveedor",
+        "noRequests": "No hay solicitudes pendientes de pacientes",
+        "requestDate": "Fecha de Solicitud",
+        "accept": "Aceptar",
+        "decline": "Rechazar"
     },
     "button": {
         "startNow": "Comenzar ahora"

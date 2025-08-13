@@ -10,7 +10,10 @@
         "healthRecords": "Dossiers de Santé",
         "signIn": "Se Connecter",
         "signUp": "S'inscrire",
-        "signOut": "Se Déconnecter"
+        "signOut": "Se Déconnecter",
+        "myPatients": "Mes Patients",
+        "providerAssignment": "Affectation des Prestataires",
+        "management": "Gestion"
     },
     "Home": {
         "hero": {
@@ -50,7 +53,8 @@
             "title": "Prêt à Transformer les Soins de Santé ?",
             "subtitle": "Rejoignez des milliers de personnes qui font confiance à notre plateforme pour leurs besoins de santé",
             "button": "Commencez Aujourd'hui"
-        }
+        },
+        "signUp": "S'inscrire"
     },
     "Auth": {
         "signIn": {
@@ -117,7 +121,11 @@
             "audioCall": "Appel Audio",
             "message": "Message Texte",
             "bookNow": "Prendre Rendez-vous",
-            "booking": "Réservation en cours..."
+            "booking": "Réservation en cours...",
+            "cancel": "Annuler",
+            "consultationBooked": "Consultation Réservée !",
+            "redirecting": "Redirection vers vos consultations...",
+            "withProvider": "avec"
         },
         "type": {
             "video": "Vidéo",
@@ -284,6 +292,11 @@
         "recommendation": "Recommandation",
         "goodProgress": "Bon Progrès",
         "reminder": "Rappel",
+        "viewAllActivities": "Voir Toutes les Activités",
+        "healthRecommendation": "Sur la base de vos évaluations de santé récentes, nous recommandons ce qui suit :",
+        "learnMore": "En savoir plus",
+        "improvedScore": "Votre score de santé s'est amélioré de 5 % cette semaine !",
+        "medicationReminder": "N'oubliez pas de prendre votre médicament prescrit à temps.",
         "stats": {
             "healthChecks": "Bilans de Santé",
             "completedThisMonth": "Complétés ce mois-ci",
@@ -443,9 +456,11 @@
         "tryDifferentFilters": "Essayez différents termes de recherche ou filtres, ou effacez-les pour voir tous vos dossiers.",
         "searchPlaceholder": "Rechercher des dossiers...",
         "allTypes": "Tous les types",
+        "filterByType": "Filtrer par Type",
         "recordType": {
             "allergy": "Allergie",
             "medication": "Médicament",
+            "diagnosis": "Diagnostic",
             "condition": "Condition Médicale",
             "vaccination": "Vaccination",
             "lab": "Résultat de Laboratoire",
@@ -485,6 +500,100 @@
             "descriptionRequired": "La description est requise",
             "dateRequired": "La date est requise"
         }
+    },
+    "Notifications": {
+        "title": "Notifications",
+        "markAllRead": "Tout marquer comme lu",
+        "noNotifications": "Aucune notification",
+        "viewAll": "Voir toutes les notifications"
+    },
+    "Settings": {
+        "title": "Paramètres",
+        "general": "Général",
+        "notifications": "Notifications",
+        "privacy": "Confidentialité",
+        "profile": "Profil",
+        "accessibility": "Accessibilité",
+        "appearance": "Apparence",
+        "theme": "Thème",
+        "language": "Langue",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système",
+        "save": "Enregistrer les Modifications",
+        "cancel": "Annuler",
+        "reset": "Réinitialiser les Paramètres"
+    },
+    "Admin": {
+        "accessDenied": "Accès refusé",
+        "adminAccessRequired": "L'accès administrateur est requis pour afficher cette page.",
+        "goBack": "Retour",
+        "providerAssignment": "Affectation des Prestataires",
+        "manageProviderPatientRelationships": "Gérer les relations prestataire-patient et les affectations",
+        "searchPatients": "Rechercher des patients par nom ou email",
+        "allPatients": "Tous les Patients",
+        "assignedPatients": "Patients Affectés",
+        "unassignedPatients": "Patients Non Affectés",
+        "reset": "Réinitialiser",
+        "patients": "Patients",
+        "totalPatients": "Total des Patients",
+        "assigned": "Affecté",
+        "unassigned": "Non affecté",
+        "noPatients": "Aucun patient ne correspond à vos critères",
+        "patientName": "Nom du Patient",
+        "email": "Email",
+        "assignedProvider": "Prestataire Affecté",
+        "status": "Statut",
+        "actions": "Actions",
+        "noProvider": "Aucun prestataire assigné",
+        "changeProvider": "Changer de Prestataire",
+        "removeProvider": "Supprimer le Prestataire",
+        "assignProvider": "Assigner un Prestataire",
+        "requested": "Demandé",
+        "selectProviderFor": "Sélectionner un prestataire pour",
+        "searchProviders": "Rechercher des prestataires par nom ou spécialité",
+        "patientCount": "Patients",
+        "availability": "Disponibilité",
+        "cancel": "Annuler",
+        "assigning": "Affectation en cours...",
+        "confirmAssignment": "Confirmer l'Affectation"
+    },
+    "ProviderPatients": {
+        "title": "Mes Patients",
+        "description": "Gérez vos patients affectés et les demandes de patients",
+        "stats": {
+            "totalPatients": "Total des Patients",
+            "patientsUnderYourCare": "Patients actuellement sous vos soins",
+            "pendingRequests": "Demandes en Attente",
+            "patientsRequestingYou": "Patients vous demandant comme prestataire",
+            "availability": "Votre Disponibilité",
+            "yourCurrentStatus": "Votre statut actuel pour les nouveaux patients",
+            "available": "Disponible"
+        },
+        "tabs": {
+            "assigned": "Patients Affectés",
+            "requests": "Demandes des Patients"
+        },
+        "assignedPatients": "Patients Affectés",
+        "searchPatients": "Rechercher des patients...",
+        "filter": "Filtrer",
+        "all": "Tous",
+        "recentlyAdded": "Récemment Ajoutés",
+        "alphabetical": "Alphabétique",
+        "noAssignedPatients": "Aucun patient ne vous est actuellement affecté",
+        "patientName": "Nom du Patient",
+        "email": "Email",
+        "age": "Âge",
+        "gender": "Genre",
+        "actions": "Actions",
+        "viewRecords": "Voir les Dossiers",
+        "scheduleConsultation": "Planifier une Consultation",
+        "patientRequests": "Demandes des Patients",
+        "requestsDescription": "Patients qui vous ont demandé comme prestataire de soins",
+        "noRequests": "Aucune demande en attente de patients",
+        "requestDate": "Date de la Demande",
+        "accept": "Accepter",
+        "decline": "Refuser"
     },
     "button": {
         "startNow": "Commencer maintenant"

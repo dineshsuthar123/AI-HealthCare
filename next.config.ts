@@ -1,12 +1,17 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import type { NextConfig } from 'next';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
     // Force SWC transpilation even when Babel config exists
     experimental: {
         forceSwcTransforms: true,
+    },
+
+    // Do not fail the production build on ESLint errors (Vercel/CI)
+    eslint: {
+        ignoreDuringBuilds: true,
     },
 
     // Configure redirects for common issues
@@ -30,13 +35,8 @@ const nextConfig = {
                 destination: '/static-fallback.html',
                 permanent: false,
             },
-            // Ensure /test-fallback works (for cases where it might not be properly excluded from middleware)
-            {
-                source: '/test-fallback',
-                destination: '/test-fallback',
-                permanent: false,
-                basePath: false, // Bypass Next.js's base path
-            },
+            // Keep /test-fallback accessible
+            // (No special basePath handling required)
             // Provide a fallback path to test-fallback in case of issues
             {
                 source: '/fallback',

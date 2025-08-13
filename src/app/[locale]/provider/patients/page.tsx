@@ -35,8 +35,37 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { SearchIcon } from 'lucide-react';
+// (No icon in Input component; ensure we don't import unused icons)
+
+type ObjectIdLike = string | { toString(): string };
+
+type ProviderDoc = {
+    _id: ObjectIdLike;
+    email: string;
+    role: string;
+    name?: string;
+};
+
+type PatientDoc = {
+    _id: ObjectIdLike;
+    name: string;
+    email: string;
+    profile?: {
+        age?: number;
+        gender?: string;
+    };
+    providerRequests?: Array<{
+        provider: ObjectIdLike;
+        status: string;
+        requestDate?: string | Date;
+    }>;
+};
+
+const idToString = (id: ObjectIdLike): string =>
+    typeof id === 'string' ? id : id.toString();
+
+const idEq = (a: ObjectIdLike, b: ObjectIdLike | string): boolean =>
+    idToString(a) === (typeof b === 'string' ? b : idToString(b));
 
 async function getProviderWithPatients() {
     try {
@@ -44,27 +73,27 @@ async function getProviderWithPatients() {
         if (!session?.user?.email) return null;
 
         await dbConnect();
-        const provider = await User.findOne({
+        const provider = (await User.findOne({
             email: session.user.email,
             role: 'provider'
-        }).lean();
+        }).lean()) as unknown as ProviderDoc | null;
 
         if (!provider) return null;
 
         // Get all patients assigned to this provider
-        const patients = await User.find({
+        const patients = (await User.find({
             assignedProvider: provider._id
         })
             .select('name email profile.age profile.gender')
-            .lean();
+            .lean()) as unknown as PatientDoc[];
 
         // Get patients who requested this provider but aren't assigned yet
-        const requestingPatients = await User.find({
+        const requestingPatients = (await User.find({
             'providerRequests.provider': provider._id,
             'providerRequests.status': 'pending'
         })
             .select('name email profile.age profile.gender providerRequests')
-            .lean();
+            .lean()) as unknown as PatientDoc[];
 
         return {
             provider,
@@ -77,7 +106,10 @@ async function getProviderWithPatients() {
     }
 }
 
-export async function generateMetadata({ params: { locale } }) {
+export async function generateMetadata(
+    { params }: { params: Promise<{ locale: string }> }
+) {
+    const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'ProviderPatients' });
 
     return {
@@ -104,16 +136,20 @@ export default async function ProviderPatientsPage() {
     );
 }
 
-function ProviderPatientsUI({ provider, patients, requestingPatients }) {
+function ProviderPatientsUI({ provider, patients, requestingPatients }: {
+    provider: ProviderDoc;
+    patients: PatientDoc[];
+    requestingPatients: PatientDoc[];
+}) {
     const t = useTranslations('ProviderPatients');
-    const [searchTerm, setSearchTerm] = React.useState('');
-    const [filter, setFilter] = React.useState('all');
-    const [pendingRequests, setPendingRequests] = React.useState(requestingPatients);
-    const [assignedPatients, setAssignedPatients] = React.useState(patients);
-    const [processingRequest, setProcessingRequest] = React.useState(null);
+    const [searchTerm, setSearchTerm] = React.useState<string>('');
+    const [filter, setFilter] = React.useState<'all' | 'recent' | 'alphabetical'>('all');
+    const [pendingRequests, setPendingRequests] = React.useState<PatientDoc[]>(requestingPatients);
+    const [assignedPatients, setAssignedPatients] = React.useState<PatientDoc[]>(patients);
+    const [processingRequest, setProcessingRequest] = React.useState<string | null>(null);
 
-    const filteredPatients = React.useMemo(() => {
-        return assignedPatients.filter(patient => {
+    const filteredPatients = React.useMemo((): PatientDoc[] => {
+        return assignedPatients.filter((patient: PatientDoc) => {
             const matchesSearch = !searchTerm ||
                 patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 patient.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -121,7 +157,8 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
             if (filter === 'all') return matchesSearch;
             if (filter === 'recent') {
                 // Assumes _id contains timestamp info (MongoDB ObjectId does)
-                const isRecent = new Date(parseInt(patient._id.substring(0, 8), 16) * 1000) >
+                const idStr = idToString(patient._id);
+                const isRecent = new Date(parseInt(idStr.substring(0, 8), 16) * 1000) >
                     new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
                 return matchesSearch && isRecent;
             }
@@ -135,14 +172,14 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
     }, [assignedPatients, searchTerm, filter]);
 
     // Sort patients if needed
-    const sortedPatients = React.useMemo(() => {
+    const sortedPatients = React.useMemo<PatientDoc[]>(() => {
         if (filter === 'alphabetical') {
             return [...filteredPatients].sort((a, b) => a.name.localeCompare(b.name));
         }
         return filteredPatients;
     }, [filteredPatients, filter]);
 
-    async function handleRequest(patientId, action) {
+    async function handleRequest(patientId: string, action: 'accept' | 'decline') {
         try {
             setProcessingRequest(patientId);
 
@@ -163,22 +200,23 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
             // Update UI based on action
             if (action === 'accept') {
                 // Find patient in pending requests
-                const acceptedPatient = pendingRequests.find(p => p._id === patientId);
+                const acceptedPatient = pendingRequests.find((p: PatientDoc) => idEq(p._id, patientId));
 
                 // Remove from pending requests
-                setPendingRequests(pendingRequests.filter(p => p._id !== patientId));
+                setPendingRequests(pendingRequests.filter((p: PatientDoc) => !idEq(p._id, patientId)));
 
                 // Add to assigned patients if not already there
-                if (acceptedPatient && !assignedPatients.some(p => p._id === patientId)) {
+                if (acceptedPatient && !assignedPatients.some((p: PatientDoc) => idEq(p._id, patientId))) {
                     setAssignedPatients([...assignedPatients, acceptedPatient]);
                 }
             } else {
                 // Just remove from pending requests
-                setPendingRequests(pendingRequests.filter(p => p._id !== patientId));
+                setPendingRequests(pendingRequests.filter((p: PatientDoc) => !idEq(p._id, patientId)));
             }
         } catch (error) {
             console.error('Error handling request:', error);
-            alert(error.message);
+            const msg = error instanceof Error ? error.message : String(error);
+            alert(msg);
         } finally {
             setProcessingRequest(null);
         }
@@ -247,14 +285,13 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
                                     <Input
                                         placeholder={t('searchPatients')}
                                         className="flex-1"
-                                        icon={<SearchIcon className="h-4 w-4" />}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                     <Select
                                         defaultValue="all"
                                         value={filter}
-                                        onValueChange={setFilter}
+                                        onValueChange={(v) => setFilter(v as 'all' | 'recent' | 'alphabetical')}
                                     >
                                         <SelectTrigger className="w-[180px]">
                                             <SelectValue placeholder={t('filter')} />
@@ -285,8 +322,8 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {sortedPatients.map((patient) => (
-                                            <TableRow key={patient._id}>
+                                        {sortedPatients.map((patient: PatientDoc) => (
+                                            <TableRow key={idToString(patient._id)}>
                                                 <TableCell className="font-medium">{patient.name}</TableCell>
                                                 <TableCell>{patient.email}</TableCell>
                                                 <TableCell>{patient.profile?.age || '-'}</TableCell>
@@ -334,17 +371,17 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {pendingRequests.map((patient) => {
-                                            const request = patient.providerRequests.find(
-                                                r => r.provider.toString() === provider._id.toString()
+                                        {pendingRequests.map((patient: PatientDoc) => {
+                                            const request = patient.providerRequests?.find(
+                                                (r) => idEq(r.provider, provider._id)
                                             );
 
                                             return (
-                                                <TableRow key={patient._id}>
+                                                <TableRow key={idToString(patient._id)}>
                                                     <TableCell className="font-medium">{patient.name}</TableCell>
                                                     <TableCell>{patient.email}</TableCell>
                                                     <TableCell>
-                                                        {new Date(request?.requestDate).toLocaleDateString()}
+                                                        {request?.requestDate ? new Date(request.requestDate).toLocaleDateString() : '-'}
                                                     </TableCell>
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end space-x-2">
@@ -352,7 +389,7 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
                                                                 variant="outline"
                                                                 size="sm"
                                                                 className="bg-red-50 hover:bg-red-100 text-red-600 border-red-200"
-                                                                onClick={() => handleRequest(patient._id, 'decline')}
+                                                                onClick={() => handleRequest(idToString(patient._id), 'decline')}
                                                                 disabled={processingRequest === patient._id}
                                                             >
                                                                 {processingRequest === patient._id ? '...' : t('decline')}
@@ -360,7 +397,7 @@ function ProviderPatientsUI({ provider, patients, requestingPatients }) {
                                                             <Button
                                                                 variant="default"
                                                                 size="sm"
-                                                                onClick={() => handleRequest(patient._id, 'accept')}
+                                                                onClick={() => handleRequest(idToString(patient._id), 'accept')}
                                                                 disabled={processingRequest === patient._id}
                                                             >
                                                                 {processingRequest === patient._id ? '...' : t('accept')}
