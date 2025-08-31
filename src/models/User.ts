@@ -112,13 +112,21 @@ const UserSchema = new mongoose.Schema({
         }
     }],
     preferences: {
-        language: {
-            type: String,
-            default: 'en',
-        },
+        language: { type: String, default: 'en' },
+        theme: { type: String, enum: ['light', 'dark', 'system'], default: 'system' },
         notifications: {
             email: { type: Boolean, default: true },
+            push: { type: Boolean, default: true },
             sms: { type: Boolean, default: false },
+            appointments: { type: Boolean, default: true },
+            reminders: { type: Boolean, default: true },
+            updates: { type: Boolean, default: false },
+        },
+        accessibility: {
+            fontSize: { type: String, enum: ['small', 'medium', 'large'], default: 'medium' },
+            highContrast: { type: Boolean, default: false },
+            reducedMotion: { type: Boolean, default: false },
+            soundEffects: { type: Boolean, default: true },
         },
     },
 }, {

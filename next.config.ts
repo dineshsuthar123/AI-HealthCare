@@ -1,7 +1,8 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import type { NextConfig } from 'next';
 
-const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
+// Point to i18n.ts at project root (keeps messages co-located and avoids bundling issues)
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 const nextConfig: NextConfig = {
     // Force SWC transpilation even when Babel config exists
@@ -35,14 +36,7 @@ const nextConfig: NextConfig = {
                 destination: '/static-fallback.html',
                 permanent: false,
             },
-            // Keep /test-fallback accessible
-            // (No special basePath handling required)
-            // Provide a fallback path to test-fallback in case of issues
-            {
-                source: '/fallback',
-                destination: '/test-fallback',
-                permanent: false,
-            },
+            // Removed legacy /fallback -> /test-fallback redirect to prevent prerender/export errors
             // If a page is not found, try the English version
             {
                 source: '/:path*',

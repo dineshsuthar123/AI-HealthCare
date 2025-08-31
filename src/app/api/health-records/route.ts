@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import HealthRecordModel from '@/models/HealthRecord';
 
+export const runtime = 'nodejs';
+
 export async function GET(req: NextRequest) {
     try {
         await connectDB();

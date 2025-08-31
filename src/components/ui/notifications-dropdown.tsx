@@ -27,61 +27,12 @@ interface NotificationsDropdownProps {
     onClose: () => void;
 }
 
-// Mock notifications for demonstration
-const mockNotifications: Notification[] = [
-    {
-        id: '1',
-        type: 'appointment',
-        title: 'Upcoming Appointment',
-        message: 'Your video consultation with Dr. Smith is scheduled for tomorrow at 2:00 PM',
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-        isRead: false,
-        action: {
-            label: 'View Details',
-            href: '/consultations'
-        }
-    },
-    {
-        id: '2',
-        type: 'reminder',
-        title: 'Medication Reminder',
-        message: 'Time to take your evening medication',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        isRead: false,
-        action: {
-            label: 'Mark Taken',
-            href: '/health-records'
-        }
-    },
-    {
-        id: '3',
-        type: 'alert',
-        title: 'Health Alert',
-        message: 'Your recent symptom check suggests monitoring your blood pressure',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-        isRead: true,
-        action: {
-            label: 'View Report',
-            href: '/symptom-checker'
-        }
-    },
-    {
-        id: '4',
-        type: 'update',
-        title: 'New Health Record',
-        message: 'Your lab results have been uploaded to your health records',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
-        isRead: true,
-        action: {
-            label: 'View Records',
-            href: '/health-records'
-        }
-    }
-];
+// Local storage key for read notifications
+const READ_KEY = 'readNotifications';
 
 export default function NotificationsDropdown({ isOpen, onToggle, onClose }: NotificationsDropdownProps) {
     const t = useTranslations('Notifications');
-    const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isClient, setIsClient] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -105,6 +56,34 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [isOpen, onClose, isClient]);
+
+    // Fetch notifications when opened (or on first mount)
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const res = await fetch('/api/notifications', { credentials: 'include' });
+                if (!res.ok) {
+                    setNotifications([]);
+                    return;
+                }
+                const data = await res.json();
+                const readIds = new Set<string>(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
+                const items: Notification[] = (data.notifications || []).map((n: any) => ({
+                    id: n.id,
+                    type: n.type,
+                    title: n.title,
+                    message: n.message,
+                    timestamp: new Date(n.timestamp),
+                    isRead: readIds.has(n.id),
+                    action: n.action,
+                }));
+                setNotifications(items);
+            } catch {
+                setNotifications([]);
+            }
+        };
+        if (isOpen && isClient) load();
+    }, [isOpen, isClient]);
 
     const getNotificationIcon = (type: Notification['type']) => {
         switch (type) {
@@ -139,22 +118,24 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
 
     const markAsRead = (id: string) => {
         setNotifications(prev =>
-            prev.map(notification =>
-                notification.id === id
-                    ? { ...notification, isRead: true }
-                    : notification
-            )
+            prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
         );
+        const read = new Set<string>(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
+        read.add(id);
+        localStorage.setItem(READ_KEY, JSON.stringify(Array.from(read)));
     };
 
     const markAllAsRead = () => {
-        setNotifications(prev =>
-            prev.map(notification => ({ ...notification, isRead: true }))
-        );
+        setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+        const allIds = notifications.map(n => n.id);
+        localStorage.setItem(READ_KEY, JSON.stringify(allIds));
     };
 
     const removeNotification = (id: string) => {
-        setNotifications(prev => prev.filter(notification => notification.id !== id));
+        setNotifications(prev => prev.filter(n => n.id !== id));
+        const read = new Set<string>(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
+        read.add(id);
+        localStorage.setItem(READ_KEY, JSON.stringify(Array.from(read)));
     };
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -166,17 +147,22 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                 variant="ghost"
                 size="icon"
                 className={cn(
-                    "relative glass rounded-full transition-all duration-200",
+                    "relative glass rounded-full transition-all duration-200 hover:shadow-md",
                     isOpen && "bg-blue-50 text-blue-600"
                 )}
                 onClick={onToggle}
             >
-                <Bell className="h-5 w-5" />
+                <div className="relative">
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                        <span className="absolute -inset-2 rounded-full bg-blue-500/10 animate-pulse" />
+                    )}
+                </div>
                 {unreadCount > 0 && (
                     <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium"
+                        className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium shadow"
                     >
                         {unreadCount > 9 ? '9+' : unreadCount}
                     </motion.span>
@@ -193,10 +179,10 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                         transition={{ duration: 0.2 }}
                         className="absolute right-0 mt-2 w-96 z-50"
                     >
-                        <Card className="glass border-0 shadow-2xl">
+            <Card className="glass border border-gray-200/40 shadow-2xl backdrop-blur-xl">
                             <CardContent className="p-0">
                                 {/* Header */}
-                                <div className="p-4 border-b border-gray-200/20">
+                <div className="p-4 border-b border-gray-200/40 bg-gradient-to-r from-white to-blue-50">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                             Notifications
@@ -206,7 +192,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={markAllAsRead}
-                                                className="text-xs"
+                        className="text-xs hover:bg-blue-100 text-blue-700"
                                             >
                                                 Mark all as read
                                             </Button>
@@ -229,8 +215,8 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                                     initial={{ opacity: 0, x: -20 }}
                                                     animate={{ opacity: 1, x: 0 }}
                                                     className={cn(
-                                                        "p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer",
-                                                        !notification.isRead && "bg-blue-50/50 dark:bg-blue-900/20"
+                                                        "group p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer",
+                                                        !notification.isRead && "bg-blue-50/60 dark:bg-blue-900/20 border-l-4 border-blue-400"
                                                     )}
                                                     onClick={() => markAsRead(notification.id)}
                                                 >
@@ -253,7 +239,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                                                     <Button
                                                                         variant="ghost"
                                                                         size="icon"
-                                                                        className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-red-100 hover:text-red-600"
+                                                                        className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-red-100 hover:text-red-600 rounded-full"
                                                                         onClick={(e) => {
                                                                             e.stopPropagation();
                                                                             removeNotification(notification.id);
@@ -296,10 +282,10 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
 
                                 {/* Footer */}
                                 {notifications.length > 0 && (
-                                    <div className="p-4 border-t border-gray-200/20">
+                    <div className="p-4 border-t border-gray-200/40 bg-white/60">
                                         <Button
                                             variant="ghost"
-                                            className="w-full text-sm text-blue-600 hover:text-blue-700"
+                        className="w-full text-sm text-blue-600 hover:text-blue-700"
                                             onClick={() => {
                                                 // Navigate to notifications page
                                                 window.location.href = '/notifications';

@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { redirect } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search,

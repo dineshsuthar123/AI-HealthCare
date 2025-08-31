@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
+import { usePathname, useRouter } from '@/navigation';
 import { Globe, Check, ChevronDown, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
@@ -32,6 +33,20 @@ export default function ReliableLanguageSwitcher({
     const [isOpen, setIsOpen] = useState(false);
     const locale = useLocale();
     const [isMounted, setIsMounted] = useState(false);
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const supportedLocales = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
+    const stripLeadingLocale = (path: string | null | undefined) => {
+        if (!path) return '/';
+        const parts = path.split('/');
+        // ['', 'en', '...']
+        if (parts.length > 1 && supportedLocales.includes(parts[1] as any)) {
+            const rest = parts.slice(2).join('/');
+            return rest ? `/${rest}` : '/';
+        }
+        return path || '/';
+    };
 
     // Prevent hydration issues
     useEffect(() => {
@@ -52,63 +67,16 @@ export default function ReliableLanguageSwitcher({
 
                 // 2. Store preference in localStorage
                 localStorage.setItem('preferredLocale', newLocale);
-
-                // 3. Get current path and properly rebuild it with new locale
-                const pathname = window.location.pathname;
-
-                // Split the pathname to get segments
-                const segments = pathname.split('/').filter(Boolean);
-
-                // Check if first segment is a locale
-                const isFirstSegmentLocale = languages.some(lang => lang.code === segments[0]);
-
-                // Remove the current locale from the path if it exists
-                let pathWithoutLocale = '';
-                if (isFirstSegmentLocale && segments.length > 1) {
-                    // There's a locale and more path segments
-                    pathWithoutLocale = segments.slice(1).join('/');
-                } else if (!isFirstSegmentLocale && segments.length > 0) {
-                    // There's no locale but there are path segments
-                    pathWithoutLocale = segments.join('/');
-                }
-                // Otherwise we're on the root path
-
-                // 4. Construct the new path with the selected locale
-                const newPath = `/${newLocale}${pathWithoutLocale ? '/' + pathWithoutLocale : ''}`;
-
-                // 5. Add cache-busting parameter to force a clean reload
-                const timestamp = Date.now();
-
-                // 6. Add query params if they exist (but exclude our cache busting params)
-                const url = new URL(window.location.href);
-                url.searchParams.delete('_i18n_refresh');
-                url.searchParams.delete('_t');
-                url.searchParams.delete('_nocache');
-                const cleanSearch = url.search;
-
-                // 7. Add our cache busting parameter
-                const separator = cleanSearch ? '&' : '?';
-                const finalUrl = `${newPath}${cleanSearch}${separator}_nocache=${timestamp}`;
-
-                // 8. Log for debugging
-                console.log(`Language switching: ${pathname} → ${finalUrl}`);
-
-                // 9. Navigate (most reliable method - forces a full page reload)
-                window.location.href = finalUrl;
-
-                // 10. For extra reliability, reload after a short delay if the navigation didn't happen
-                setTimeout(() => {
-                    if (locale === newLocale) {
-                        console.log('Forcing reload to refresh translations');
-                        window.location.reload();
-                    }
-                }, 500);
+                // 3. Use next-intl navigation to switch locales reliably
+                const currentPath = typeof window !== 'undefined' ? window.location.pathname : pathname;
+                const basePath = stripLeadingLocale(currentPath);
+                router.replace(basePath || '/', { locale: newLocale });
             } catch (error) {
                 console.error('Error during language switch:', error);
                 // Fallback to a simpler approach if something went wrong
                 try {
-                    // Add a cache busting parameter
-                    window.location.href = `/${newLocale}?_nocache=${Date.now()}`;
+                    // Navigate directly to the locale root
+                    window.location.href = `/${newLocale}`;
                 } catch (innerError) {
                     console.error('Fallback navigation failed:', innerError);
                     // Ultimate fallback - just try to go to the language root

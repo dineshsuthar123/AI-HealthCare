@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/navigation';
 import { Heart, Stethoscope, Video, MessageSquare, BarChart3, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,8 +7,8 @@ import { ParticlesBackground } from '@/components/animations/particles-backgroun
 import { DNAAnimation, HeartbeatAnimation, PulseRingsAnimation, StethoscopeIcon } from '@/components/animations/medical-animations';
 import { FadeIn, FloatingElement, GlowingText, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/motion-effects';
 
-export default function HomePage() {
-    const t = useTranslations('Home');
+export default async function HomePage() {
+    const t = await getTranslations('Home');
 
     const features = [
         {

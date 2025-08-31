@@ -34,6 +34,17 @@ export default function LanguageSwitcher({
     const router = useRouter();
     const pathname = usePathname();
 
+    const supportedLocales = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
+    const stripLeadingLocale = (path: string | null | undefined) => {
+        if (!path) return '/';
+        const parts = path.split('/');
+        if (parts.length > 1 && supportedLocales.includes(parts[1] as any)) {
+            const rest = parts.slice(2).join('/');
+            return rest ? `/${rest}` : '/';
+        }
+        return path || '/';
+    };
+
     const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]; const handleLanguageChange = (newLocale: string) => {
         // Close dropdown
         setIsOpen(false);
@@ -45,8 +56,9 @@ export default function LanguageSwitcher({
 
         // Navigate to the same page but with new locale
         try {
-            // Use the pathname from next-intl navigation
-            router.push(pathname, { locale: newLocale });
+            // Use the pathname from next-intl navigation but strip the current locale
+            const basePath = stripLeadingLocale(pathname);
+            router.push(basePath, { locale: newLocale });
         } catch (error) {
             console.error('Error changing language:', error);
             // Fallback: construct the URL manually

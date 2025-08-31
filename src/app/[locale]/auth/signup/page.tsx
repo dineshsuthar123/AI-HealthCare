@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link } from '@/navigation';
+import { useRouter } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import { signIn } from 'next-auth/react';
 import { Heart, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
