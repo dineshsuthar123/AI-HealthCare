@@ -158,28 +158,21 @@ export function handleApiError(error: unknown, includeDetails: boolean = false) 
         }
     }
 
-    // OpenAI API error specific class
-    class OpenAIServiceError extends ServiceUnavailableError {
-        constructor(message: string = 'AI service temporarily unavailable', details?: ErrorDetail) {
-            super(message, 'AI_SERVICE_ERROR', details);
-            this.name = 'OpenAIServiceError';
+    // AI provider error handling (OpenAI/Groq/etc.)
+    if (error instanceof Error) {
+        const name = error.name || '';
+        const message = error.message || '';
+        if (/OpenAI|Groq/i.test(name) || /OpenAI|Groq/i.test(message)) {
+            return NextResponse.json(
+                {
+                    error: 'AI Service Error',
+                    code: 'AI_SERVICE_ERROR',
+                    message: 'The AI analysis service is temporarily unavailable. Please try again later.',
+                    ...(includeDetails && { details: error.message }),
+                },
+                { status: HttpStatusCode.SERVICE_UNAVAILABLE }
+            );
         }
-    }
-
-    // OpenAI API error handling
-    if (error instanceof Error &&
-        ((error.name && error.name.includes('OpenAI')) ||
-            (error.message && error.message.includes('OpenAI')) ||
-            (error.name && error.name === 'OpenAIError'))) {
-        return NextResponse.json(
-            {
-                error: 'AI Service Error',
-                code: 'AI_SERVICE_ERROR',
-                message: 'The AI analysis service is temporarily unavailable. Please try again later.',
-                ...(includeDetails && { details: error.message }),
-            },
-            { status: HttpStatusCode.SERVICE_UNAVAILABLE }
-        );
     }
 
     // Twilio API error

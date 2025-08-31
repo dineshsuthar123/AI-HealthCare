@@ -5,6 +5,8 @@ import connectDB from '@/lib/mongodb';
 import HealthRecordModel from '@/models/HealthRecord';
 import mongoose from 'mongoose';
 
+export const runtime = 'nodejs';
+
 // Handle GET for a specific health record
 export async function GET(req: NextRequest) {
     try {

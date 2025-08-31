@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { redirect } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import { Link } from '@/navigation';
 import { useState, useEffect } from 'react';
 import { Users, Calendar, Clock, FileText } from 'lucide-react';
@@ -46,6 +46,7 @@ interface DashboardData {
 export default function ProviderDashboardPage() {
     const { data: session, status } = useSession();
     const t = useTranslations('ProviderDashboard');
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState('overview');
     const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -54,13 +55,13 @@ export default function ProviderDashboardPage() {
     // Redirect if not logged in or not a provider
     useEffect(() => {
         if (status === 'unauthenticated') {
-            redirect('/auth/signin');
+            router.push('/auth/signin');
         }
 
         if (session && session.user.role !== 'provider') {
-            redirect('/dashboard');
+            router.push('/dashboard');
         }
-    }, [session, status]);
+    }, [session, status, router]);
 
     // Fetch provider dashboard data
     useEffect(() => {

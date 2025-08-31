@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { VideoCall } from '@/components/consultations/video-call';
 

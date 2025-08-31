@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import connectToDatabase from '@/lib/mongodb';
 import SymptomCheckModel from '@/models/SymptomCheck';
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     try {
         // Get the authenticated user
         const session = await getServerSession(authOptions);
-        if (!session || !session.user) {
+    if (!session || !session.user || !session.user.id) {
             return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
         }
 
@@ -21,9 +21,9 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { symptoms, analysis } = body;
 
-        if (!symptoms || !analysis) {
+    if (!Array.isArray(symptoms) || !analysis || typeof analysis !== 'object') {
             return NextResponse.json(
-                { error: 'Symptoms and analysis data are required' },
+        { error: 'Symptoms and analysis data are required' },
                 { status: 400 }
             );
         }
@@ -72,3 +72,6 @@ export async function POST(req: Request) {
         );
     }
 }
+
+// Ensure Node.js runtime to make getServerSession work reliably
+export const runtime = 'nodejs';

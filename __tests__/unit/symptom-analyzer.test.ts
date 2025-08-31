@@ -1,11 +1,12 @@
 import { analyzeSymptoms, generateHealthAdvice, type SymptomInput } from '@/lib/ai/symptom-analyzer';
-import { OpenAI } from 'openai';
+import Groq from 'groq-sdk';
 
-// Mock OpenAI
-jest.mock('openai', () => {
+// Mock Groq SDK
+jest.mock('groq-sdk', () => {
     const mockCreate = jest.fn();
     return {
-        OpenAI: jest.fn().mockImplementation(() => ({
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => ({
             chat: {
                 completions: {
                     create: mockCreate
@@ -17,19 +18,19 @@ jest.mock('openai', () => {
 
 describe('Symptom Analyzer', () => {
     let mockCreate: jest.Mock;
-    const mockedOpenAI = OpenAI as unknown as jest.Mock;
+    const mockedGroq = Groq as unknown as jest.Mock;
 
     beforeEach(() => {
         // Clear all mocks before each test
         jest.clearAllMocks();
 
         // Set up the mock create function
-        mockCreate = mockedOpenAI().chat.completions.create as jest.Mock;
+    mockCreate = mockedGroq().chat.completions.create as jest.Mock;
         mockCreate.mockClear();
     });
 
     // Mock environment variables
-    process.env.OPENAI_API_KEY = 'test-api-key';
+    process.env.GROQ_API_KEY = 'test-api-key';
 
     describe('analyzeSymptoms', () => {
         const mockSymptoms: SymptomInput[] = [
@@ -66,7 +67,7 @@ describe('Symptom Analyzer', () => {
                 usage: {
                     total_tokens: 350
                 }
-            } as unknown as OpenAI.Chat.Completions.ChatCompletion);
+            } as unknown as any);
 
             const result = await analyzeSymptoms(mockSymptoms);
 
@@ -112,7 +113,7 @@ describe('Symptom Analyzer', () => {
                         }
                     }
                 ]
-            } as unknown as OpenAI.Chat.Completions.ChatCompletion);
+            } as unknown as any);
 
             const result = await analyzeSymptoms(mockSymptoms);
 
@@ -169,7 +170,7 @@ describe('Symptom Analyzer', () => {
                         }
                     }
                 ]
-            } as unknown as OpenAI.Chat.Completions.ChatCompletion);
+            } as unknown as any);
 
             const result = await generateHealthAdvice('Headache');
 

@@ -1,33 +1,21 @@
 import { AIAnalysis } from '@/lib/ai/symptom-analyzer';
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 
-// Initialize OpenAI with better error checking
-let openai: OpenAI;
+// Initialize Groq with better error checking
+let groq: Groq | null = null;
 try {
     // Get API key with explicit fallback
-    const apiKey = process.env.OPENAI_API_KEY?.trim();
+    const apiKey = process.env.GROQ_API_KEY?.trim();
 
     if (!apiKey) {
-        console.warn('OPENAI_API_KEY is not defined or empty. SMS AI features will use fallback responses.');
-        throw new Error('Missing OpenAI API key');
+        console.warn('GROQ_API_KEY is not defined or empty. SMS AI features will use fallback responses.');
+        throw new Error('Missing Groq API key');
     }
 
-    openai = new OpenAI({
-        apiKey: apiKey,
-        timeout: 8000, // 8 seconds timeout for SMS analysis for faster responses
-    });
+    groq = new Groq({ apiKey });
 } catch (error) {
-    console.error('Failed to initialize OpenAI client for SMS analyzer:', error);
-    // Create a dummy client that will throw controlled errors
-    openai = {
-        chat: {
-            completions: {
-                create: async () => {
-                    throw new Error('OpenAI client not properly initialized: ' + (error instanceof Error ? error.message : String(error)));
-                }
-            }
-        }
-    } as unknown as OpenAI;
+    console.error('Failed to initialize Groq client for SMS analyzer:', error);
+    groq = null;
 }
 
 // Cache for SMS symptom analysis to prevent repeated API calls
@@ -79,8 +67,9 @@ Remember to be concise as this is for SMS.`;
 
         // Try to use AI models
         try {
-            const completion = await openai.chat.completions.create({
-                model: "gpt-3.5-turbo", // Use faster model for SMS
+            if (!groq) throw new Error('Groq client not initialized');
+            const completion = await groq.chat.completions.create({
+                model: "llama-3.1-8b-instant", // Use fast Groq model for SMS
                 messages: [
                     {
                         role: "system",
@@ -92,8 +81,7 @@ Remember to be concise as this is for SMS.`;
                     }
                 ],
                 temperature: 0.3,
-                max_tokens: 500, // Reduced for SMS
-                response_format: { type: "json_object" }
+                max_tokens: 500
             });
 
             const response = completion.choices[0]?.message?.content;
@@ -125,7 +113,7 @@ Remember to be concise as this is for SMS.`;
                 }
             }
         } catch (aiError) {
-            console.error('Error using OpenAI for SMS analysis:', aiError);
+            console.error('Error using Groq for SMS analysis:', aiError);
             // Continue to fallback
         }
 

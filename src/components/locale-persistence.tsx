@@ -9,6 +9,17 @@ export default function LocalePersistence() {
     const router = useRouter();
     const pathname = usePathname();
 
+    const supportedLocales = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
+    const stripLeadingLocale = (path: string | null | undefined) => {
+        if (!path) return '/';
+        const parts = path.split('/');
+        if (parts.length > 1 && supportedLocales.includes(parts[1] as any)) {
+            const rest = parts.slice(2).join('/');
+            return rest ? `/${rest}` : '/';
+        }
+        return path || '/';
+    };
+
     useEffect(() => {
         // Save current locale to localStorage
         if (typeof window !== 'undefined') {
@@ -38,7 +49,7 @@ export default function LocalePersistence() {
                     localStorage.setItem('preferredLocale', forceLocale);
 
                     // Navigate to the new locale using the router for a clean transition
-                    router.push(pathname, { locale: forceLocale });
+                    router.push(stripLeadingLocale(pathname), { locale: forceLocale });
                     return;
                 }
             }
@@ -50,9 +61,9 @@ export default function LocalePersistence() {
             if (savedLocale && savedLocale !== locale) {
                 // Check if the saved locale is supported
                 const supportedLocales = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'];
-                if (supportedLocales.includes(savedLocale)) {
+                if (supportedLocales.includes(savedLocale as any)) {
                     console.log(`LocalePersistence: Switching to saved locale ${savedLocale}`);
-                    router.push(pathname, { locale: savedLocale });
+                    router.push(stripLeadingLocale(pathname), { locale: savedLocale });
                 }
             }
         }

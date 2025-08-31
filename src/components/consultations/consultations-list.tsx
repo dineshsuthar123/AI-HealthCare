@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { formatDate, formatTime } from '@/lib/utils';
 import { Consultation } from '@/types';
+import { useRouter } from '@/navigation';
 
 interface ConsultationsListProps {
     isPast?: boolean;
@@ -14,12 +15,20 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
     const t = useTranslations('Consultations');
     const [consultations, setConsultations] = useState<Consultation[]>([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchConsultations = async () => {
             try {
-                const response = await fetch(`/api/consultations?isPast=${isPast}`);
+                const response = await fetch(`/api/consultations?isPast=${isPast}` , {
+                    credentials: 'include'
+                });
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        // Redirect unauthenticated users to sign-in (locale-aware)
+                        router.push('/auth/signin');
+                        return;
+                    }
                     throw new Error('Failed to fetch consultations');
                 }
                 const data = await response.json();
@@ -46,9 +55,14 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ id: consultationId }),
+                credentials: 'include',
             });
 
             if (!response.ok) {
+                if (response.status === 401) {
+                    router.push('/auth/signin');
+                    return;
+                }
                 throw new Error('Failed to cancel consultation');
             }
 
