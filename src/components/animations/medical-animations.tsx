@@ -2,6 +2,125 @@
 
 import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import { motion } from '@/lib/framer-motion';
+
+interface MedicalAnimationProps {
+    className?: string;
+    size?: number;
+    color?: string;
+}
+
+interface MedicalAnimationsProps {
+    activePanel: 'video' | 'notes' | 'vitals' | 'tools';
+}
+
+export const MedicalAnimations: React.FC<MedicalAnimationsProps> = ({ activePanel }) => {
+    const FloatingParticle = ({ delay = 0, x = 0, y = 0, size = 4 }) => (
+        <motion.div
+            className="absolute bg-blue-300 rounded-full opacity-20"
+            style={{ width: size, height: size }}
+            initial={{ x, y, opacity: 0 }}
+            animate={{
+                x: [x, x + 20, x - 10, x],
+                y: [y, y - 30, y + 10, y],
+                opacity: [0, 0.3, 0.1, 0],
+            }}
+            transition={{
+                duration: 4,
+                delay,
+                repeat: Infinity,
+                repeatType: 'loop',
+                ease: 'easeInOut',
+            }}
+        />
+    );
+
+    const PulseRing = ({ size = 40, delay = 0 }) => (
+        <motion.div
+            className="absolute border-2 border-green-400 rounded-full opacity-30"
+            style={{ width: size, height: size }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{
+                scale: [0, 1.5, 2],
+                opacity: [0, 0.5, 0],
+            }}
+            transition={{
+                duration: 3,
+                delay,
+                repeat: Infinity,
+                repeatType: 'loop',
+                ease: 'easeOut',
+            }}
+        />
+    );
+
+    const HeartbeatLine = () => (
+        <motion.svg
+            className="absolute opacity-10"
+            width="200"
+            height="60"
+            viewBox="0 0 200 60"
+        >
+            <motion.path
+                d="M0,30 L40,30 L50,10 L60,50 L70,20 L80,40 L90,30 L200,30"
+                stroke="red"
+                strokeWidth="2"
+                fill="none"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: 'loop',
+                    ease: 'easeInOut',
+                }}
+            />
+        </motion.svg>
+    );
+
+    const renderAnimationsByPanel = () => {
+        switch (activePanel) {
+            case 'video':
+                return (
+                    <>
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <FloatingParticle
+                                key={i}
+                                delay={i * 0.5}
+                                x={Math.random() * 200}
+                                y={Math.random() * 200}
+                                size={Math.random() * 6 + 2}
+                            />
+                        ))}
+                        <div className="absolute top-1/4 left-1/4">
+                            <PulseRing size={60} delay={0} />
+                            <PulseRing size={80} delay={1} />
+                        </div>
+                    </>
+                );
+            case 'vitals':
+                return (
+                    <>
+                        <div className="absolute top-1/3 left-10">
+                            <HeartbeatLine />
+                        </div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <PulseRing size={100} delay={0} />
+                            <PulseRing size={120} delay={0.5} />
+                        </div>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {renderAnimationsByPanel()}
+        </div>
+    );
+};
 
 interface MedicalAnimationProps {
     className?: string;
