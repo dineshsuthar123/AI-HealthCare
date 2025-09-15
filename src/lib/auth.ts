@@ -5,7 +5,7 @@ import { Adapter } from 'next-auth/adapters';
 import { MongoClient } from 'mongodb';
 import connectDB from './mongodb';
 import User from '../models/User';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 
 // Extend the standard next-auth types
 declare module "next-auth" {

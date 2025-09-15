@@ -6,17 +6,26 @@ import { Loader2 } from 'lucide-react';
 
 interface Props {
     children: ReactNode;
+    /** If true, never show the blocking overlay (useful on auth pages) */
+    disableOverlay?: boolean;
 }
 
-export default function AuthProvider({ children }: Props) {
+export default function AuthProvider({ children, disableOverlay }: Props) {
     const [isLoading, setIsLoading] = useState(true);
     const [loadingMessage, setLoadingMessage] = useState('Loading your healthcare data...');
 
     // Use effect to optimize loading experience
     useEffect(() => {
+        // Early exit on auth pages or when overlay disabled
+        const isAuthRoute = typeof window !== 'undefined' && /\/auth\/(signin|signup|forgot-password)/.test(window.location.pathname);
+        if (disableOverlay || isAuthRoute) {
+            setIsLoading(false);
+            return;
+        }
+
         // Check for stored auth data to make loading appear faster
-        const storedSession = localStorage.getItem('userSession');
-        let quickCheckTimer: NodeJS.Timeout;
+        const storedSession = typeof window !== 'undefined' ? localStorage.getItem('userSession') : null;
+        let quickCheckTimer: ReturnType<typeof setTimeout> | undefined;
 
         // Set a maximum time for loading state
         const maxLoadTimer = setTimeout(() => {
@@ -61,7 +70,7 @@ export default function AuthProvider({ children }: Props) {
             clearTimeout(maxLoadTimer);
             if (quickCheckTimer) clearTimeout(quickCheckTimer);
         };
-    }, []);
+    }, [disableOverlay]);
 
     return (
         <SessionProvider refetchInterval={60} refetchOnWindowFocus={true}>

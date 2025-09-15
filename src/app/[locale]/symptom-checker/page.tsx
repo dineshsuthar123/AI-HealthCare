@@ -11,11 +11,14 @@ import { cn, getRiskColor, getUrgencyColor } from '@/lib/utils';
 import { useToast, ToastContainer } from '@/components/ui/toast';
 import { EmergencyContact } from '@/components/symptom-checker/emergency-contact';
 import { ParticlesBackground } from '@/components/animations/particles-background';
+import { useRouter, usePathname } from '@/navigation';
 import { FadeIn, ScaleIn, StaggerContainer } from '@/components/animations/motion-effects';
 
 export default function SymptomCheckerPage() {
     const t = useTranslations('SymptomChecker');
     const { toasts, removeToast, success, error: showError } = useToast();
+    const router = useRouter();
+    const pathname = usePathname();
 
     const [symptoms, setSymptoms] = useState<SymptomInput[]>([]);
     const [currentSymptom, setCurrentSymptom] = useState<SymptomInput>({
@@ -430,6 +433,7 @@ export default function SymptomCheckerPage() {
                                                         const response = await fetch('/api/symptom-check/save', {
                                                             method: 'POST',
                                                             headers: { 'Content-Type': 'application/json' },
+                                                            credentials: 'include',
                                                             body: JSON.stringify({
                                                                 symptoms,
                                                                 analysis,
@@ -439,9 +443,27 @@ export default function SymptomCheckerPage() {
 
                                                         if (response.ok) {
                                                             success(t('resultsSaved') || 'Analysis saved successfully');
-                                                        } else {
-                                                            throw new Error('Failed to save results');
+                                                            return;
                                                         }
+
+                                                        // Try to parse error details
+                                                        let errMsg = 'Failed to save results';
+                                                        try {
+                                                            const data = await response.json();
+                                                            if (data?.error) errMsg = String(data.error);
+                                                        } catch {
+                                                            // ignore JSON parse errors
+                                                        }
+
+                                                        if (response.status === 401) {
+                                                            // Not authenticated: prompt sign-in and redirect back after login
+                                                            showError(t('authRequired') || 'Please sign in to save results.');
+                                                            const callbackUrl = encodeURIComponent(pathname || '/');
+                                                            router.push(`/auth/signin?callbackUrl=${callbackUrl}`);
+                                                            return;
+                                                        }
+
+                                                        throw new Error(errMsg);
                                                     } catch (error) {
                                                         console.error('Error saving results:', error);
                                                         showError(t('savingError') || 'Failed to save results. Please try again.');

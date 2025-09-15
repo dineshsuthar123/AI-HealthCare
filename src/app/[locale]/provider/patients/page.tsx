@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth/next';
+import { redirect } from '@/navigation';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import {
@@ -118,14 +118,15 @@ export async function generateMetadata(
     };
 }
 
-export default async function ProviderPatientsPage() {
+export default async function ProviderPatientsPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     const data = await getProviderWithPatients();
 
     if (!data) {
-        redirect('/auth/signin');
+        redirect({ href: '/auth/signin', locale });
     }
 
-    const { provider, patients, requestingPatients } = data;
+    const { provider, patients, requestingPatients } = data!;
 
     return (
         <ProviderPatientsUI

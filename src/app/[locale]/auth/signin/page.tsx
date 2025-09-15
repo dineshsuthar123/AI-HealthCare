@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link } from '@/navigation';
+import { useRouter } from '@/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Heart, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { useToast } from '@/components/ui/toast';
 
 export default function SignInPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const t = useTranslations('Auth');
     const { success } = useToast();
     const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +31,13 @@ export default function SignInPage() {
             // Pre-store session information to make subsequent loads faster
             localStorage.setItem('userSession', JSON.stringify({ email, timestamp: Date.now() }));
 
+            const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard';
+
             const result = await signIn('credentials', {
                 redirect: false,
                 email,
                 password,
+                callbackUrl,
             });
 
             if (result?.error) {
@@ -47,7 +52,18 @@ export default function SignInPage() {
 
             // Set a small delay for feedback before redirecting
             setTimeout(() => {
-                router.push('/dashboard');
+                // If callbackUrl is absolute, let the browser handle it; else use locale-aware router
+                try {
+                    const url = new URL(callbackUrl, window.location.origin);
+                    const isSameOrigin = url.origin === window.location.origin;
+                    if (isSameOrigin) {
+                        router.push(url.pathname + url.search + url.hash);
+                    } else {
+                        window.location.href = url.toString();
+                    }
+                } catch {
+                    router.push(callbackUrl || '/dashboard');
+                }
             }, 500);
         } catch (err) {
             console.error('Sign in error:', err);

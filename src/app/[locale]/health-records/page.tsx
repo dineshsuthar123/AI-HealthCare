@@ -12,6 +12,7 @@ import { HealthRecordForm } from '@/components/health-records/health-record-form
 import { IHealthRecord } from '@/models/HealthRecord';
 import { ParticlesBackground } from '@/components/animations/particles-background';
 import { FadeIn, ScaleIn, StaggerContainer } from '@/components/animations/motion-effects';
+import { useRouter } from '@/navigation';
 
 // Define a client-side type that includes MongoDB's _id
 interface HealthRecord extends Omit<IHealthRecord, 'userId' | 'date' | 'createdAt' | 'updatedAt'> {
@@ -24,6 +25,7 @@ interface HealthRecord extends Omit<IHealthRecord, 'userId' | 'date' | 'createdA
 export default function HealthRecordsPage() {
     const t = useTranslations('HealthRecords');
     const { success, error: showError } = useToast();
+    const router = useRouter();
 
     const [records, setRecords] = useState<HealthRecord[]>([]);
     const [filteredRecords, setFilteredRecords] = useState<HealthRecord[]>([]);
@@ -55,8 +57,14 @@ export default function HealthRecordsPage() {
     const fetchRecords = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('/api/health-records');
-            if (!response.ok) throw new Error('Failed to fetch records');
+            const response = await fetch('/api/health-records', { credentials: 'include' });
+            if (!response.ok) {
+                if (response.status === 401) {
+                    router.push('/auth/signin');
+                    return;
+                }
+                throw new Error('Failed to fetch records');
+            }
 
             const data = await response.json();
             setRecords(data.records);
@@ -95,7 +103,8 @@ export default function HealthRecordsPage() {
             const response = await fetch('/api/health-records', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include'
             });
 
             if (!response.ok) throw new Error('Failed to create record');
@@ -117,7 +126,8 @@ export default function HealthRecordsPage() {
             const response = await fetch(`/api/health-records/${editingRecord._id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include'
             });
 
             if (!response.ok) throw new Error('Failed to update record');
@@ -140,8 +150,14 @@ export default function HealthRecordsPage() {
     const handleDeleteRecord = async (id: string) => {
         try {
             const response = await fetch(`/api/health-records/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                credentials: 'include'
             });
+            
+            if (response.status === 401) {
+                router.push('/auth/signin');
+                return;
+            }
 
             if (!response.ok) throw new Error('Failed to delete record');
 
@@ -161,7 +177,8 @@ export default function HealthRecordsPage() {
             const response = await fetch(`/api/health-records/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...record, isShared })
+                body: JSON.stringify({ ...record, isShared }),
+                credentials: 'include'
             });
 
             if (!response.ok) throw new Error('Failed to update sharing settings');

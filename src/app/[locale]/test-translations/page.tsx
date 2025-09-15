@@ -61,11 +61,6 @@ export default async function TestPage() {
                     <p className="mb-4">If you're experiencing issues with the translation page, try these options:</p>
                     <div className="space-y-3">
                         <p>
-                            <a href="/test-fallback" className="text-blue-600 hover:underline">
-                                Go to Fallback Test Page
-                            </a>
-                        </p>
-                        <p>
                             <a href={`/${locale}/test-translations?_i18n_refresh=${Date.now()}`} className="text-blue-600 hover:underline">
                                 Refresh Current Page with Cache Busting
                             </a>

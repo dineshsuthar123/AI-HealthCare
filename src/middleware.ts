@@ -24,11 +24,7 @@ export default function middleware(request: NextRequest) {
     // Create a log of the request for debugging
     console.log(`Middleware processing: ${pathname}`);
 
-    // Explicitly check for test-fallback page - this needs to be excluded from locale handling
-    if (pathname === '/test-fallback' || pathname.startsWith('/test-fallback/')) {
-        console.log('Bypassing middleware for test-fallback page');
-        return NextResponse.next();
-    }
+    // Removed legacy test-fallback bypass
 
     // Skip middleware for API routes, static files, and other excluded paths
     if (
@@ -55,7 +51,6 @@ export const config = {
         // - API routes (/api/...)
         // - Next.js internals (_next/...)
         // - Static files (including favicon.ico, images, etc)
-        // - Test fallback page and all its sub-paths (/test-fallback/*)
-        '/((?!api|_next|_vercel|test-fallback|static-fallback\\.html|static-test|favicon.ico|.*\\.(?:jpg|jpeg|gif|png|svg|webp)).*)'
+    '/((?!api|_next|_vercel|static-fallback\\.html|static-test|favicon.ico|.*\\.(?:jpg|jpeg|gif|png|svg|webp)).*)'
     ]
 };

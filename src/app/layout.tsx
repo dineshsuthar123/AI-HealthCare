@@ -10,8 +10,9 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
+    // Do not set lang here; the [locale] layout handles localized rendering
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html suppressHydrationWarning>
             <body className="min-h-screen antialiased">{children}</body>
         </html>
     );

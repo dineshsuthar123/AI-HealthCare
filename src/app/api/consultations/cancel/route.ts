@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import connectToDatabase from '@/lib/mongodb';
 import ConsultationModel from '@/models/Consultation';
+
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
     try {

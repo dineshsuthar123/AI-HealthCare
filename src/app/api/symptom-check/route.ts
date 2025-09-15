@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import SymptomCheck from '@/models/SymptomCheck';
@@ -183,3 +183,6 @@ export async function POST(request: NextRequest) {
         return handleApiError(error);
     }
 }
+
+// Ensure Node.js runtime for compatibility with NextAuth session lookup
+export const runtime = 'nodejs';

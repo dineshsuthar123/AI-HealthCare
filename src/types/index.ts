@@ -72,9 +72,20 @@ export interface Consultation {
     status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
     scheduledFor: Date;
     duration: number;
+    priority?: 'low' | 'medium' | 'high';
     notes?: string;
     diagnosis?: string;
     prescriptions?: Prescription[];
+    aiTriageData?: {
+        riskLevel: 'low' | 'medium' | 'high' | 'critical';
+        urgency: 'routine' | 'urgent' | 'emergency';
+        recommendations?: string[];
+        possibleConditions?: {
+            condition: string;
+            probability: number;
+            description: string;
+        }[];
+    };
     followUp?: {
         required: boolean;
         scheduledAt?: Date;

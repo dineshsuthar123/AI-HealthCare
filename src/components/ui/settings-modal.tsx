@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Settings, X, Moon, Sun, Globe, Bell, Shield, User, Palette, Volume2, Monitor } from 'lucide-react';
+import { Settings, X, Moon, Sun, Bell, Shield, User, Palette, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
 import ReliableLanguageSwitcher from '@/components/ui/reliable-language-switcher';
+import { useTheme } from '@/components/providers/theme-provider';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -77,7 +78,11 @@ const defaultSettings: UserSettings = {
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const t = useTranslations('Settings');
-    const [settings, setSettings] = useState<UserSettings>(defaultSettings);
+    const { theme, setTheme } = useTheme();
+    const [settings, setSettings] = useState<UserSettings>({
+        ...defaultSettings,
+        theme: theme,
+    });
     const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'privacy' | 'profile' | 'accessibility'>('general');
     const [hasChanges, setHasChanges] = useState(false);
     const [isClient, setIsClient] = useState(false);
@@ -87,12 +92,58 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         setIsClient(true);
     }, []);
 
+    // Prevent background scroll when modal is open and restore on close
     useEffect(() => {
-        // Load settings from localStorage on mount
+        if (!isClient) return;
+        if (!isOpen) return;
+        const scrollY = window.scrollY;
+        const original = {
+            position: document.body.style.position,
+            top: document.body.style.top,
+            overflow: document.body.style.overflow,
+            width: document.body.style.width,
+        };
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.overflow = 'hidden';
+        document.body.style.width = '100%';
+        return () => {
+            document.body.style.position = original.position;
+            document.body.style.top = original.top;
+            document.body.style.overflow = original.overflow;
+            document.body.style.width = original.width;
+            const y = parseInt((original.top || '0').toString().replace('-', '')) || scrollY;
+            window.scrollTo(0, y);
+        };
+    }, [isOpen, isClient]);
+
+    useEffect(() => {
+        // Prefill from server if logged in
+        fetch('/api/user/settings', { credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data) {
+                    setSettings(prev => ({
+                        ...prev,
+                        ...(data.preferences ? {
+                            theme: data.preferences.theme ?? prev.theme,
+                            notifications: { ...prev.notifications, ...data.preferences.notifications },
+                            accessibility: { ...prev.accessibility, ...data.preferences.accessibility },
+                        } : {}),
+                        ...(data.profile ? { profile: { ...prev.profile, ...data.profile } } : {}),
+                    }));
+                }
+            })
+            .catch(() => {
+                // ignore
+            });
+
+        // Also merge any local settings
         const savedSettings = localStorage.getItem('userSettings');
         if (savedSettings) {
             try {
-                setSettings(JSON.parse(savedSettings));
+                const parsed = JSON.parse(savedSettings);
+                setSettings((prev) => ({ ...prev, ...parsed }));
             } catch (error) {
                 console.error('Failed to parse saved settings:', error);
             }
@@ -118,6 +169,15 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const saveSettings = async () => {
         try {
             localStorage.setItem('userSettings', JSON.stringify(settings));
+
+            // Apply theme instantly
+            setTheme(settings.theme);
+
+            // Accessibility classes
+            const root = document.documentElement;
+            root.style.setProperty('--app-font-scale', settings.accessibility.fontSize === 'small' ? '0.95' : settings.accessibility.fontSize === 'large' ? '1.1' : '1');
+            if (settings.accessibility.highContrast) root.classList.add('hc'); else root.classList.remove('hc');
+            if (settings.accessibility.reducedMotion) root.classList.add('rm'); else root.classList.remove('rm');
 
             // Here you would typically save to your backend
             const response = await fetch('/api/user/settings', {
@@ -172,24 +232,24 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     if (!isOpen || !isClient) return null;
 
     return (
-        <AnimatePresence>
+    <AnimatePresence>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
                 onClick={onClose}
             >
                 <motion.div
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.95, opacity: 0 }}
-                    className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden"
+                    className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden border border-gray-200 dark:border-gray-800"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                    <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
                             <Settings className="h-6 w-6 mr-3" />
                             Settings
                         </h2>
@@ -200,7 +260,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
                     <div className="flex h-[calc(80vh-theme(spacing.16))]">
                         {/* Sidebar */}
-                        <div className="w-64 border-r border-gray-200 dark:border-gray-700 p-4">
+                        <div className="w-64 border-r border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
                             <nav className="space-y-2">
                                 {tabs.map((tab) => {
                                     const Icon = tab.icon;
@@ -211,8 +271,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             className={cn(
                                                 "w-full flex items-center px-3 py-2 text-left rounded-lg transition-colors",
                                                 activeTab === tab.id
-                                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200"
+                                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/80"
                                             )}
                                         >
                                             <Icon className="h-4 w-4 mr-3" />
@@ -224,8 +284,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         </div>
 
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto">
-                            <div className="p-6">
+                        <div className="flex-1 overflow-y-auto overscroll-contain bg-white dark:bg-gray-900">
+                            <div className="p-6 text-gray-900 dark:text-gray-100">
                                 {activeTab === 'general' && (
                                     <div className="space-y-6">
                                         <div>
@@ -234,21 +294,21 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                 <div>
                                                     <label className="block text-sm font-medium mb-2">Theme</label>
                                                     <div className="flex space-x-2">
-                                                        {(['light', 'dark', 'system'] as const).map((theme) => (
+                            {(['light', 'dark', 'system'] as const).map((opt) => (
                                                             <button
-                                                                key={theme}
-                                                                onClick={() => updateSettings('theme', theme)}
+                                                                key={opt}
+                                onClick={() => { updateSettings('theme', opt); setTheme(opt); }}
                                                                 className={cn(
                                                                     "flex items-center px-4 py-2 rounded-lg border transition-colors",
-                                                                    settings.theme === theme
-                                                                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                                                                        : "border-gray-300 hover:border-gray-400"
+                                                                    settings.theme === opt
+                                                                        ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-200"
+                                                                        : "border-gray-300 hover:border-gray-400 dark:border-gray-700 dark:hover:border-gray-600"
                                                                 )}
                                                             >
-                                                                {theme === 'light' && <Sun className="h-4 w-4 mr-2" />}
-                                                                {theme === 'dark' && <Moon className="h-4 w-4 mr-2" />}
-                                                                {theme === 'system' && <Monitor className="h-4 w-4 mr-2" />}
-                                                                {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                                                                {opt === 'light' && <Sun className="h-4 w-4 mr-2" />}
+                                                                {opt === 'dark' && <Moon className="h-4 w-4 mr-2" />}
+                                                                {opt === 'system' && <Monitor className="h-4 w-4 mr-2" />}
+                                                                {opt.charAt(0).toUpperCase() + opt.slice(1)}
                                                             </button>
                                                         ))}
                                                     </div>
@@ -268,12 +328,12 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             <div className="space-y-4">
                                                 {Object.entries(settings.notifications).slice(0, 3).map(([key, value]) => (
                                                     <div key={key} className="flex items-center justify-between">
-                                                        <label className="text-sm font-medium capitalize">{key}</label>
+                                                        <label className="text-sm font-medium capitalize text-gray-800 dark:text-gray-200">{key}</label>
                                                         <input
                                                             type="checkbox"
                                                             checked={value}
                                                             onChange={(e) => updateSettings(`notifications.${key}`, e.target.checked)}
-                                                            className="rounded"
+                                                            className="rounded accent-blue-600"
                                                             aria-label={`Toggle ${key} notification`}
                                                         />
                                                     </div>
@@ -285,12 +345,12 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             <div className="space-y-4">
                                                 {Object.entries(settings.notifications).slice(3).map(([key, value]) => (
                                                     <div key={key} className="flex items-center justify-between">
-                                                        <label className="text-sm font-medium capitalize">{key}</label>
+                                                        <label className="text-sm font-medium capitalize text-gray-800 dark:text-gray-200">{key}</label>
                                                         <input
                                                             type="checkbox"
                                                             checked={value}
                                                             onChange={(e) => updateSettings(`notifications.${key}`, e.target.checked)}
-                                                            className="rounded"
+                                                            className="rounded accent-blue-600"
                                                             aria-label={`Toggle ${key} notification`}
                                                         />
                                                     </div>
@@ -306,12 +366,12 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             <h3 className="text-lg font-semibold mb-4">Data & Privacy</h3>
                                             <div className="space-y-4">
                                                 {Object.entries(settings.privacy).map(([key, value]) => (
-                                                    <div key={key} className="flex items-center justify-between">
+                            <div key={key} className="flex items-center justify-between">
                                                         <div>
-                                                            <label className="text-sm font-medium capitalize">
+                                <label className="text-sm font-medium capitalize text-gray-800 dark:text-gray-200">
                                                                 {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
                                                             </label>
-                                                            <p className="text-xs text-gray-500 mt-1">
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                                                 {key === 'shareHealthData' && 'Allow sharing anonymized health data for research'}
                                                                 {key === 'allowAnalytics' && 'Help improve our service with usage analytics'}
                                                                 {key === 'showOnlineStatus' && 'Show when you are online to healthcare providers'}
@@ -321,7 +381,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                             type="checkbox"
                                                             checked={value}
                                                             onChange={(e) => updateSettings(`privacy.${key}`, e.target.checked)}
-                                                            className="rounded"
+                                className="rounded accent-blue-600"
                                                             aria-label={`Toggle ${key} privacy setting`}
                                                         />
                                                     </div>
@@ -369,7 +429,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                     <select
                                                         value={settings.profile.timezone}
                                                         onChange={(e) => updateSettings('profile.timezone', e.target.value)}
-                                                        className="w-full p-2 border border-gray-300 rounded-lg"
+                                                        className="w-full p-2 border border-gray-300 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700"
                                                         aria-label="Select timezone"
                                                     >
                                                         {timezones.map((tz) => (
@@ -409,33 +469,33 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                     </div>
                                                 </div>
                                                 <div className="space-y-4">
-                                                    <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between">
                                                         <label className="text-sm font-medium">High Contrast</label>
                                                         <input
                                                             type="checkbox"
                                                             checked={settings.accessibility.highContrast}
                                                             onChange={(e) => updateSettings('accessibility.highContrast', e.target.checked)}
-                                                            className="rounded"
+                                className="rounded accent-blue-600"
                                                             aria-label="Toggle High Contrast Mode"
                                                         />
                                                     </div>
-                                                    <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between">
                                                         <label className="text-sm font-medium">Reduced Motion</label>
                                                         <input
                                                             type="checkbox"
                                                             checked={settings.accessibility.reducedMotion}
                                                             onChange={(e) => updateSettings('accessibility.reducedMotion', e.target.checked)}
-                                                            className="rounded"
+                                className="rounded accent-blue-600"
                                                             aria-label="Toggle Reduced Motion"
                                                         />
                                                     </div>
-                                                    <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between">
                                                         <label className="text-sm font-medium">Sound Effects</label>
                                                         <input
                                                             type="checkbox"
                                                             checked={settings.accessibility.soundEffects}
                                                             onChange={(e) => updateSettings('accessibility.soundEffects', e.target.checked)}
-                                                            className="rounded"
+                                className="rounded accent-blue-600"
                                                             aria-label="Toggle Sound Effects"
                                                         />
                                                     </div>
@@ -448,8 +508,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         </div>
                     </div>
 
-                    {/* Footer */}
-                    <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700">
+            {/* Footer */}
+            <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
                         <Button variant="outline" onClick={resetSettings}>
                             Reset to Defaults
                         </Button>

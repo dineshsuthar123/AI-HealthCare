@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { ApiError } from '@/lib/api-error';

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/navigation';
 import ConsultationForm from '@/components/consultations/consultation-form';
 import ConsultationsList from '@/components/consultations/consultations-list';
 import { Card } from '@/components/ui/card';

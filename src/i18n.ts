@@ -1,9 +1,2 @@
-import { getRequestConfig } from 'next-intl/server';
-
-export default getRequestConfig(async ({ locale }) => {
-    const resolvedLocale = locale || 'en'; // Default to 'en' if locale is undefined
-    return {
-        locale: resolvedLocale,
-        messages: (await import(`../messages/${resolvedLocale}.json`)).default
-    };
-});
+// Deprecated: Keep for backward-compat. Delegate to the root i18n config.
+export { default } from '../i18n';

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 /**
@@ -27,3 +27,6 @@ export async function GET() {
         }, { status: 500 });
     }
 }
+
+// Ensure Node.js runtime for compatibility with NextAuth
+export const runtime = 'nodejs';

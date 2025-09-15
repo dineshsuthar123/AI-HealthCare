@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 
 // Simple in-memory cache for symptom analysis results
 // This helps prevent repeated expensive API calls for similar symptoms
@@ -10,38 +10,22 @@ interface CacheEntry {
 const analysisCache: Map<string, CacheEntry> = new Map();
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour cache validity
 
-// Initialize OpenAI with better error checking
-let openai: OpenAI;
+// Initialize Groq with better error checking
+let groq: Groq | null = null;
 try {
     // Get API key with explicit fallback
-    const apiKey = process.env.OPENAI_API_KEY?.trim();
+    const apiKey = process.env.GROQ_API_KEY?.trim();
 
     if (!apiKey) {
-        console.warn('OPENAI_API_KEY is not defined or empty. AI features will use fallback responses.');
-        throw new Error('Missing OpenAI API key');
+        console.warn('GROQ_API_KEY is not defined or empty. AI features will use fallback responses.');
+        throw new Error('Missing Groq API key');
     }
 
-    if (apiKey === 'your-openai-api-key' || apiKey.includes('sk-dummy')) {
-        console.warn('Using placeholder OpenAI API key. AI features will use fallback responses.');
-        throw new Error('Placeholder OpenAI API key detected');
-    }
-
-    openai = new OpenAI({
-        apiKey: apiKey,
-        timeout: 10000, // Reduced to 10 seconds timeout for better UX
-    });
+    groq = new Groq({ apiKey });
 } catch (error) {
-    console.error('Failed to initialize OpenAI client:', error);
+    console.error('Failed to initialize Groq client:', error);
     // Create a dummy client that will throw controlled errors for easier debugging
-    openai = {
-        chat: {
-            completions: {
-                create: async () => {
-                    throw new Error('OpenAI client not properly initialized: ' + (error instanceof Error ? error.message : String(error)));
-                }
-            }
-        }
-    } as unknown as OpenAI;
+    groq = null;
 }
 
 export interface SymptomInput {
@@ -184,16 +168,20 @@ Return ONLY JSON with this structure:
 Remember: This is for informational purposes only, not professional medical advice.`;
 
         // Try to use AI models if available, with proper error handling
-        let completion;
+    let completion: Awaited<ReturnType<Groq['chat']['completions']['create']>> | null = null;
         const isDevEnv = process.env.NODE_ENV === 'development';
 
         // Use the fastest available model first - GPT-3.5-turbo
         // Only escalate to GPT-4 for complex cases to improve performance
-        const needsAdvancedModel = symptoms.length > 3 || symptoms.some(s => s.severity === 'severe');
-        const preferredModel = (!isDevEnv && needsAdvancedModel) ? "gpt-4-turbo" : "gpt-3.5-turbo";
+    const needsAdvancedModel = symptoms.length > 3 || symptoms.some(s => s.severity === 'severe');
+    // Map to Groq models
+    const fastModel = 'llama-3.1-8b-instant';
+    const strongModel = 'mixtral-8x7b-32768';
+    const preferredModel = (!isDevEnv && needsAdvancedModel) ? strongModel : fastModel;
 
         try {
-            completion = await openai.chat.completions.create({
+            if (!groq) throw new Error('Groq client not initialized');
+            completion = await groq.chat.completions.create({
                 model: preferredModel,
                 messages: [
                     {
@@ -205,13 +193,12 @@ Remember: This is for informational purposes only, not professional medical advi
                         content: prompt
                     }
                 ],
-                temperature: 0.2, // Low temperature for more consistent outputs
-                max_tokens: 800, // Reduced from 1000 to improve speed
-                response_format: { type: "json_object" }
+                temperature: 0.2,
+                max_tokens: 800
             });
 
             telemetry.modelUsed = preferredModel;
-            telemetry.tokensUsed = completion.usage?.total_tokens;
+            telemetry.tokensUsed = (completion as any).usage?.total_tokens;
 
         } catch (error) {
             console.log("Failed to use preferred model, using fallback:", error instanceof Error ? error.message : String(error));
@@ -220,10 +207,11 @@ Remember: This is for informational purposes only, not professional medical advi
             telemetry.error = errorMsg;
 
             // If the preferred model was GPT-4, try GPT-3.5
-            if (preferredModel.includes("gpt-4")) {
+            if (preferredModel === strongModel) {
                 try {
-                    completion = await openai.chat.completions.create({
-                        model: "gpt-3.5-turbo",
+                    if (!groq) throw new Error('Groq client not initialized');
+                    completion = await groq.chat.completions.create({
+                        model: fastModel,
                         messages: [
                             {
                                 role: "system",
@@ -235,12 +223,11 @@ Remember: This is for informational purposes only, not professional medical advi
                             }
                         ],
                         temperature: 0.3,
-                        max_tokens: 800,
-                        response_format: { type: "json_object" }
+                        max_tokens: 800
                     });
 
-                    telemetry.modelUsed = "gpt-3.5-turbo";
-                    telemetry.tokensUsed = completion.usage?.total_tokens;
+                    telemetry.modelUsed = fastModel;
+                    telemetry.tokensUsed = (completion as any).usage?.total_tokens;
 
                 } catch (fallbackError) {
                     console.log("Failed to use fallback model, using local analysis:",
@@ -258,7 +245,7 @@ Remember: This is for informational purposes only, not professional medical advi
 
         // Process AI response if we got one, otherwise use fallback
         if (completion && completion.choices && completion.choices.length > 0) {
-            const response = completion.choices[0]?.message?.content;
+            const response = completion.choices[0]?.message?.content as string | null;
             if (response) {
                 // Parse the JSON response with better error handling
                 try {
@@ -287,7 +274,7 @@ Remember: This is for informational purposes only, not professional medical advi
                     // If we got here, the AI response is valid
                     return analysis;
                 } catch (jsonError) {
-                    console.error('Error parsing OpenAI JSON response:', jsonError);
+                    console.error('Error parsing Groq JSON response:', jsonError);
                     telemetry.error = `JSON parsing error: ${jsonError instanceof Error ? jsonError.message : String(jsonError)}`;
                     // We'll continue to the fallback response
                 }
@@ -637,8 +624,9 @@ export async function generateHealthAdvice(condition: string, language: string =
 
         // Try to use OpenAI API with proper error handling
         try {
-            const completion = await openai.chat.completions.create({
-                model: "gpt-3.5-turbo",
+            if (!groq) throw new Error('Groq client not initialized');
+            const completion = await groq.chat.completions.create({
+                model: "llama-3.1-8b-instant",
                 messages: [
                     {
                         role: "system",
@@ -650,7 +638,7 @@ export async function generateHealthAdvice(condition: string, language: string =
                     }
                 ],
                 temperature: 0.5,
-                max_tokens: 200, // Reduced for faster response
+                max_tokens: 200,
             });
 
             const advice = completion.choices[0]?.message?.content || 'Please consult a healthcare professional for personalized advice.';
@@ -663,7 +651,7 @@ export async function generateHealthAdvice(condition: string, language: string =
 
             return advice;
         } catch (error) {
-            console.error('Error using OpenAI for health advice:', error);
+            console.error('Error using Groq for health advice:', error);
 
             // Generate fallback advice based on the condition
             let fallbackAdvice = '';
