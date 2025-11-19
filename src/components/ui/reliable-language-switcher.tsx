@@ -122,7 +122,12 @@ export default function ReliableLanguageSwitcher({
                 <label className="block text-sm font-medium mb-2">Language</label>
                 <select
                     value={locale}
-                    onChange={(e) => handleLanguageChange(e.target.value)}
+                    onChange={(e) => {
+                        const nextLocale = e.target.value;
+                        if (isSupportedLocale(nextLocale)) {
+                            handleLanguageChange(nextLocale);
+                        }
+                    }}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     aria-label="Select language"
                 >

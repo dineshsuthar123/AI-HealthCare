@@ -316,19 +316,25 @@ export const DiagnosticTools = ({ consultationId, isProvider }: DiagnosticToolsP
                                                 </p>
                                             </div>
                                             
-                                            <h4 className="font-semibold text-gray-800 mb-2">Recommendations</h4>
-                                            <ul className="space-y-1">
-                                                {selectedTool.results.recommendations.map((rec: string, index: number) => (
-                                                    <li key={index} className="flex items-center space-x-2">
-                                                        <span className="text-green-600">✓</span>
-                                                        <span>{rec}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                            {Array.isArray(selectedTool.results.recommendations) && (
+                                                <>
+                                                    <h4 className="font-semibold text-gray-800 mb-2">Recommendations</h4>
+                                                    <ul className="space-y-1">
+                                                        {selectedTool.results.recommendations.map((rec: string, index: number) => (
+                                                            <li key={index} className="flex items-center space-x-2">
+                                                                <span className="text-green-600">✓</span>
+                                                                <span>{rec}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </>
+                                            )}
                                         </div>
                                     )}
 
-                                    {selectedTool.id === 'mental-health' && (
+                                    {selectedTool.id === 'mental-health' &&
+                                     selectedTool.results.depression &&
+                                     selectedTool.results.anxiety && (
                                         <div className="space-y-4">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="bg-green-50 p-4 rounded-lg">
@@ -346,10 +352,12 @@ export const DiagnosticTools = ({ consultationId, isProvider }: DiagnosticToolsP
                                                     <p className="text-sm text-yellow-700">{selectedTool.results.anxiety.severity}</p>
                                                 </div>
                                             </div>
-                                            <div className="bg-blue-50 p-4 rounded-lg">
-                                                <h4 className="font-semibold text-blue-800">Recommendation</h4>
-                                                <p className="text-blue-700">{selectedTool.results.recommendation}</p>
-                                            </div>
+                                            {selectedTool.results.recommendation && (
+                                                <div className="bg-blue-50 p-4 rounded-lg">
+                                                    <h4 className="font-semibold text-blue-800">Recommendation</h4>
+                                                    <p className="text-blue-700">{selectedTool.results.recommendation}</p>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
 

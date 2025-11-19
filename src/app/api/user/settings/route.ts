@@ -10,6 +10,13 @@ interface UserSettingsPayload {
   profile?: UserPreferences;
 }
 
+type SafeProfileFields = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  timezone?: string;
+};
+
 export const runtime = 'nodejs';
 
 export async function GET() {
@@ -50,13 +57,23 @@ export async function PUT(req: NextRequest) {
       update['preferences'] = body.preferences;
     }
     if (body.profile) {
-      // Only allow updating safe profile fields
-      update['profile'] = {
-        ...(body.profile?.name && { name: body.profile.name }),
-        ...(body.profile?.email && { email: body.profile.email }),
-        ...(body.profile?.phone && { phone: body.profile.phone }),
-        ...(body.profile?.timezone && { timezone: body.profile.timezone }),
-      };
+      const profileUpdate: SafeProfileFields = {};
+      if (typeof body.profile.name === 'string') {
+        profileUpdate.name = body.profile.name;
+      }
+      if (typeof body.profile.email === 'string') {
+        profileUpdate.email = body.profile.email;
+      }
+      if (typeof body.profile.phone === 'string') {
+        profileUpdate.phone = body.profile.phone;
+      }
+      if (typeof body.profile.timezone === 'string') {
+        profileUpdate.timezone = body.profile.timezone;
+      }
+
+      if (Object.keys(profileUpdate).length > 0) {
+        update['profile'] = profileUpdate;
+      }
     }
 
     const user = await User.findByIdAndUpdate(
