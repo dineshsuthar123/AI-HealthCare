@@ -461,6 +461,15 @@
             "lab": "Lab",
             "other": "Other"
         },
+        "stats": {
+            "total": "Total Records",
+            "shared": "Shared Records",
+            "lastUpdated": "Last Updated",
+            "private": "Kept Private"
+        },
+        "actions": {
+            "refresh": "Refresh"
+        },
         "recordTitle": "Title",
         "fieldType": "Type",
         "recordDate": "Date",

@@ -46,29 +46,29 @@ export default async function TestPage() {
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                     <h2 className="text-xl font-semibold mb-4">All Available Languages (Direct Links)</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <a href="/en/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇺🇸 English</a>
-                        <a href="/es/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇪🇸 Español</a>
-                        <a href="/fr/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇫🇷 Français</a>
-                        <a href="/pt/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇧🇷 Português</a>
-                        <a href="/ar/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇸🇦 العربية</a>
-                        <a href="/hi/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇮🇳 हिन्दी</a>
-                        <a href="/sw/test-translations" className="p-3 border rounded-lg hover:bg-gray-50">🇰🇪 Kiswahili</a>
+                        <Link href="/test-translations" locale="en" className="p-3 border rounded-lg hover:bg-gray-50">🇺🇸 English</Link>
+                        <Link href="/test-translations" locale="es" className="p-3 border rounded-lg hover:bg-gray-50">🇪🇸 Español</Link>
+                        <Link href="/test-translations" locale="fr" className="p-3 border rounded-lg hover:bg-gray-50">🇫🇷 Français</Link>
+                        <Link href="/test-translations" locale="pt" className="p-3 border rounded-lg hover:bg-gray-50">🇧🇷 Português</Link>
+                        <Link href="/test-translations" locale="ar" className="p-3 border rounded-lg hover:bg-gray-50">🇸🇦 العربية</Link>
+                        <Link href="/test-translations" locale="hi" className="p-3 border rounded-lg hover:bg-gray-50">🇮🇳 हिन्दी</Link>
+                        <Link href="/test-translations" locale="sw" className="p-3 border rounded-lg hover:bg-gray-50">🇰🇪 Kiswahili</Link>
                     </div>
                 </div>
 
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <h2 className="text-xl font-semibold mb-4">Fallback Options</h2>
-                    <p className="mb-4">If you're experiencing issues with the translation page, try these options:</p>
+                    <p className="mb-4">If you&apos;re experiencing issues with the translation page, try these options:</p>
                     <div className="space-y-3">
                         <p>
-                            <a href={`/${locale}/test-translations?_i18n_refresh=${Date.now()}`} className="text-blue-600 hover:underline">
+                            <Link href={`/test-translations?_i18n_refresh=${Date.now()}`} locale={locale} className="text-blue-600 hover:underline">
                                 Refresh Current Page with Cache Busting
-                            </a>
+                            </Link>
                         </p>
                         <p>
-                            <a href="/" className="text-blue-600 hover:underline">
+                            <Link href="/" locale={locale} className="text-blue-600 hover:underline">
                                 Return to Home Page
-                            </a>
+                            </Link>
                         </p>
                     </div>
                 </div>

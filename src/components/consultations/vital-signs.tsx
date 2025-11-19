@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { FadeIn, ScaleIn } from '@/components/animations/motion-effects';
 
@@ -21,7 +20,6 @@ interface VitalSign {
 }
 
 export const VitalSigns = ({ consultationId, isProvider }: VitalSignsProps) => {
-    const t = useTranslations('ConsultationRoom');
     const [vitals, setVitals] = useState<VitalSign[]>([]);
     const [isSimulating, setIsSimulating] = useState(false);
     const [selectedVital, setSelectedVital] = useState<VitalSign['type']>('heart_rate');

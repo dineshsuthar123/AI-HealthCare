@@ -10,7 +10,6 @@ import {
     TrendingUp,
     BarChart3,
     Calendar,
-    MapPin,
     ThermometerSnowflake
 } from 'lucide-react';
 

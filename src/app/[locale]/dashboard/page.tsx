@@ -76,7 +76,7 @@ export default function DashboardPage() {
     const { data: session, status } = useSession();
     const t = useTranslations('Dashboard');
     const tHealth = useTranslations('HealthRecords');
-    const { success, error: showError } = useToast();
+    const { error: showError } = useToast();
     const [showMedicalRecords, setShowMedicalRecords] = useState(false);
     const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
     // Define HealthRecord type for health records

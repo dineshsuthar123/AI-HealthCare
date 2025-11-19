@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useSession } from 'next-auth/react';
 import { useRouter } from '@/navigation';
 import {
     Calendar,
@@ -10,10 +10,8 @@ import {
     Search,
     Star,
     MapPin,
-    User,
     Filter,
     Briefcase,
-    Heart,
     ChevronDown,
     ChevronRight,
     MessageCircle,
@@ -22,7 +20,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
 // Types for our provider data
@@ -130,7 +127,6 @@ const providersData: Provider[] = [
 // Main component
 export default function ProviderPage() {
     const t = useTranslations('Provider');
-    const { data: session } = useSession();
     const router = useRouter();
     const [providers, setProviders] = useState<Provider[]>(providersData);
     const [searchTerm, setSearchTerm] = useState('');
@@ -311,10 +307,13 @@ function ProviderCard({ provider, onSchedule, onSelect, delay }: ProviderCardPro
         >
             <div className="md:flex">
                 <div className="md:flex-shrink-0 p-6">
-                    <img
+                    <Image
                         src={provider.imageUrl}
                         alt={provider.name}
+                        width={128}
+                        height={128}
                         className="h-32 w-32 rounded-full object-cover border-4 border-blue-100"
+                        unoptimized
                     />
                 </div>
                 <div className="p-6 md:flex-1">
@@ -422,10 +421,13 @@ function ProviderDetailModal({ provider, onClose, onSchedule }: ProviderDetailMo
 
                     {/* Provider Header */}
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col md:flex-row items-center md:items-start gap-4">
-                        <img
+                        <Image
                             src={provider.imageUrl}
                             alt={provider.name}
+                            width={128}
+                            height={128}
                             className="h-32 w-32 rounded-full object-cover border-4 border-blue-100"
+                            unoptimized
                         />
                         <div className="flex-1 text-center md:text-left">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{provider.name}</h2>

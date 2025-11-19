@@ -467,6 +467,15 @@
             "other": "Otro",
             "diagnosis": "Diagnóstico"
         },
+        "stats": {
+            "total": "Registros totales",
+            "shared": "Registros compartidos",
+            "lastUpdated": "Última actualización",
+            "private": "Guardados de forma privada"
+        },
+        "actions": {
+            "refresh": "Actualizar"
+        },
         "recordTitle": "Título",
         "fieldType": "Tipo",
         "recordDate": "Fecha",

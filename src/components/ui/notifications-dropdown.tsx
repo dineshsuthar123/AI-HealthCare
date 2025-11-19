@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Bell, X, Check, Clock, AlertCircle, Calendar, Stethoscope, FileText } from 'lucide-react';
+import { Bell, X, Clock, AlertCircle, Calendar, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/components/providers/theme-provider';
 
 interface Notification {
     id: string;
@@ -25,21 +26,50 @@ interface NotificationsDropdownProps {
     isOpen: boolean;
     onToggle: () => void;
     onClose: () => void;
+    triggerClassName?: string;
 }
 
 // Local storage key for read notifications
 const READ_KEY = 'readNotifications';
 
-export default function NotificationsDropdown({ isOpen, onToggle, onClose }: NotificationsDropdownProps) {
+export default function NotificationsDropdown({ isOpen, onToggle, onClose, triggerClassName }: NotificationsDropdownProps) {
     const t = useTranslations('Notifications');
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isClient, setIsClient] = useState(false);
+    const [readIds, setReadIds] = useState<string[]>([]);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const readIdsRef = useRef<Set<string>>(new Set());
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === 'dark';
 
     // Prevent hydration issues
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    useEffect(() => {
+        if (!isClient) return;
+        try {
+            const stored = JSON.parse(localStorage.getItem(READ_KEY) || '[]');
+            if (Array.isArray(stored)) {
+                setReadIds(stored);
+                readIdsRef.current = new Set(stored);
+            }
+        } catch {
+            setReadIds([]);
+            readIdsRef.current = new Set();
+        }
+    }, [isClient]);
+
+    useEffect(() => {
+        readIdsRef.current = new Set(readIds);
+        setNotifications(prev =>
+            prev.map(notification => ({
+                ...notification,
+                isRead: readIdsRef.current.has(notification.id),
+            }))
+        );
+    }, [readIds]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -57,33 +87,68 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
         };
     }, [isOpen, onClose, isClient]);
 
-    // Fetch notifications when opened (or on first mount)
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const res = await fetch('/api/notifications', { credentials: 'include' });
-                if (!res.ok) {
-                    setNotifications([]);
-                    return;
-                }
-                const data = await res.json();
-                const readIds = new Set<string>(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
-                const items: Notification[] = (data.notifications || []).map((n: any) => ({
-                    id: n.id,
-                    type: n.type,
-                    title: n.title,
-                    message: n.message,
-                    timestamp: new Date(n.timestamp),
-                    isRead: readIds.has(n.id),
-                    action: n.action,
-                }));
-                setNotifications(items);
-            } catch {
+    const normalizeNotifications = useCallback((payload: any[] = []) => {
+        const readSet = readIdsRef.current;
+        return payload
+            .map((n) => ({
+                id: n.id,
+                type: n.type,
+                title: n.title,
+                message: n.message,
+                timestamp: new Date(n.timestamp),
+                isRead: readSet.has(n.id),
+                action: n.action,
+            }))
+            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    }, []);
+
+    const bootstrapNotifications = useCallback(async () => {
+        try {
+            const res = await fetch('/api/notifications', { credentials: 'include' });
+            if (!res.ok) {
                 setNotifications([]);
+                return;
             }
+            const data = await res.json();
+            setNotifications(normalizeNotifications(data.notifications || []));
+        } catch {
+            setNotifications([]);
+        }
+    }, [normalizeNotifications]);
+
+    useEffect(() => {
+        if (!isClient) return;
+        bootstrapNotifications();
+        let source: EventSource | null = null;
+        let retry: ReturnType<typeof setTimeout> | null = null;
+
+        const connect = () => {
+            source = new EventSource('/api/notifications/stream', { withCredentials: true });
+            source.onmessage = (event) => {
+                if (!event.data) return;
+                try {
+                    const payload = JSON.parse(event.data);
+                    if (payload?.notifications) {
+                        setNotifications(normalizeNotifications(payload.notifications));
+                    }
+                } catch {
+                    // ignore malformed payloads
+                }
+            };
+            source.onerror = () => {
+                source?.close();
+                if (retry) clearTimeout(retry);
+                retry = setTimeout(connect, 4000);
+            };
         };
-        if (isOpen && isClient) load();
-    }, [isOpen, isClient]);
+
+        connect();
+
+        return () => {
+            source?.close();
+            if (retry) clearTimeout(retry);
+        };
+    }, [isClient, bootstrapNotifications, normalizeNotifications]);
 
     const getNotificationIcon = (type: Notification['type']) => {
         switch (type) {
@@ -116,26 +181,30 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
         }
     };
 
+    const persistReadIds = (updater: (current: string[]) => string[]) => {
+        setReadIds(prev => {
+            const next = updater(prev);
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(READ_KEY, JSON.stringify(next));
+            }
+            return next;
+        });
+    };
+
     const markAsRead = (id: string) => {
-        setNotifications(prev =>
-            prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
-        );
-        const read = new Set<string>(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
-        read.add(id);
-        localStorage.setItem(READ_KEY, JSON.stringify(Array.from(read)));
+        setNotifications(prev => prev.map(n => (n.id === id ? { ...n, isRead: true } : n)));
+        persistReadIds(prev => (prev.includes(id) ? prev : [...prev, id]));
     };
 
     const markAllAsRead = () => {
         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-        const allIds = notifications.map(n => n.id);
-        localStorage.setItem(READ_KEY, JSON.stringify(allIds));
+        const ids = notifications.map(n => n.id);
+        persistReadIds(() => ids);
     };
 
     const removeNotification = (id: string) => {
         setNotifications(prev => prev.filter(n => n.id !== id));
-        const read = new Set<string>(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
-        read.add(id);
-        localStorage.setItem(READ_KEY, JSON.stringify(Array.from(read)));
+        persistReadIds(prev => (prev.includes(id) ? prev : [...prev, id]));
     };
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -147,10 +216,15 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                 variant="ghost"
                 size="icon"
                 className={cn(
-                    "relative glass rounded-full transition-all duration-200 hover:shadow-md",
-                    isOpen && "bg-blue-50 text-blue-600"
+                    'relative flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-2',
+                    isDark
+                        ? 'border-white/15 bg-white/5 text-white hover:bg-white/10 focus-visible:ring-white/40'
+                        : 'border-gray-200 bg-white/90 text-slate-800 hover:bg-white focus-visible:ring-blue-300',
+                    isOpen && (isDark ? 'ring-1 ring-white/50' : 'ring-1 ring-blue-400/60'),
+                    triggerClassName
                 )}
                 onClick={onToggle}
+                aria-label={t('title')}
             >
                 <div className="relative">
                     <Bell className="h-5 w-5" />
@@ -179,25 +253,29 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                         transition={{ duration: 0.2 }}
                         className="absolute right-0 mt-2 w-96 z-50"
                     >
-            <Card className="glass border border-gray-200/40 shadow-2xl backdrop-blur-xl">
+                        <Card className={cn(
+                            'shadow-2xl backdrop-blur-xl border rounded-2xl overflow-hidden',
+                            isDark ? 'border-white/10 bg-slate-900/80' : 'border-gray-200/70 bg-white/95'
+                        )}>
                             <CardContent className="p-0">
                                 {/* Header */}
-                <div className="p-4 border-b border-gray-200/40 bg-gradient-to-r from-white to-blue-50">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                            Notifications
-                                        </h3>
-                                        {unreadCount > 0 && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={markAllAsRead}
-                        className="text-xs hover:bg-blue-100 text-blue-700"
-                                            >
-                                                Mark all as read
-                                            </Button>
-                                        )}
-                                    </div>
+                                <div className={cn(
+                                    'p-4 border-b flex items-center justify-between',
+                                    isDark ? 'border-white/10 bg-slate-900/60' : 'border-gray-200/60 bg-gradient-to-r from-white to-blue-50'
+                                )}>
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                        {t('title')}
+                                    </h3>
+                                    {unreadCount > 0 && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={markAllAsRead}
+                                            className="text-xs text-blue-700 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-blue-500/10"
+                                        >
+                                            {t('markAllRead')}
+                                        </Button>
+                                    )}
                                 </div>
 
                                 {/* Notifications List */}
@@ -205,7 +283,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                     {notifications.length === 0 ? (
                                         <div className="p-8 text-center">
                                             <Bell className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                                            <p className="text-gray-500">No notifications</p>
+                                            <p className="text-gray-500 dark:text-gray-400">{t('noNotifications')}</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-1">
@@ -215,8 +293,8 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                                     initial={{ opacity: 0, x: -20 }}
                                                     animate={{ opacity: 1, x: 0 }}
                                                     className={cn(
-                                                        "group p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer",
-                                                        !notification.isRead && "bg-blue-50/60 dark:bg-blue-900/20 border-l-4 border-blue-400"
+                                                        'group p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer',
+                                                        !notification.isRead && 'bg-blue-50/60 dark:bg-blue-900/20 border-l-4 border-blue-400/70'
                                                     )}
                                                     onClick={() => markAsRead(notification.id)}
                                                 >
@@ -227,8 +305,8 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center justify-between">
                                                                 <p className={cn(
-                                                                    "text-sm font-medium",
-                                                                    notification.isRead ? "text-gray-700 dark:text-gray-300" : "text-gray-900 dark:text-white"
+                                                                    'text-sm font-medium',
+                                                                    notification.isRead ? 'text-gray-700 dark:text-gray-300' : 'text-gray-900 dark:text-white'
                                                                 )}>
                                                                     {notification.title}
                                                                 </p>
@@ -250,8 +328,8 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
                                                                 </div>
                                                             </div>
                                                             <p className={cn(
-                                                                "text-sm mt-1",
-                                                                notification.isRead ? "text-gray-500" : "text-gray-700 dark:text-gray-300"
+                                                                'text-sm mt-1',
+                                                                notification.isRead ? 'text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-300'
                                                             )}>
                                                                 {notification.message}
                                                             </p>
@@ -282,16 +360,19 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose }: Not
 
                                 {/* Footer */}
                                 {notifications.length > 0 && (
-                    <div className="p-4 border-t border-gray-200/40 bg-white/60">
+                                    <div className={cn(
+                                        'p-4 border-t',
+                                        isDark ? 'border-white/10 bg-slate-900/50' : 'border-gray-200/60 bg-white/60'
+                                    )}>
                                         <Button
                                             variant="ghost"
-                        className="w-full text-sm text-blue-600 hover:text-blue-700"
+                                            className="w-full text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200"
                                             onClick={() => {
                                                 // Navigate to notifications page
                                                 window.location.href = '/notifications';
                                             }}
                                         >
-                                            View all notifications
+                                            {t('viewAll')}
                                         </Button>
                                     </div>
                                 )}

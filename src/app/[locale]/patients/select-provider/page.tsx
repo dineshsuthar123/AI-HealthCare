@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/navigation';
@@ -37,8 +38,10 @@ interface Provider {
     about: string;
 }
 
+type TranslateFn = (key: string, values?: Record<string, unknown>) => string;
+
 export default function SelectProviderPage() {
-    const { data: session, status } = useSession({
+    const { status } = useSession({
         required: true,
         onUnauthenticated() {
             redirect('/auth/signin');
@@ -181,6 +184,7 @@ export default function SelectProviderPage() {
                 setSuccessMessage('');
             }, 3000);
         } catch (error) {
+            console.error('Failed to update provider selection:', error);
             setErrorMessage('Failed to update your provider. Please try again.');
 
             // Clear error message after 3 seconds
@@ -260,10 +264,13 @@ export default function SelectProviderPage() {
                             <CardContent className="p-6">
                                 <div className="md:flex">
                                     <div className="md:flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-                                        <img
+                                        <Image
                                             src={currentProvider.imageUrl}
                                             alt={currentProvider.name}
+                                            width={128}
+                                            height={128}
                                             className="h-32 w-32 rounded-full object-cover border-4 border-blue-100 mx-auto md:mx-0"
+                                            unoptimized
                                         />
                                     </div>
                                     <div className="md:flex-1">
@@ -467,7 +474,7 @@ interface ProviderCardProps {
     isCurrentProvider: boolean;
     onSelect: () => void;
     delay: number;
-    t: any; // Translation function
+    t: TranslateFn;
 }
 
 function ProviderCard({ provider, isCurrentProvider, onSelect, delay, t }: ProviderCardProps) {
@@ -480,10 +487,13 @@ function ProviderCard({ provider, isCurrentProvider, onSelect, delay, t }: Provi
         >
             <div className="md:flex">
                 <div className="md:flex-shrink-0 p-6">
-                    <img
+                    <Image
                         src={provider.imageUrl}
                         alt={provider.name}
+                        width={128}
+                        height={128}
                         className="h-32 w-32 rounded-full object-cover border-4 border-blue-100"
+                        unoptimized
                     />
                 </div>
                 <div className="p-6 md:flex-1">

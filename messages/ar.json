@@ -466,6 +466,15 @@
             "lab": "نتيجة مختبر",
             "other": "أخرى"
         },
+        "stats": {
+            "total": "إجمالي السجلات",
+            "shared": "السجلات المشتركة",
+            "lastUpdated": "آخر تحديث",
+            "private": "محفوظة بشكل خاص"
+        },
+        "actions": {
+            "refresh": "تحديث"
+        },
         "recordTitle": "العنوان",
         "fieldType": "النوع",
         "recordDate": "التاريخ",

@@ -31,6 +31,15 @@ interface FormattedActivity {
     status: string;
 }
 
+interface HealthRecord {
+    _id: string;
+    title: string;
+    type: string;
+    date: string | Date;
+    description: string;
+    attachmentUrl?: string;
+}
+
 // Helper function to format dates as relative time (e.g., "2 hours ago")
 function formatRelativeTime(date: Date): string {
     const now = new Date();
@@ -67,10 +76,10 @@ export default function DashboardPage() {
     const { data: session, status } = useSession();
     const t = useTranslations('Dashboard');
     const tHealth = useTranslations('HealthRecords');
-    const { success, error: showError } = useToast();
+    const { error: showError } = useToast();
     const [showMedicalRecords, setShowMedicalRecords] = useState(false);
     const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
-    const [healthRecords, setHealthRecords] = useState<any[]>([]);
+    const [healthRecords, setHealthRecords] = useState<HealthRecord[]>([]);
     const [isLoadingRecords, setIsLoadingRecords] = useState(false);
 
     const [recentActivities, setRecentActivities] = useState<FormattedActivity[]>([

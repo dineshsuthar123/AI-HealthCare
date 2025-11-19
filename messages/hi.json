@@ -466,6 +466,15 @@
             "lab": "लैब परिणाम",
             "other": "अन्य"
         },
+        "stats": {
+            "total": "कुल रिकॉर्ड",
+            "shared": "साझा रिकॉर्ड",
+            "lastUpdated": "अंतिम अपडेट",
+            "private": "निजी रूप से सुरक्षित"
+        },
+        "actions": {
+            "refresh": "रीफ़्रेश"
+        },
         "recordTitle": "शीर्षक",
         "fieldType": "प्रकार",
         "recordDate": "तारीख",

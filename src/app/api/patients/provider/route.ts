@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import type { Types } from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { ApiError } from '@/lib/api-error';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
     try {
         const session = await getServerSession();
 
@@ -84,9 +85,8 @@ export async function POST(req: NextRequest) {
         if (currentUser.assignedProvider) {
             const previousProvider = await User.findById(currentUser.assignedProvider);
             if (previousProvider) {
-                previousProvider.patients = previousProvider.patients.filter(
-                    (id: any) => id.toString() !== currentUser._id.toString()
-                );
+                const previousIds = (previousProvider.patients as Types.ObjectId[] | undefined) ?? [];
+                previousProvider.patients = previousIds.filter((id: Types.ObjectId) => id.toString() !== currentUser._id.toString());
                 await previousProvider.save();
             }
         }
@@ -95,9 +95,11 @@ export async function POST(req: NextRequest) {
         currentUser.assignedProvider = providerId;
 
         // Add patient to provider's patients array if not already there
-        if (!provider.patients.includes(currentUser._id)) {
-            provider.patients.push(currentUser._id);
+        const providerPatientIds = (provider.patients as Types.ObjectId[] | undefined) ?? [];
+        if (!providerPatientIds.some((id) => id.toString() === currentUser._id.toString())) {
+            providerPatientIds.push(currentUser._id as Types.ObjectId);
         }
+        provider.patients = providerPatientIds;
 
         // Save both documents
         await Promise.all([

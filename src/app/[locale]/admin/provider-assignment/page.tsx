@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -10,8 +11,6 @@ import {
     UserPlus,
     UserCheck,
     UserX,
-    Filter,
-    ChevronDown,
     CheckCircle,
     AlertCircle,
     RefreshCw,
@@ -41,6 +40,8 @@ interface Provider {
     imageUrl: string;
 }
 
+type AssignmentFilter = 'all' | 'assigned' | 'unassigned';
+
 export default function ProviderAssignmentPage() {
     const { data: session } = useSession({
         required: true,
@@ -59,7 +60,7 @@ export default function ProviderAssignmentPage() {
     const [loading, setLoading] = useState(true);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [filter, setFilter] = useState<'all' | 'assigned' | 'unassigned'>('all');
+    const [filter, setFilter] = useState<AssignmentFilter>('all');
 
     // Sample data for demonstration
     useEffect(() => {
@@ -222,6 +223,7 @@ export default function ProviderAssignmentPage() {
                 setSuccessMessage('');
             }, 3000);
         } catch (error) {
+            console.error('Error assigning provider:', error);
             setErrorMessage('Failed to assign provider. Please try again.');
 
             // Clear error message after 3 seconds
@@ -273,6 +275,7 @@ export default function ProviderAssignmentPage() {
                 setSuccessMessage('');
             }, 3000);
         } catch (error) {
+            console.error('Error removing provider:', error);
             setErrorMessage('Failed to remove provider. Please try again.');
 
             // Clear error message after 3 seconds
@@ -356,7 +359,7 @@ export default function ProviderAssignmentPage() {
                                 <select
                                     className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2"
                                     value={filter}
-                                    onChange={(e) => setFilter(e.target.value as any)}
+                                    onChange={(e) => setFilter(e.target.value as AssignmentFilter)}
                                 >
                                     <option value="all">{t('allPatients')}</option>
                                     <option value="assigned">{t('assignedPatients')}</option>
@@ -515,7 +518,7 @@ export default function ProviderAssignmentPage() {
                                         type="text"
                                         placeholder={t('searchProviders')}
                                         className="pl-10"
-                                        onChange={(e) => {
+                                        onChange={() => {
                                             // In a real app, this would filter providers from the API
                                             // For demo, we'll keep it simple
                                         }}
@@ -534,9 +537,12 @@ export default function ProviderAssignmentPage() {
                       `}
                                             onClick={() => setSelectedProvider(provider)}
                                         >
-                                            <img
+                                            <Image
                                                 src={provider.imageUrl}
                                                 alt={provider.name}
+                                                width={64}
+                                                height={64}
+                                                unoptimized
                                                 className="h-16 w-16 rounded-full object-cover border-2 border-gray-200"
                                             />
                                             <div className="ml-4 flex-1">

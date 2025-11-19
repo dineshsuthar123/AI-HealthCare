@@ -78,30 +78,30 @@ export function EmergencyContact({ analysis, symptoms, showForm, onClose }: Emer
             <div className={showEmergencyForm ? "hidden" : "block"}>
                 <Button
                     variant="destructive"
-                    className="w-full flex items-center justify-center"
+                    className="flex w-full items-center justify-center rounded-2xl border-0 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 text-white shadow-[0_20px_60px_rgba(249,115,22,0.35)]"
                     onClick={() => setShowEmergencyForm(true)}
                 >
-                    <Phone className="h-4 w-4 mr-2" />
+                    <Phone className="mr-2 h-4 w-4" />
                     {t('emergencyContact.title')}
                 </Button>
             </div>
 
             {showEmergencyForm && (
-                <div className="p-4 border border-red-300 bg-red-50 rounded-lg mt-2">
+                <div className="mt-3 space-y-4 rounded-2xl border border-rose-400/40 bg-rose-500/10 p-5 text-rose-50">
                     {emergencyContactSent ? (
-                        <div className="text-green-700 flex items-center">
-                            <CheckCircle className="h-5 w-5 mr-2" />
+                        <div className="flex items-center text-emerald-200">
+                            <CheckCircle className="mr-2 h-5 w-5" />
                             <span>{t('emergencyContact.successMessage')}</span>
                         </div>
                     ) : (
                         <>
-                            <h4 className="text-red-700 font-medium mb-3 flex items-center">
-                                <AlertTriangle className="h-5 w-5 mr-2" />
+                            <h4 className="flex items-center text-base font-medium text-rose-100">
+                                <AlertTriangle className="mr-2 h-5 w-5 text-amber-300" />
                                 {t('emergencyContact.title')}
                             </h4>
                             <form onSubmit={handleEmergencyContact} className="space-y-3" data-testid="emergency-form">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="mb-1 block text-sm font-medium text-rose-100">
                                         {t('emergencyContact.nameLabel')}
                                     </label>
                                     <Input
@@ -113,10 +113,11 @@ export function EmergencyContact({ analysis, symptoms, showForm, onClose }: Emer
                                             name: e.target.value
                                         })}
                                         required
+                                        className="h-11 rounded-2xl border-white/20 bg-white/5 text-white placeholder:text-rose-200/70"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="mb-1 block text-sm font-medium text-rose-100">
                                         {t('emergencyContact.phoneLabel')}
                                     </label>
                                     <Input
@@ -128,13 +129,14 @@ export function EmergencyContact({ analysis, symptoms, showForm, onClose }: Emer
                                             phone: e.target.value
                                         })}
                                         required
+                                        className="h-11 rounded-2xl border-white/20 bg-white/5 text-white placeholder:text-rose-200/70"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">
+                                    <p className="mt-1 text-xs text-rose-200/80">
                                         {t('emergencyContact.phoneHelp')}
                                     </p>
                                 </div>
                                 {error && (
-                                    <div className="text-red-500 text-sm" role="alert">
+                                    <div className="text-sm text-amber-200" role="alert">
                                         {error}
                                     </div>
                                 )}
@@ -142,14 +144,14 @@ export function EmergencyContact({ analysis, symptoms, showForm, onClose }: Emer
                                     <Button
                                         type="submit"
                                         variant="destructive"
-                                        className="flex-1"
+                                        className="flex-1 rounded-2xl border-0 bg-gradient-to-r from-rose-500 to-orange-400"
                                     >
                                         {t('emergencyContact.sendAlert')}
                                     </Button>
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="flex-1"
+                                        className="flex-1 rounded-2xl border-white/30 text-white hover:border-white/60"
                                         onClick={() => {
                                             setShowEmergencyForm(false);
                                             if (onClose) onClose();

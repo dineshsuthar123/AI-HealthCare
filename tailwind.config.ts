@@ -25,6 +25,10 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        holo: "var(--holo-cyan)",
+        violet: "var(--violet-core)",
+        ember: "var(--rose-ember)",
+        plasma: "var(--plasma-dark)",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -63,6 +67,8 @@ const config: Config = {
         "blob": "blob 7s infinite",
         slideIn: 'slideIn 0.3s ease-out forwards',
         slideOut: 'slideOut 0.3s ease-in forwards',
+        pulseOrbit: 'pulseOrbit 12s ease-in-out infinite',
+        shimmer: 'shimmer 4s linear infinite'
       },
       keyframes: {
         "blob": {
@@ -86,6 +92,15 @@ const config: Config = {
         slideOut: {
           '0%': { transform: 'translateX(0)', opacity: '1' },
           '100%': { transform: 'translateX(100%)', opacity: '0' },
+        },
+        pulseOrbit: {
+          '0%': { boxShadow: '0 0 0 rgba(83,246,255,0.3)' },
+          '50%': { boxShadow: '0 0 35px rgba(108,77,255,0.6)' },
+          '100%': { boxShadow: '0 0 0 rgba(83,246,255,0.3)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         }
       },
     },

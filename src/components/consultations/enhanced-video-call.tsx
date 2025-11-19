@@ -31,7 +31,7 @@ export const EnhancedVideoCall = ({
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
-    const [connectionQuality, setConnectionQuality] = useState('excellent');
+    const connectionQuality = 'excellent';
     const [recordingActive, setRecordingActive] = useState(false);
     const [participantConnected, setParticipantConnected] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -41,27 +41,38 @@ export const EnhancedVideoCall = ({
 
     // Initialize media stream
     useEffect(() => {
+        let isMounted = true;
+        let localStream: MediaStream | null = null;
+
         const getMediaStream = async () => {
             try {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
                     video: { width: 1280, height: 720, frameRate: 30 },
                     audio: { echoCancellation: true, noiseSuppression: true }
                 });
+
+                if (!isMounted) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+
+                localStream = mediaStream;
                 setStream(mediaStream);
                 if (myVideo.current) {
                     myVideo.current.srcObject = mediaStream;
                 }
             } catch (err) {
-                console.error("Error accessing media devices:", err);
-                setError("Could not access camera or microphone. Please check your permissions.");
+                console.error('Error accessing media devices:', err);
+                setError('Could not access camera or microphone. Please check your permissions.');
             }
         };
 
         getMediaStream();
 
         return () => {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+            isMounted = false;
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
             }
         };
     }, []);
@@ -143,7 +154,11 @@ export const EnhancedVideoCall = ({
     }
 
     return (
-        <div className="h-full flex flex-col p-4 space-y-4">
+        <div
+            className="h-full flex flex-col p-4 space-y-4"
+            data-consultation-id={consultationId}
+            data-user-id={userId}
+        >
             {/* Main Video Area */}
             <div className="flex-1 relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl overflow-hidden shadow-2xl">
                 {/* Participant Video (Main) */}

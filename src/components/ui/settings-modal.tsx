@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Settings, X, Moon, Sun, Bell, Shield, User, Palette, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
@@ -81,7 +80,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const { theme, setTheme } = useTheme();
     const [settings, setSettings] = useState<UserSettings>({
         ...defaultSettings,
-        theme: theme,
+        theme,
     });
     const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'privacy' | 'profile' | 'accessibility'>('general');
     const [hasChanges, setHasChanges] = useState(false);
@@ -118,48 +117,79 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     }, [isOpen, isClient]);
 
     useEffect(() => {
-        // Prefill from server if logged in
-        fetch('/api/user/settings', { credentials: 'include' })
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                if (data) {
-                    setSettings(prev => ({
+        if (!isClient) return;
+        let cancelled = false;
+
+        const loadSettings = async () => {
+            try {
+                const response = await fetch('/api/user/settings', { credentials: 'include' });
+                if (!response.ok) throw new Error('Failed to load settings');
+                const data = await response.json();
+                if (cancelled) return;
+                setSettings(prev => {
+                    const merged: UserSettings = {
                         ...prev,
                         ...(data.preferences ? {
-                            theme: data.preferences.theme ?? prev.theme,
+                            theme: (data.preferences.theme ?? prev.theme) as UserSettings['theme'],
                             notifications: { ...prev.notifications, ...data.preferences.notifications },
                             accessibility: { ...prev.accessibility, ...data.preferences.accessibility },
                         } : {}),
                         ...(data.profile ? { profile: { ...prev.profile, ...data.profile } } : {}),
-                    }));
-                }
-            })
-            .catch(() => {
-                // ignore
-            });
+                    };
+                    if (data.preferences?.theme) {
+                        setTheme(data.preferences.theme);
+                    }
+                    return merged;
+                });
+            } catch {
+                // ignore fetch errors
+            }
+        };
 
-        // Also merge any local settings
-        const savedSettings = localStorage.getItem('userSettings');
+        loadSettings();
+
+        const savedSettings = typeof window !== 'undefined' ? localStorage.getItem('userSettings') : null;
         if (savedSettings) {
             try {
-                const parsed = JSON.parse(savedSettings);
-                setSettings((prev) => ({ ...prev, ...parsed }));
+                const parsed = JSON.parse(savedSettings) as Partial<UserSettings>;
+                setSettings(prev => {
+                    const merged = { ...prev, ...parsed } as UserSettings;
+                    if (parsed.theme) {
+                        setTheme(parsed.theme);
+                    }
+                    return merged;
+                });
             } catch (error) {
                 console.error('Failed to parse saved settings:', error);
             }
         }
-    }, []);
 
-    const updateSettings = (path: string, value: any) => {
+        return () => {
+            cancelled = true;
+        };
+    }, [isClient, setTheme]);
+
+    useEffect(() => {
+        setSettings(prev => (prev.theme === theme ? prev : { ...prev, theme }));
+    }, [theme]);
+
+    const updateSettings = (path: string, value: unknown) => {
         setSettings(prev => {
-            const newSettings = { ...prev };
+            const newSettings = JSON.parse(JSON.stringify(prev)) as UserSettings;
             const keys = path.split('.');
-            let current: any = newSettings;
+            let current: Record<string, unknown> = newSettings as unknown as Record<string, unknown>;
 
-            for (let i = 0; i < keys.length - 1; i++) {
-                current = current[keys[i]];
+            for (let i = 0; i < keys.length - 1; i += 1) {
+                const key = keys[i];
+                const next = current[key];
+                if (typeof next === 'object' && next !== null) {
+                    current[key] = { ...(next as Record<string, unknown>) };
+                } else {
+                    current[key] = {};
+                }
+                current = current[key] as Record<string, unknown>;
             }
-            current[keys[keys.length - 1]] = value;
+            current[keys[keys.length - 1]] = value as never;
 
             return newSettings;
         });
@@ -168,16 +198,20 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
     const saveSettings = async () => {
         try {
-            localStorage.setItem('userSettings', JSON.stringify(settings));
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('userSettings', JSON.stringify(settings));
+            }
 
             // Apply theme instantly
             setTheme(settings.theme);
 
             // Accessibility classes
-            const root = document.documentElement;
+            if (typeof document !== 'undefined') {
+                const root = document.documentElement;
             root.style.setProperty('--app-font-scale', settings.accessibility.fontSize === 'small' ? '0.95' : settings.accessibility.fontSize === 'large' ? '1.1' : '1');
             if (settings.accessibility.highContrast) root.classList.add('hc'); else root.classList.remove('hc');
             if (settings.accessibility.reducedMotion) root.classList.add('rm'); else root.classList.remove('rm');
+            }
 
             // Here you would typically save to your backend
             const response = await fetch('/api/user/settings', {
@@ -197,26 +231,17 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
     const resetSettings = () => {
         setSettings(defaultSettings);
+        setTheme(defaultSettings.theme);
         setHasChanges(true);
     };
 
-    const tabs = [
-        { id: 'general', label: 'General', icon: Settings },
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'privacy', label: 'Privacy', icon: Shield },
-        { id: 'profile', label: 'Profile', icon: User },
-        { id: 'accessibility', label: 'Accessibility', icon: Palette },
-    ] as const;
-
-    const languages = [
-        { code: 'en', name: 'English' },
-        { code: 'es', name: 'Español' },
-        { code: 'fr', name: 'Français' },
-        { code: 'pt', name: 'Português' },
-        { code: 'ar', name: 'العربية' },
-        { code: 'hi', name: 'हिन्दी' },
-        { code: 'sw', name: 'Kiswahili' },
-    ];
+    const tabs = useMemo(() => ([
+        { id: 'general', label: t('general'), icon: Settings },
+        { id: 'notifications', label: t('notifications'), icon: Bell },
+        { id: 'privacy', label: t('privacy'), icon: Shield },
+        { id: 'profile', label: t('profile'), icon: User },
+        { id: 'accessibility', label: t('accessibility'), icon: Palette },
+    ] as const), [t]);
 
     const timezones = [
         'America/New_York',
@@ -237,30 +262,30 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+        className="fixed inset-0 z-[100] flex min-h-screen items-center justify-center bg-black/60 px-4 py-8"
                 onClick={onClose}
             >
                 <motion.div
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.95, opacity: 0 }}
-                    className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden border border-gray-200 dark:border-gray-800"
+                    className="flex w-full max-w-4xl max-h-[90vh] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
                             <Settings className="h-6 w-6 mr-3" />
-                            Settings
+                            {t('title')}
                         </h2>
                         <Button variant="ghost" size="icon" onClick={onClose}>
                             <X className="h-5 w-5" />
                         </Button>
                     </div>
 
-                    <div className="flex h-[calc(80vh-theme(spacing.16))]">
+                    <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
                         {/* Sidebar */}
-                        <div className="w-64 border-r border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
+                        <div className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 overflow-y-auto">
                             <nav className="space-y-2">
                                 {tabs.map((tab) => {
                                     const Icon = tab.icon;
@@ -289,10 +314,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 {activeTab === 'general' && (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-lg font-semibold mb-4">Appearance</h3>
+                                            <h3 className="text-lg font-semibold mb-4">{t('appearance')}</h3>
                                             <div className="space-y-4">
                                                 <div>
-                                                    <label className="block text-sm font-medium mb-2">Theme</label>
+                                                    <label className="block text-sm font-medium mb-2">{t('theme')}</label>
                                                     <div className="flex space-x-2">
                             {(['light', 'dark', 'system'] as const).map((opt) => (
                                                             <button
@@ -308,7 +333,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                                                 {opt === 'light' && <Sun className="h-4 w-4 mr-2" />}
                                                                 {opt === 'dark' && <Moon className="h-4 w-4 mr-2" />}
                                                                 {opt === 'system' && <Monitor className="h-4 w-4 mr-2" />}
-                                                                {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                                                                {t(opt as 'light' | 'dark' | 'system')}
                                                             </button>
                                                         ))}
                                                     </div>
@@ -324,7 +349,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 {activeTab === 'notifications' && (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-lg font-semibold mb-4">Notification Channels</h3>
+                                            <h3 className="text-lg font-semibold mb-4">{t('notifications')}</h3>
                                             <div className="space-y-4">
                                                 {Object.entries(settings.notifications).slice(0, 3).map(([key, value]) => (
                                                     <div key={key} className="flex items-center justify-between">
@@ -341,7 +366,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             </div>
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-semibold mb-4">Notification Types</h3>
+                                            <h3 className="text-lg font-semibold mb-4">{t('notifications')}</h3>
                                             <div className="space-y-4">
                                                 {Object.entries(settings.notifications).slice(3).map(([key, value]) => (
                                                     <div key={key} className="flex items-center justify-between">
@@ -363,7 +388,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 {activeTab === 'privacy' && (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-lg font-semibold mb-4">Data & Privacy</h3>
+                                            <h3 className="text-lg font-semibold mb-4">{t('privacy')}</h3>
                                             <div className="space-y-4">
                                                 {Object.entries(settings.privacy).map(([key, value]) => (
                             <div key={key} className="flex items-center justify-between">
@@ -394,7 +419,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 {activeTab === 'profile' && (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-lg font-semibold mb-4">Profile Information</h3>
+                                            <h3 className="text-lg font-semibold mb-4">{t('profile')}</h3>
                                             <div className="space-y-4">
                                                 <div>
                                                     <label className="block text-sm font-medium mb-2">Full Name</label>
@@ -447,7 +472,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 {activeTab === 'accessibility' && (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-lg font-semibold mb-4">Accessibility Options</h3>
+                                            <h3 className="text-lg font-semibold mb-4">{t('accessibility')}</h3>
                                             <div className="space-y-4">
                                                 <div>
                                                     <label className="block text-sm font-medium mb-2">Font Size</label>
@@ -509,13 +534,13 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
                         <Button variant="outline" onClick={resetSettings}>
-                            Reset to Defaults
+                            {t('reset')}
                         </Button>
                         <div className="flex space-x-3">
                             <Button variant="outline" onClick={onClose}>
-                                Cancel
+                                {t('cancel')}
                             </Button>
                             <Button
                                 onClick={saveSettings}
@@ -524,7 +549,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 size="lg"
                                 className="w-full justify-center mt-4 shadow-lg hover:scale-105 transition-transform"
                             >
-                                Save Changes
+                                {t('save')}
                             </Button>
                         </div>
                     </div>

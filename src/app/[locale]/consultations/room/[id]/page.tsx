@@ -5,18 +5,17 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from '@/navigation';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { MedicalConsultationRoom } from '@/components/consultations/medical-consultation-room';
 import { ParticlesBackground } from '@/components/animations/particles-background';
+import type { Consultation } from '@/types';
 
 export default function ConsultationRoomPage() {
     const { data: session, status } = useSession();
     const params = useParams();
     const id = params.id as string;
     const router = useRouter();
-    const t = useTranslations('ConsultationRoom');
     const [isLoading, setIsLoading] = useState(true);
-    const [consultation, setConsultation] = useState<any>(null);
+    const [consultation, setConsultation] = useState<Consultation | null>(null);
 
     useEffect(() => {
         if (status === 'unauthenticated') {

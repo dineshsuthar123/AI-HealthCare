@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { FadeIn, ScaleIn } from '@/components/animations/motion-effects';
+import type { Consultation } from '@/types';
 
 interface MedicalNotesProps {
     consultationId: string;
     isProvider: boolean;
-    consultation?: any;
+    consultation?: Consultation | null;
 }
 
 interface Note {
@@ -111,6 +112,11 @@ export const MedicalNotes = ({ consultationId, isProvider, consultation }: Medic
                 <div className="mb-6">
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">📋 Medical Notes</h2>
                     <p className="text-gray-600">Real-time documentation for consultation #{consultationId.slice(-8).toUpperCase()}</p>
+                    {consultation?.reason && (
+                        <p className="text-sm text-gray-500 mt-1">
+                            Reason: {consultation.reason}
+                        </p>
+                    )}
                 </div>
             </FadeIn>
 

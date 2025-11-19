@@ -63,7 +63,7 @@ export async function PUT(
 
         const resolvedParams = await params;
         const { id } = resolvedParams;
-        const updateData = await request.json();
+        const updateData: Record<string, unknown> = await request.json();
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return NextResponse.json({ error: 'Invalid consultation ID' }, { status: 400 });
@@ -89,7 +89,7 @@ export async function PUT(
             ? ['status', 'notes', 'diagnosis', 'prescriptions', 'followUp', 'rating']
             : ['rating']; // Patients can only update rating
 
-        const filteredUpdate: any = {};
+        const filteredUpdate: Record<string, unknown> = {};
         for (const field of allowedFields) {
             if (updateData[field] !== undefined) {
                 filteredUpdate[field] = updateData[field];

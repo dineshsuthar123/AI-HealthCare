@@ -18,8 +18,21 @@ interface DiagnosticTest {
     status: 'available' | 'in-progress' | 'completed' | 'ordered';
     description: string;
     estimatedTime?: string;
-    results?: any;
+    results?: DiagnosticResult;
 }
+
+type DiagnosticResult = {
+    confidence?: number;
+    primaryCondition?: string;
+    severity?: string;
+    recommendations?: string[];
+    depression?: { score: number; severity: string };
+    anxiety?: { score: number; severity: string };
+    recommendation?: string;
+    overallRisk?: string;
+    factors?: Array<{ factor: string; risk: string }>;
+    status?: string;
+};
 
 export const DiagnosticTools = ({ consultationId, isProvider }: DiagnosticToolsProps) => {
     const t = useTranslations('ConsultationRoom');

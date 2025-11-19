@@ -4,6 +4,12 @@ import { authOptions } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 
+type UserPreferences = Record<string, unknown>;
+interface UserSettingsPayload {
+  preferences?: UserPreferences;
+  profile?: UserPreferences;
+}
+
 export const runtime = 'nodejs';
 
 export async function GET() {
@@ -14,9 +20,9 @@ export async function GET() {
     }
 
     await connectDB();
-    const user: any = await User.findById(session.user.id)
+    const user = await User.findById(session.user.id)
       .select('preferences profile')
-      .lean();
+      .lean<{ preferences?: UserPreferences; profile?: UserPreferences }>();
 
     return NextResponse.json({
       preferences: user?.preferences ?? {},
@@ -35,10 +41,10 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json().catch(() => ({}));
+    const body = (await req.json().catch(() => ({}))) as UserSettingsPayload;
     await connectDB();
 
-    const update: any = {};
+    const update: Record<string, unknown> = {};
 
     if (body.preferences) {
       update['preferences'] = body.preferences;

@@ -3,7 +3,6 @@
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { redirect } from 'next/navigation';
-import { Link } from '@/navigation';
 import { useState, useEffect } from 'react';
 import {
     Users,
@@ -124,21 +123,6 @@ export default function AdminDashboardPage() {
     if (!session) {
         return null; // Redirect will happen in the useEffect
     }
-
-    const formatTime = (date: Date) => {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
-    const formatDate = (date: Date) => {
-        const now = new Date();
-        const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-        if (diffInHours < 24) {
-            return t('hoursAgo', { hours: diffInHours });
-        } else {
-            return date.toLocaleDateString();
-        }
-    };
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">

@@ -101,9 +101,9 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
     const getUrgencyColor = (urgency: string) => {
         switch (urgency) {
             case 'critical': return 'bg-red-500 text-white animate-pulse';
-            case 'high': return 'bg-orange-500 text-white';
-            case 'medium': return 'bg-yellow-500 text-white';
-            default: return 'bg-green-500 text-white';
+            case 'high': return 'bg-orange-400 text-white';
+            case 'medium': return 'bg-yellow-400 text-[#0f172a]';
+            default: return 'bg-emerald-500 text-white';
         }
     };
 
@@ -119,23 +119,23 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-white">
             {/* Filter Pills */}
             <FadeIn>
                 <div className="flex flex-wrap gap-2 mb-6">
-                    {[
-                        { key: 'all', label: '🔍 All', icon: '🔍' },
-                        { key: 'video', label: '🎥 Video', icon: '🎥' },
-                        { key: 'audio', label: '🎧 Audio', icon: '🎧' },
-                        { key: 'message', label: '💬 Message', icon: '💬' }
-                    ].map(({ key, label, icon }) => (
+                    {[ 
+                        { key: 'all', label: '🔍 All' },
+                        { key: 'video', label: '🎥 Video' },
+                        { key: 'audio', label: '🎧 Audio' },
+                        { key: 'message', label: '💬 Message' }
+                    ].map(({ key, label }) => (
                         <button
                             key={key}
                             onClick={() => setFilter(key as typeof filter)}
                             className={`px-4 py-2 rounded-full font-medium transition-all duration-300 ${
                                 filter === key
-                                    ? 'bg-blue-500 text-white shadow-lg scale-105'
-                                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                                    ? 'bg-gradient-to-r from-[#52f6ff] to-[#b14dff] text-white shadow-[0_12px_35px_rgba(98,132,255,0.35)] scale-105'
+                                    : 'bg-white/5 text-white/70 border border-white/10 hover:border-white/30'
                             }`}
                         >
                             {label}
@@ -146,14 +146,14 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
 
             {filteredConsultations.length === 0 ? (
                 <ScaleIn>
-                    <div className="py-12 text-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl">
+                    <div className="py-12 text-center rounded-2xl border border-white/10 bg-white/5">
                         <div className="text-6xl mb-4">
                             {isPast ? '📚' : '🗓️'}
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                        <h3 className="text-xl font-semibold text-white mb-2">
                             {isPast ? 'No Past Consultations' : 'No Upcoming Consultations'}
                         </h3>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-white/70 mb-6">
                             {isPast 
                                 ? 'Your consultation history will appear here once you complete sessions'
                                 : 'Book your first consultation to get personalized medical care'
@@ -162,7 +162,7 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                         {!isPast && (
                             <Button 
                                 onClick={() => router.push('/consultations/new')}
-                                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                                className="bg-gradient-to-r from-[#52f6ff] via-[#6284ff] to-[#b14dff] hover:opacity-90"
                             >
                                 📅 Schedule Consultation
                             </Button>
@@ -171,13 +171,13 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                 </ScaleIn>
             ) : (
                 <StaggerContainer className="space-y-4">
-                    {filteredConsultations.map((consultation, index) => {
+                    {filteredConsultations.map((consultation) => {
                         const urgency = getUrgencyLevel(consultation);
                         const timeUntil = !isPast ? getTimeUntilConsultation(consultation.scheduledFor) : null;
                         
                         return (
                             <StaggerItem key={consultation._id}>
-                                <div className={`relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 ${
+                                <div className={`relative rounded-2xl border border-white/10 bg-[#040a1b] shadow-[0_25px_80px_rgba(2,6,23,0.6)] hover:border-white/30 transition-all duration-300 overflow-hidden ${
                                     urgency === 'critical' ? 'ring-2 ring-red-500 ring-opacity-50' : ''
                                 }`}>
                                     {/* Urgency Indicator */}
@@ -190,16 +190,16 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                                             <div className="flex-1">
                                                 {/* Header */}
                                                 <div className="flex items-center space-x-3 mb-3">
-                                                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                                    <div className="w-12 h-12 bg-gradient-to-r from-[#57afea] to-[#b14dff] rounded-full flex items-center justify-center">
                                                         <span className="text-white text-lg">
                                                             {getConsultationTypeIcon(consultation.type)}
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <h3 className="font-semibold text-gray-800 text-lg">
+                                                        <h3 className="font-semibold text-white text-lg">
                                                             {consultation.reason}
                                                         </h3>
-                                                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                                        <div className="flex items-center space-x-2 text-sm text-white/60">
                                                             <span>📅 {formatDate(new Date(consultation.scheduledFor))}</span>
                                                             <span>•</span>
                                                             <span>⏰ {formatTime(new Date(consultation.scheduledFor))}</span>
@@ -226,9 +226,9 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                                                 {!isPast && timeUntil && (
                                                     <div className="mb-4">
                                                         <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${
-                                                            timeUntil === 'Overdue' ? 'bg-red-100 text-red-700' :
-                                                            timeUntil.includes('minutes') ? 'bg-yellow-100 text-yellow-700' :
-                                                            'bg-blue-100 text-blue-700'
+                                                            timeUntil === 'Overdue' ? 'bg-red-500/20 text-red-200' :
+                                                            timeUntil.includes('minutes') ? 'bg-amber-500/20 text-amber-200' :
+                                                            'bg-blue-500/20 text-blue-100'
                                                         }`}>
                                                             <span>⏳</span>
                                                             <span>{timeUntil === 'Overdue' ? 'Overdue' : `Starts in ${timeUntil}`}</span>
@@ -237,8 +237,8 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                                                 )}
 
                                                 {/* Provider Info */}
-                                                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-                                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                                                <div className="flex items-center space-x-2 text-sm text-white/70 mb-4">
+                                                    <div className="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center">
                                                         👨‍⚕️
                                                     </div>
                                                     <span className="font-medium">
@@ -247,18 +247,18 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                                                     {consultation.provider?.specialty && (
                                                         <>
                                                             <span>•</span>
-                                                            <span className="text-gray-500">{consultation.provider.specialty}</span>
+                                                            <span className="text-white/50">{consultation.provider.specialty}</span>
                                                         </>
                                                     )}
                                                 </div>
 
                                                 {/* AI Triage Info */}
                                                 {consultation.aiTriageData && (
-                                                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-3 mb-4">
-                                                        <div className="flex items-center space-x-2 text-sm">
+                                                    <div className="bg-gradient-to-r from-[#44276a]/50 to-[#0f2a4d]/60 rounded-lg p-3 mb-4">
+                                                        <div className="flex items-center space-x-2 text-sm text-white/80">
                                                             <span>🤖</span>
-                                                            <span className="font-medium text-purple-700">AI Assessment:</span>
-                                                            <span className="text-purple-600">
+                                                            <span className="font-medium text-white">AI Assessment:</span>
+                                                            <span className="text-white/80">
                                                                 {consultation.aiTriageData.riskLevel} risk, {consultation.aiTriageData.urgency} priority
                                                             </span>
                                                         </div>
@@ -323,9 +323,9 @@ export default function ConsultationsList({ isPast = false }: ConsultationsListP
                                     {/* Progress Bar for upcoming consultations */}
                                     {!isPast && consultation.status === 'scheduled' && timeUntil && timeUntil !== 'Overdue' && (
                                         <div className="px-6 pb-4">
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                            <div className="w-full bg-white/10 rounded-full h-2">
                                                 <div 
-                                                    className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300"
+                                                    className="bg-gradient-to-r from-[#57afea] to-[#6df5c2] h-2 rounded-full transition-all duration-300"
                                                     style={{ 
                                                         width: timeUntil.includes('minutes') ? '90%' : 
                                                                timeUntil.includes('h') ? '50%' : '10%' 
@@ -374,10 +374,10 @@ function getConsultationType(type: string, t: (key: string) => string) {
 
 function getConsultationTypeStyle(type: string) {
     switch (type) {
-        case 'video': return 'bg-blue-100 text-blue-800 border border-blue-200';
-        case 'audio': return 'bg-green-100 text-green-800 border border-green-200';
-        case 'message': return 'bg-purple-100 text-purple-800 border border-purple-200';
-        default: return 'bg-gray-100 text-gray-800 border border-gray-200';
+        case 'video': return 'bg-blue-500/15 text-blue-200 border border-blue-400/30';
+        case 'audio': return 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/30';
+        case 'message': return 'bg-violet-500/15 text-violet-200 border border-violet-400/30';
+        default: return 'bg-white/10 text-white/80 border border-white/20';
     }
 }
 
@@ -393,11 +393,11 @@ function getConsultationStatus(status: string, t: (key: string) => string) {
 
 function getConsultationStatusStyle(status: string) {
     switch (status) {
-        case 'scheduled': return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
-        case 'completed': return 'bg-green-100 text-green-800 border border-green-200';
-        case 'cancelled': return 'bg-red-100 text-red-800 border border-red-200';
-        case 'in-progress': return 'bg-blue-100 text-blue-800 border border-blue-200';
-        default: return 'bg-gray-100 text-gray-800 border border-gray-200';
+        case 'scheduled': return 'bg-amber-500/15 text-amber-200 border border-amber-400/30';
+        case 'completed': return 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/30';
+        case 'cancelled': return 'bg-rose-500/15 text-rose-200 border border-rose-400/30';
+        case 'in-progress': return 'bg-sky-500/15 text-sky-200 border border-sky-400/30';
+        default: return 'bg-white/10 text-white/80 border border-white/20';
     }
 }
 

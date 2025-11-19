@@ -466,6 +466,15 @@
             "lab": "Matokeo ya Maabara",
             "other": "Nyingine"
         },
+        "stats": {
+            "total": "Rekodi zote",
+            "shared": "Rekodi zilizoshirikiwa",
+            "lastUpdated": "Sasisho la mwisho",
+            "private": "Zimehifadhiwa binafsi"
+        },
+        "actions": {
+            "refresh": "Onyesha upya"
+        },
         "recordTitle": "Kichwa",
         "fieldType": "Aina",
         "recordDate": "Tarehe",

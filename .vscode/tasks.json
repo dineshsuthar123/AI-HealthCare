@@ -25,6 +25,17 @@
 				"$tsc",
 				"$eslint-stylish"
 			]
+		},
+		{
+			"label": "Typecheck build to validate homepage",
+			"type": "shell",
+			"command": "npm run build:nolint",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc",
+				"$eslint-stylish"
+			],
+			"group": "build"
 		}
 	]
 }

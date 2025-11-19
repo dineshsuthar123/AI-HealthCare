@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import type { Types } from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { ApiError } from '@/lib/api-error';
@@ -53,9 +54,8 @@ export async function POST(req: NextRequest) {
 
         // If provider exists, remove patient from their list
         if (provider) {
-            provider.patients = provider.patients.filter(
-                (id: any) => id.toString() !== patientId
-            );
+            const patientIds = (provider.patients as Types.ObjectId[] | undefined) ?? [];
+            provider.patients = patientIds.filter((id: Types.ObjectId) => id.toString() !== patientId);
             await provider.save();
         }
 

@@ -466,6 +466,15 @@
             "lab": "Resultado de Laboratório",
             "other": "Outro"
         },
+        "stats": {
+            "total": "Registros totais",
+            "shared": "Registros compartilhados",
+            "lastUpdated": "Última atualização",
+            "private": "Mantidos em privado"
+        },
+        "actions": {
+            "refresh": "Atualizar"
+        },
         "recordTitle": "Título",
         "fieldType": "Tipo",
         "recordDate": "Data",

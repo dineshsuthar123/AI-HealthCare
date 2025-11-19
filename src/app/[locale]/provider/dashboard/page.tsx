@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/navigation';
@@ -88,14 +89,6 @@ export default function ProviderDashboardPage() {
             fetchDashboardData();
         }
     }, [session]);
-
-    const formatTime = (date: Date) => {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
-    const formatDate = (date: Date) => {
-        return date.toLocaleDateString();
-    };
 
     // Rendering functions
     const renderLoading = () => (
@@ -308,10 +301,13 @@ export default function ProviderDashboardPage() {
                                                     <div className="flex-shrink-0">
                                                         <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
                                                             {patient.profilePicture ? (
-                                                                <img
+                                                                <Image
                                                                     src={patient.profilePicture}
                                                                     alt={patient.name}
-                                                                    className="h-10 w-10 rounded-full"
+                                                                    width={40}
+                                                                    height={40}
+                                                                    className="h-10 w-10 rounded-full object-cover"
+                                                                    unoptimized
                                                                 />
                                                             ) : (
                                                                 patient.name.charAt(0).toUpperCase()
@@ -537,10 +533,13 @@ export default function ProviderDashboardPage() {
                                                             <div className="flex-shrink-0 h-10 w-10">
                                                                 <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
                                                                     {patient.profilePicture ? (
-                                                                        <img
+                                                                        <Image
                                                                             src={patient.profilePicture}
                                                                             alt={patient.name}
-                                                                            className="h-10 w-10 rounded-full"
+                                                                            width={40}
+                                                                            height={40}
+                                                                            className="h-10 w-10 rounded-full object-cover"
+                                                                            unoptimized
                                                                         />
                                                                     ) : (
                                                                         patient.name.charAt(0).toUpperCase()

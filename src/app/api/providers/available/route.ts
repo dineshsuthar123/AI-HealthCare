@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         const specialty = searchParams.get('specialty') || '';
 
         // Build query
-        const query: Record<string, any> = { role: 'provider' };
+        const query: Record<string, unknown> = { role: 'provider' };
 
         if (search) {
             query.$or = [

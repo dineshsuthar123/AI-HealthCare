@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         const filter = searchParams.get('filter') || 'all';
 
         // Build query
-        const query: Record<string, any> = { role: 'patient' };
+        const query: Record<string, unknown> = { role: 'patient' };
 
         if (search) {
             query.$or = [

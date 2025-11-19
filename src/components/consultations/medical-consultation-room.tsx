@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MedicalAnimations } from '@/components/animations/medical-animations';
 import { FadeIn, ScaleIn, SlideInFromBottom } from '@/components/animations/motion-effects';
@@ -9,13 +8,14 @@ import { EnhancedVideoCall } from './enhanced-video-call';
 import { MedicalNotes } from './medical-notes';
 import { VitalSigns } from './vital-signs';
 import { DiagnosticTools } from './diagnostic-tools';
+import type { Consultation } from '@/types';
 
 interface MedicalConsultationRoomProps {
     consultationId: string;
     userId: string;
     userName: string;
     userRole: string;
-    consultation?: any;
+    consultation?: Consultation | null;
 }
 
 export const MedicalConsultationRoom = ({
@@ -25,7 +25,6 @@ export const MedicalConsultationRoom = ({
     userRole,
     consultation
 }: MedicalConsultationRoomProps) => {
-    const t = useTranslations('ConsultationRoom');
     const [activePanel, setActivePanel] = useState<'video' | 'notes' | 'vitals' | 'tools'>('video');
     const [isMinimized, setIsMinimized] = useState(false);
     const [consultationStarted, setConsultationStarted] = useState(false);
