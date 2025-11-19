@@ -198,7 +198,7 @@ Remember: This is for informational purposes only, not professional medical advi
             });
 
             telemetry.modelUsed = preferredModel;
-            telemetry.tokensUsed = (completion as any).usage?.total_tokens;
+            telemetry.tokensUsed = completion?.usage?.total_tokens;
 
         } catch (error) {
             console.log("Failed to use preferred model, using fallback:", error instanceof Error ? error.message : String(error));
@@ -227,7 +227,7 @@ Remember: This is for informational purposes only, not professional medical advi
                     });
 
                     telemetry.modelUsed = fastModel;
-                    telemetry.tokensUsed = (completion as any).usage?.total_tokens;
+                    telemetry.tokensUsed = completion?.usage?.total_tokens;
 
                 } catch (fallbackError) {
                     console.log("Failed to use fallback model, using local analysis:",

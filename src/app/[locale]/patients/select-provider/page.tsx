@@ -38,8 +38,6 @@ interface Provider {
     about: string;
 }
 
-type TranslateFn = (key: string, values?: Record<string, unknown>) => string;
-
 export default function SelectProviderPage() {
     const { status } = useSession({
         required: true,
@@ -408,7 +406,6 @@ export default function SelectProviderPage() {
                                     setConfirmationModalOpen(true);
                                 }}
                                 delay={index * 0.1}
-                                t={t}
                             />
                         ))
                     )}
@@ -474,10 +471,10 @@ interface ProviderCardProps {
     isCurrentProvider: boolean;
     onSelect: () => void;
     delay: number;
-    t: TranslateFn;
 }
 
-function ProviderCard({ provider, isCurrentProvider, onSelect, delay, t }: ProviderCardProps) {
+function ProviderCard({ provider, isCurrentProvider, onSelect, delay }: ProviderCardProps) {
+    const t = useTranslations('Patients');
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}

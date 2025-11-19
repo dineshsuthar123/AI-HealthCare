@@ -10,6 +10,14 @@ import { VitalSigns } from './vital-signs';
 import { DiagnosticTools } from './diagnostic-tools';
 import type { Consultation } from '@/types';
 
+type PanelKey = 'video' | 'notes' | 'vitals' | 'tools';
+
+interface NavigationItem {
+    id: PanelKey;
+    icon: string;
+    label: string;
+}
+
 interface MedicalConsultationRoomProps {
     consultationId: string;
     userId: string;
@@ -25,12 +33,18 @@ export const MedicalConsultationRoom = ({
     userRole,
     consultation
 }: MedicalConsultationRoomProps) => {
-    const [activePanel, setActivePanel] = useState<'video' | 'notes' | 'vitals' | 'tools'>('video');
+    const [activePanel, setActivePanel] = useState<PanelKey>('video');
     const [isMinimized, setIsMinimized] = useState(false);
     const [consultationStarted, setConsultationStarted] = useState(false);
     const [consultationStatus, setConsultationStatus] = useState('waiting');
 
     const isProvider = userRole === 'provider';
+    const navigationItems: NavigationItem[] = [
+        { id: 'video', icon: '🎥', label: 'Video' },
+        { id: 'notes', icon: '📝', label: 'Notes' },
+        { id: 'vitals', icon: '💓', label: 'Vitals' },
+        { id: 'tools', icon: '🔬', label: 'Tools' }
+    ];
 
     const handleStartConsultation = () => {
         setConsultationStarted(true);
@@ -97,15 +111,10 @@ export const MedicalConsultationRoom = ({
                 {/* Left Panel - Navigation */}
                 <SlideInFromBottom delay={0.2}>
                     <div className="w-20 bg-white/80 backdrop-blur-sm border-r border-blue-200 flex flex-col items-center py-6 space-y-4">
-                        {[
-                            { id: 'video', icon: '🎥', label: 'Video' },
-                            { id: 'notes', icon: '📝', label: 'Notes' },
-                            { id: 'vitals', icon: '💓', label: 'Vitals' },
-                            { id: 'tools', icon: '🔬', label: 'Tools' }
-                        ].map((item) => (
+                        {navigationItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setActivePanel(item.id as any)}
+                                onClick={() => setActivePanel(item.id)}
                                 className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all duration-300 ${
                                     activePanel === item.id
                                         ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg scale-110'

@@ -22,6 +22,11 @@ interface Notification {
     };
 }
 
+type NotificationPayload = Omit<Notification, 'timestamp' | 'isRead'> & {
+    timestamp: string | number | Date;
+    isRead?: boolean;
+};
+
 interface NotificationsDropdownProps {
     isOpen: boolean;
     onToggle: () => void;
@@ -87,7 +92,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
         };
     }, [isOpen, onClose, isClient]);
 
-    const normalizeNotifications = useCallback((payload: any[] = []) => {
+    const normalizeNotifications = useCallback((payload: NotificationPayload[] = []) => {
         const readSet = readIdsRef.current;
         return payload
             .map((n) => ({
@@ -96,7 +101,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
                 title: n.title,
                 message: n.message,
                 timestamp: new Date(n.timestamp),
-                isRead: readSet.has(n.id),
+                isRead: n.isRead ?? readSet.has(n.id),
                 action: n.action,
             }))
             .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
@@ -109,7 +114,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
                 setNotifications([]);
                 return;
             }
-            const data = await res.json();
+            const data = await res.json() as { notifications?: NotificationPayload[] };
             setNotifications(normalizeNotifications(data.notifications || []));
         } catch {
             setNotifications([]);
@@ -127,7 +132,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
             source.onmessage = (event) => {
                 if (!event.data) return;
                 try {
-                    const payload = JSON.parse(event.data);
+                    const payload = JSON.parse(event.data) as { notifications?: NotificationPayload[] };
                     if (payload?.notifications) {
                         setNotifications(normalizeNotifications(payload.notifications));
                     }

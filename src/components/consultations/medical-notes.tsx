@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { FadeIn, ScaleIn } from '@/components/animations/motion-effects';
 import type { Consultation } from '@/types';
@@ -22,7 +21,6 @@ interface Note {
 }
 
 export const MedicalNotes = ({ consultationId, isProvider, consultation }: MedicalNotesProps) => {
-    const t = useTranslations('ConsultationRoom');
     const [notes, setNotes] = useState<Note[]>([]);
     const [newNote, setNewNote] = useState('');
     const [noteType, setNoteType] = useState<Note['type']>('observation');

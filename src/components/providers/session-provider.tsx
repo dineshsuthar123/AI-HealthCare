@@ -55,8 +55,8 @@ export default function AuthProvider({ children, disableOverlay }: Props) {
                         // Error in check, default to moderate loading time
                         setTimeout(() => setIsLoading(false), 1000);
                     });
-            } catch (e) {
-                // Error in fetch, default to moderate loading time
+            } catch (error) {
+                console.warn('AuthProvider session quick-check failed:', error);
                 setTimeout(() => setIsLoading(false), 1000);
             }
         } else {

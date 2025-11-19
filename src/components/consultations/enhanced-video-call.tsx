@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { FadeIn, ScaleIn } from '@/components/animations/motion-effects';
 
@@ -26,7 +25,6 @@ export const EnhancedVideoCall = ({
     consultationStarted,
     consultationStatus
 }: EnhancedVideoCallProps) => {
-    const t = useTranslations('ConsultationRoom');
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);

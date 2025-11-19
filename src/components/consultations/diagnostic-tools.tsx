@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { FadeIn, ScaleIn } from '@/components/animations/motion-effects';
 
@@ -35,7 +34,6 @@ type DiagnosticResult = {
 };
 
 export const DiagnosticTools = ({ consultationId, isProvider }: DiagnosticToolsProps) => {
-    const t = useTranslations('ConsultationRoom');
     const [activeCategory, setActiveCategory] = useState<string>('assessment');
     const [diagnosticTests, setDiagnosticTests] = useState<DiagnosticTest[]>([]);
     const [selectedTool, setSelectedTool] = useState<DiagnosticTest | null>(null);

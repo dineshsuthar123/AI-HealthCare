@@ -51,6 +51,7 @@ export async function GET(request: Request) {
                             previousIds = currentIds;
                         }
                     } catch (error) {
+                        console.error('Notifications stream snapshot error:', error);
                         controller.enqueue(encoder.encode(`event: error\ndata: ${JSON.stringify({ message: 'stream-error' })}\n\n`));
                     }
                 };

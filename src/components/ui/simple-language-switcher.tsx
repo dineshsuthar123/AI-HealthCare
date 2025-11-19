@@ -6,7 +6,6 @@ import { Globe, Check, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
-import { clearIntlCache } from '@/lib/clear-intl-cache';
 
 interface SimpleLanguageSwitcherProps {
     className?: string;
@@ -20,13 +19,15 @@ const languages = [
     { code: 'ar', name: 'العربية', flag: '🇸🇦' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
     { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' },
-];
+] as const;
 
 export default function SimpleLanguageSwitcher({ className }: SimpleLanguageSwitcherProps) {
     const [isOpen, setIsOpen] = useState(false);
     const locale = useLocale();
 
-    const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]; const handleLanguageChange = (newLocale: string) => {
+    const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
+
+    const handleLanguageChange = (newLocale: string) => {
         setIsOpen(false);
 
         // Store language preference in localStorage

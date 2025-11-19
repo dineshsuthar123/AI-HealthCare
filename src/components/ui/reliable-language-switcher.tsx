@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/navigation';
-import { Globe, Check, ChevronDown, RefreshCw } from 'lucide-react';
+import { Globe, Check, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from '@/lib/framer-motion';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,26 @@ const languages = [
     { code: 'ar', name: 'العربية', flag: '🇸🇦' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
     { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' },
-];
+] as const;
+
+const SUPPORTED_LOCALES = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
+type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+
+const isSupportedLocale = (value: string | null | undefined): value is SupportedLocale => {
+    if (!value) return false;
+    return SUPPORTED_LOCALES.includes(value as SupportedLocale);
+};
+
+const stripLeadingLocale = (path: string | null | undefined) => {
+    if (!path) return '/';
+    const parts = path.split('/');
+    // ['', 'en', '...']
+    if (parts.length > 1 && isSupportedLocale(parts[1])) {
+        const rest = parts.slice(2).join('/');
+        return rest ? `/${rest}` : '/';
+    }
+    return path || '/';
+};
 
 export default function ReliableLanguageSwitcher({
     variant = 'dropdown',
@@ -36,18 +55,6 @@ export default function ReliableLanguageSwitcher({
     const router = useRouter();
     const pathname = usePathname();
 
-    const supportedLocales = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
-    const stripLeadingLocale = (path: string | null | undefined) => {
-        if (!path) return '/';
-        const parts = path.split('/');
-        // ['', 'en', '...']
-        if (parts.length > 1 && supportedLocales.includes(parts[1] as any)) {
-            const rest = parts.slice(2).join('/');
-            return rest ? `/${rest}` : '/';
-        }
-        return path || '/';
-    };
-
     // Prevent hydration issues
     useEffect(() => {
         setIsMounted(true);
@@ -56,7 +63,7 @@ export default function ReliableLanguageSwitcher({
     const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
 
     // This is the most reliable way to switch languages in Next.js with next-intl
-    const handleLanguageChange = (newLocale: string) => {
+    const handleLanguageChange = (newLocale: SupportedLocale) => {
         // Close dropdown
         setIsOpen(false);
 
@@ -96,7 +103,7 @@ export default function ReliableLanguageSwitcher({
     }
 
     // Handler for when everything else fails
-    const handleFallbackNavigation = (newLocale: string) => {
+    const handleFallbackNavigation = (newLocale: SupportedLocale) => {
         try {
             // Store preference
             localStorage.setItem('preferredLocale', newLocale);

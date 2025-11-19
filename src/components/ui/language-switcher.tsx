@@ -22,7 +22,25 @@ const languages = [
     { code: 'ar', name: 'العربية', flag: '🇸🇦' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
     { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' },
-];
+] as const;
+
+const SUPPORTED_LOCALES = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
+type SupportedLocale = typeof SUPPORTED_LOCALES[number];
+
+const isSupportedLocale = (value: string | null | undefined): value is SupportedLocale => {
+    if (!value) return false;
+    return SUPPORTED_LOCALES.includes(value as SupportedLocale);
+};
+
+const stripLeadingLocale = (path: string | null | undefined) => {
+    if (!path) return '/';
+    const parts = path.split('/');
+    if (parts.length > 1 && isSupportedLocale(parts[1])) {
+        const rest = parts.slice(2).join('/');
+        return rest ? `/${rest}` : '/';
+    }
+    return path || '/';
+};
 
 export default function LanguageSwitcher({
     variant = 'dropdown',
@@ -34,18 +52,9 @@ export default function LanguageSwitcher({
     const router = useRouter();
     const pathname = usePathname();
 
-    const supportedLocales = ['en', 'es', 'fr', 'hi', 'pt', 'sw', 'ar'] as const;
-    const stripLeadingLocale = (path: string | null | undefined) => {
-        if (!path) return '/';
-        const parts = path.split('/');
-        if (parts.length > 1 && supportedLocales.includes(parts[1] as any)) {
-            const rest = parts.slice(2).join('/');
-            return rest ? `/${rest}` : '/';
-        }
-        return path || '/';
-    };
+    const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
 
-    const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]; const handleLanguageChange = (newLocale: string) => {
+    const handleLanguageChange = (newLocale: SupportedLocale) => {
         // Close dropdown
         setIsOpen(false);
 
@@ -56,7 +65,6 @@ export default function LanguageSwitcher({
 
         // Navigate to the same page but with new locale
         try {
-            // Use the pathname from next-intl navigation but strip the current locale
             const basePath = stripLeadingLocale(pathname);
             router.push(basePath, { locale: newLocale });
         } catch (error) {
@@ -80,7 +88,7 @@ export default function LanguageSwitcher({
                 <label className="block text-sm font-medium mb-2">Language</label>
                 <select
                     value={locale}
-                    onChange={(e) => handleLanguageChange(e.target.value)}
+                    onChange={(e) => handleLanguageChange(e.target.value as SupportedLocale)}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     aria-label="Select language"
                 >
@@ -138,7 +146,7 @@ export default function LanguageSwitcher({
                                 {languages.map((lang) => (
                                     <button
                                         key={lang.code}
-                                        onClick={() => handleLanguageChange(lang.code)}
+                                        onClick={() => handleLanguageChange(lang.code as SupportedLocale)}
                                         className={cn(
                                             "w-full flex items-center justify-between px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
                                             locale === lang.code ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300"
