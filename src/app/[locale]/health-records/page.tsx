@@ -354,7 +354,7 @@ export default function HealthRecordsPage() {
 
     if (showForm || editingRecord) {
         return (
-            <div className="relative min-h-screen bg-slate-950 py-12 px-4 text-white sm:px-6 lg:px-8">
+            <div className="future-page relative min-h-screen bg-slate-950 py-12 px-4 text-white sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-4xl">
                     <Card className="border-white/10 bg-white/[0.03] backdrop-blur">
                         <CardContent className="pt-8">
@@ -371,7 +371,7 @@ export default function HealthRecordsPage() {
     }
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+        <div className="future-page relative min-h-screen overflow-hidden bg-slate-950 text-white">
             <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950" aria-hidden="true" />
             <div
                 className="absolute inset-0 opacity-30"

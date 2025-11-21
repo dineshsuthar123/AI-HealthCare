@@ -31,7 +31,7 @@ export default function ConsultationsPage() {
     }
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#01030f] text-white">
+        <div className="future-page relative min-h-screen overflow-hidden bg-[#01030f] text-white">
             <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(87,120,255,0.35),_transparent_45%)]" aria-hidden />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(82,246,255,0.12),_transparent_35%)]" aria-hidden />

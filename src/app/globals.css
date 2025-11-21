@@ -265,6 +265,41 @@
     line-height: 1.6;
 }
 
+@layer components {
+    body:not(.dark) .future-page {
+        background: radial-gradient(circle at top, #f8faff 0%, #ffffff 55%);
+        color: var(--foreground);
+    }
+
+    body:not(.dark) .future-page [class*="bg-slate-95"],
+    body:not(.dark) .future-page [class*="bg-[#0"] {
+        background-color: rgba(255, 255, 255, 0.96) !important;
+    }
+
+    body:not(.dark) .future-page [class*="bg-white/"],
+    body:not(.dark) .future-page [class*="bg-white["] {
+        background-color: rgba(255, 255, 255, 0.92) !important;
+    }
+
+    body:not(.dark) .future-page [class*="border-white/"] {
+        border-color: rgba(148, 163, 184, 0.4) !important;
+    }
+
+    body:not(.dark) .future-page [class*="text-white"] {
+        color: var(--foreground) !important;
+    }
+
+    body:not(.dark) .future-page [class*="text-slate-2"],
+    body:not(.dark) .future-page [class*="text-slate-3"],
+    body:not(.dark) .future-page [class*="text-slate-4"] {
+        color: #475467 !important;
+    }
+
+    body:not(.dark) .future-page [class*="shadow-["] {
+        box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12) !important;
+    }
+}
+
 /* Accessibility helpers */
 .hc * { outline-color: #fff !important; }
 @media (prefers-reduced-motion: reduce) { .rm * { animation: none !important; transition: none !important; } }

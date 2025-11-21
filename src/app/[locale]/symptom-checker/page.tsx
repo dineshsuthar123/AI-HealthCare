@@ -164,7 +164,7 @@ export default function SymptomCheckerPage() {
     // Render a simple skeleton during SSR to prevent hydration mismatch
     if (!isClient) {
         return (
-            <div className="min-h-screen bg-slate-950 py-12">
+            <div className="future-page min-h-screen bg-slate-950 py-12">
                 <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center text-white">
                         <Stethoscope className="mx-auto mb-4 h-14 w-14 text-cyan-300" />
@@ -177,7 +177,7 @@ export default function SymptomCheckerPage() {
     }
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+        <div className="future-page relative min-h-screen overflow-hidden bg-slate-950 text-white">
             <ParticlesBackground variant="medical" />
 
             <div className="relative z-10 px-4 py-24 sm:px-6 lg:px-10">
