@@ -74,23 +74,32 @@ export default function SignInPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-center mb-6">
-                <Heart className="h-12 w-12 text-blue-600" />
-            </div>
+        <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900" />
+            <div className="absolute inset-0 opacity-60" style={{
+                backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.35), transparent 45%), radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.25), transparent 40%)'
+            }} />
+            <div className="absolute inset-0 opacity-20" style={{
+                backgroundImage: `linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)`
+            }} />
 
-            <Card className="w-full max-w-md">
-                <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center">
+            <div className="relative z-10 min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-center mb-6">
+                    <Heart className="h-12 w-12 text-cyan-300 drop-shadow-[0_0_20px_rgba(6,182,212,0.45)]" />
+                </div>
+
+                <Card className="w-full max-w-md bg-white/90 dark:bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-[0_20px_80px_rgba(14,165,233,0.15)]">
+                    <CardHeader className="space-y-1 text-slate-900 dark:text-white">
+                        <CardTitle className="text-2xl font-bold text-center">
                         {t('signIn.title')}
                     </CardTitle>
-                    <CardDescription className="text-center">
+                        <CardDescription className="text-center text-slate-600 dark:text-slate-300">
                         {t('signIn.subtitle')}
                     </CardDescription>
-                </CardHeader>
+                    </CardHeader>
 
-                <form onSubmit={handleSignIn}>
-                    <CardContent className="space-y-4">
+                    <form onSubmit={handleSignIn}>
+                        <CardContent className="space-y-4">
                         {error && (
                             <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm">
                                 {error}
@@ -107,7 +116,7 @@ export default function SignInPage() {
                                     id="email"
                                     type="email"
                                     placeholder={t('signIn.emailPlaceholder')}
-                                    className="pl-10"
+                                    className="pl-10 bg-white/90 dark:bg-slate-900/60 border-gray-200 dark:border-slate-700"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -133,7 +142,7 @@ export default function SignInPage() {
                                     id="password"
                                     type="password"
                                     placeholder={t('signIn.passwordPlaceholder')}
-                                    className="pl-10"
+                                    className="pl-10 bg-white/90 dark:bg-slate-900/60 border-gray-200 dark:border-slate-700"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -141,7 +150,7 @@ export default function SignInPage() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full group relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg hover:shadow-xl transition-all duration-300" disabled={isLoading}>
+                        <Button type="submit" className="w-full group relative overflow-hidden rounded-lg bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 shadow-lg hover:shadow-xl transition-all duration-300" disabled={isLoading}>
                             <span className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-all duration-300"></span>
                             {isLoading ? (
                                 <>
@@ -161,7 +170,7 @@ export default function SignInPage() {
                                 <div className="w-full border-t border-gray-200"></div>
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="bg-white px-2 text-gray-500">
+                                <span className="bg-white/90 dark:bg-slate-900/80 px-2 text-gray-500 dark:text-slate-300">
                                     {t('signIn.orContinue')}
                                 </span>
                             </div>
@@ -170,7 +179,7 @@ export default function SignInPage() {
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full"
+                            className="w-full border-gray-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/60"
                             onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
                         >
                             <svg
@@ -197,21 +206,22 @@ export default function SignInPage() {
                             </svg>
                             {t('signIn.continueWithGoogle')}
                         </Button>
-                    </CardContent>
-                </form>
+                        </CardContent>
+                    </form>
 
-                <CardFooter className="flex justify-center">
-                    <div className="text-sm text-gray-600">
-                        {t('signIn.noAccount')}{' '}
-                        <Link
-                            href="/auth/signup"
-                            className="font-medium text-blue-600 hover:text-blue-800"
-                        >
-                            {t('signIn.createAccount')}
-                        </Link>
-                    </div>
-                </CardFooter>
-            </Card>
+                    <CardFooter className="flex justify-center">
+                        <div className="text-sm text-gray-600 dark:text-slate-300">
+                            {t('signIn.noAccount')}{' '}
+                            <Link
+                                href="/auth/signup"
+                                className="font-medium text-blue-600 hover:text-blue-400"
+                            >
+                                {t('signIn.createAccount')}
+                            </Link>
+                        </div>
+                    </CardFooter>
+                </Card>
+            </div>
         </div>
     );
 }
