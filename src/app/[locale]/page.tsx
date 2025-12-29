@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/navigation';
-import { Stethoscope, Video, MessageSquare, BarChart3, Sparkles } from 'lucide-react';
+import { Stethoscope, Video, MessageSquare, BarChart3, Sparkles, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 // Removed ParticlesBackground to reduce bundle size on homepage
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations/motion-effects';
@@ -25,6 +25,12 @@ export default async function HomePage() {
             title: t('features.telemedicine.title'),
             description: t('features.telemedicine.description'),
             href: '/consultations',
+        },
+        {
+            icon: AlertTriangle,
+            title: 'AI Emergency Center',
+            description: 'Voice-activated emergency response with AI triage, real-time vitals monitoring, and instant access to help.',
+            href: '/emergency',
         },
         {
             icon: MessageSquare,

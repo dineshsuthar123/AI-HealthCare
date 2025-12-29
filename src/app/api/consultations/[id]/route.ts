@@ -111,6 +111,60 @@ export async function PUT(
     }
 }
 
+export async function PATCH(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const resolvedParams = await params;
+        const { id } = resolvedParams;
+        const { status } = await request.json();
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ error: 'Invalid consultation ID' }, { status: 400 });
+        }
+
+        await connectToDatabase();
+
+        // Find consultation and ensure the user has access
+        const consultation = await ConsultationModel.findOne({
+            _id: id,
+            $or: [
+                { patientId: session.user.id },
+                { providerId: session.user.id }
+            ]
+        });
+
+        if (!consultation) {
+            return NextResponse.json({ error: 'Consultation not found' }, { status: 404 });
+        }
+
+        // Update status
+        const validStatuses = ['scheduled', 'in-progress', 'completed', 'cancelled'];
+        if (status && validStatuses.includes(status)) {
+            consultation.status = status;
+            consultation.updatedAt = new Date();
+            
+            if (status === 'completed') {
+                consultation.completedAt = new Date();
+            }
+            
+            await consultation.save();
+        }
+
+        return NextResponse.json({ success: true, consultation });
+    } catch (error) {
+        console.error('Error patching consultation:', error);
+        return NextResponse.json({ error: 'Failed to update consultation' }, { status: 500 });
+    }
+}
+
 // This route is deprecated. Use /api/consultations/cancel instead.
 export function DELETE() {
     return NextResponse.json(

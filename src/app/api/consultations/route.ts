@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import connectToDatabase from '@/lib/mongodb';
 import ConsultationModel from '@/models/Consultation';
+import mongoose from 'mongoose';
 
 export const runtime = 'nodejs';
 
@@ -94,6 +95,20 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        // Get user ID from session
+        const userId = session.user?.id;
+        if (!userId) {
+            return NextResponse.json({ error: 'User ID not found in session' }, { status: 400 });
+        }
+
+        // Convert to ObjectId
+        let patientObjectId: mongoose.Types.ObjectId;
+        try {
+            patientObjectId = new mongoose.Types.ObjectId(userId);
+        } catch {
+            return NextResponse.json({ error: 'Invalid user ID format' }, { status: 400 });
+        }
+
         // Connect to the database
         await connectToDatabase();
 
@@ -101,7 +116,7 @@ export async function POST(request: NextRequest) {
         const scheduledFor = new Date(`${data.date}T${data.time}`);
 
         const consultationData: {
-            patientId: string;
+            patientId: mongoose.Types.ObjectId;
             reason: string;
             type: string;
             status: string;
@@ -116,7 +131,7 @@ export async function POST(request: NextRequest) {
             };
             priority?: string;
         } = {
-            patientId: session.user.id || '',
+            patientId: patientObjectId,
             reason: data.reason,
             type: data.type || 'video',
             status: 'scheduled',

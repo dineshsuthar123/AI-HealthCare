@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Bell, X, Clock, AlertCircle, Calendar, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,7 @@ const READ_KEY = 'readNotifications';
 
 export default function NotificationsDropdown({ isOpen, onToggle, onClose, triggerClassName }: NotificationsDropdownProps) {
     const t = useTranslations('Notifications');
+    const { data: session, status } = useSession();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isClient, setIsClient] = useState(false);
     const [readIds, setReadIds] = useState<string[]>([]);
@@ -46,6 +48,9 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
     const readIdsRef = useRef<Set<string>>(new Set());
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === 'dark';
+    
+    // Check if user is authenticated
+    const isAuthenticated = status === 'authenticated' && !!session?.user;
 
     // Prevent hydration issues
     useEffect(() => {
@@ -122,7 +127,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
     }, [normalizeNotifications]);
 
     useEffect(() => {
-        if (!isClient) return;
+        if (!isClient || !isAuthenticated) return;
         bootstrapNotifications();
         let source: EventSource | null = null;
         let retry: ReturnType<typeof setTimeout> | null = null;
@@ -143,7 +148,10 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
             source.onerror = () => {
                 source?.close();
                 if (retry) clearTimeout(retry);
-                retry = setTimeout(connect, 4000);
+                // Only retry if still authenticated
+                if (isAuthenticated) {
+                    retry = setTimeout(connect, 4000);
+                }
             };
         };
 
@@ -153,7 +161,7 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
             source?.close();
             if (retry) clearTimeout(retry);
         };
-    }, [isClient, bootstrapNotifications, normalizeNotifications]);
+    }, [isClient, isAuthenticated, bootstrapNotifications, normalizeNotifications]);
 
     const getNotificationIcon = (type: Notification['type']) => {
         switch (type) {
@@ -370,14 +378,11 @@ export default function NotificationsDropdown({ isOpen, onToggle, onClose, trigg
                                         isDark ? 'border-white/10 bg-slate-900/50' : 'border-gray-200/60 bg-white/60'
                                     )}>
                                         <Button
+                                            asChild
                                             variant="ghost"
                                             className="w-full text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200"
-                                            onClick={() => {
-                                                // Navigate to notifications page
-                                                window.location.href = '/notifications';
-                                            }}
                                         >
-                                            {t('viewAll')}
+                                            <a href="/notifications">{t('viewAll')}</a>
                                         </Button>
                                     </div>
                                 )}

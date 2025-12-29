@@ -67,6 +67,7 @@ export default function Header() {
         { name: t('consultations'), href: '/consultations' },
         { name: t('dashboard'), href: '/dashboard' },
         { name: t('healthRecords'), href: '/health-records' },
+        { name: 'Emergency', href: '/emergency' },
     ];
 
     // Role-specific navigation items

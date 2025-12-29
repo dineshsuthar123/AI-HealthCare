@@ -60,15 +60,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check user permissions for sending SMS
-        if (session.user?.role !== 'admin' && session.user?.role !== 'provider') {
-            // Log unauthorized access attempt for security monitoring
-            console.warn(`Unauthorized SMS send attempt by user: ${session.user?.id}`);
-
-            return NextResponse.json({
-                error: 'Forbidden',
-                message: 'You do not have permission to send SMS messages'
-            }, { status: 403 });
-        }
+        // Allow patients to send their own SMS (useful for +91 and self-service), keep providers/admins too
 
         // Check if Twilio is configured
         if (!isTwilioConfigured()) {

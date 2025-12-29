@@ -203,6 +203,7 @@ export default function ConsultationForm({ variant = 'standalone' }: Consultatio
                                             >
                                                 <option value="video" className="text-gray-900">Video</option>
                                                 <option value="audio" className="text-gray-900">Audio</option>
+                                                <option value="text" className="text-gray-900">Text chat</option>
                                                 <option value="in-person" className="text-gray-900">In person</option>
                                             </select>
                                         </div>

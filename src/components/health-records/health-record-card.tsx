@@ -55,17 +55,17 @@ const getTypeIcon = (type: string) => {
 const getTypeColor = (type: string) => {
     switch (type) {
         case 'allergy':
-            return 'bg-red-100 text-red-800';
+            return 'bg-gradient-to-r from-rose-500/20 to-orange-500/20 text-rose-200 border border-rose-500/40';
         case 'medication':
-            return 'bg-blue-100 text-blue-800';
+            return 'bg-gradient-to-r from-blue-500/20 to-cyan-400/20 text-blue-200 border border-blue-500/40';
         case 'condition':
-            return 'bg-yellow-100 text-yellow-800';
+            return 'bg-gradient-to-r from-amber-400/20 to-orange-500/20 text-amber-200 border border-amber-400/40';
         case 'vaccination':
-            return 'bg-green-100 text-green-800';
+            return 'bg-gradient-to-r from-emerald-400/20 to-teal-500/20 text-emerald-200 border border-emerald-400/40';
         case 'lab':
-            return 'bg-purple-100 text-purple-800';
+            return 'bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-200 border border-purple-500/40';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-gradient-to-r from-slate-500/20 to-slate-400/20 text-slate-200 border border-slate-400/40';
     }
 };
 
@@ -103,16 +103,16 @@ export const HealthRecordCard = ({ record, onEdit, onDelete, onToggleShare }: He
     };
 
     return (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border border-white/10 bg-[#0b1224] text-white">
             <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                     <div className="flex items-center">
-                        <div className={`p-2 rounded-md mr-3 ${getTypeColor(record.type)}`}>
-                            <span className="text-xl">{getTypeIcon(record.type)}</span>
+                        <div className={`p-2 rounded-md mr-3 shadow-inner ${getTypeColor(record.type)}`}>
+                            <span className="text-xl drop-shadow-sm">{getTypeIcon(record.type)}</span>
                         </div>
                         <div>
-                            <CardTitle className="text-lg">{record.title}</CardTitle>
-                            <CardDescription>
+                            <CardTitle className="text-lg text-white">{record.title}</CardTitle>
+                            <CardDescription className="text-slate-300">
                                 {t(`recordType.${record.type}`)} • {formatDistanceToNow(new Date(record.date), { addSuffix: true })}
                             </CardDescription>
                         </div>

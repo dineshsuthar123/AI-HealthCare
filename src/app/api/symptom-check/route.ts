@@ -5,15 +5,35 @@ import connectDB from '@/lib/mongodb';
 import SymptomCheck from '@/models/SymptomCheck';
 import { analyzeSymptoms, type SymptomInput, type AIAnalysis } from '@/lib/ai/symptom-analyzer';
 import { BadRequestError, handleApiError, logApiError } from '@/lib/api-error';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limiter';
+import { sanitizeForDb } from '@/lib/sanitize';
 import { z } from 'zod';
 
 // Simple in-memory cache to improve performance for symptom checks
 const SYMPTOM_CHECK_CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache lifetime
+const MAX_CACHE_SIZE = 1000; // Maximum cache entries
 interface CachedAnalysis {
     timestamp: number;
     analysis: AIAnalysis;
 }
 const symptomCheckCache = new Map<string, CachedAnalysis>();
+
+// Periodic cache cleanup
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of symptomCheckCache.entries()) {
+        if (now - value.timestamp > SYMPTOM_CHECK_CACHE_TTL) {
+            symptomCheckCache.delete(key);
+        }
+    }
+    // Prevent memory bloat
+    if (symptomCheckCache.size > MAX_CACHE_SIZE) {
+        const sortedEntries = Array.from(symptomCheckCache.entries())
+            .sort((a, b) => a[1].timestamp - b[1].timestamp);
+        const toDelete = sortedEntries.slice(0, symptomCheckCache.size - MAX_CACHE_SIZE + 100);
+        toDelete.forEach(([key]) => symptomCheckCache.delete(key));
+    }
+}, 60 * 1000);
 
 // Validation schema for symptom check request
 const SymptomInputSchema = z.object({
@@ -56,13 +76,19 @@ function generateCacheKey(symptoms: SymptomInput[]): string {
 export async function POST(request: NextRequest) {
     const startTime = Date.now();
 
+    // Rate limiting - AI endpoints are expensive
+    const { limited, response } = checkRateLimit(request, 'symptom-check', RATE_LIMITS.ai);
+    if (limited && response) {
+        return response;
+    }
+
     try {
         // Get user session (optional - users can check symptoms without logging in)
         const session = await getServerSession(authOptions);
 
         // Parse and validate request body
         const requestData = await request.json().catch(() => ({}));
-        const validationResult = SymptomCheckSchema.safeParse(requestData);
+        const validationResult = SymptomCheckSchema.safeParse(sanitizeForDb(requestData));
 
         if (!validationResult.success) {
             throw new BadRequestError(

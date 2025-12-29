@@ -44,4 +44,10 @@ const SymptomCheckSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+// Create indexes for better query performance
+SymptomCheckSchema.index({ userId: 1, createdAt: -1 });
+SymptomCheckSchema.index({ 'aiAnalysis.riskLevel': 1 });
+SymptomCheckSchema.index({ status: 1 });
+SymptomCheckSchema.index({ followUpRequired: 1 });
+
 export default mongoose.models.SymptomCheck || mongoose.model('SymptomCheck', SymptomCheckSchema);

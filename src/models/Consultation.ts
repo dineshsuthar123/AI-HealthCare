@@ -16,7 +16,7 @@ const ConsultationSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['video', 'audio', 'message'],
+        enum: ['video', 'audio', 'text', 'in-person', 'message'],
         default: 'video',
     },
     status: {
@@ -84,5 +84,13 @@ const ConsultationSchema = new mongoose.Schema({
 }, {
     timestamps: true,
 });
+
+// Create indexes for better query performance
+ConsultationSchema.index({ patientId: 1, scheduledFor: -1 });
+ConsultationSchema.index({ providerId: 1, scheduledFor: -1 });
+ConsultationSchema.index({ status: 1 });
+ConsultationSchema.index({ scheduledFor: 1 });
+ConsultationSchema.index({ 'aiTriageData.riskLevel': 1 });
+ConsultationSchema.index({ createdAt: -1 });
 
 export default mongoose.models.Consultation || mongoose.model('Consultation', ConsultationSchema);

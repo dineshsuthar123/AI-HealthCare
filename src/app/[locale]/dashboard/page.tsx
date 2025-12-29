@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { redirect } from 'next/navigation';
 import { Link } from '@/navigation';
-import { Activity, Calendar, FileText, Users, Heart, TrendingUp, X, ExternalLink, MessageSquare, Bell, Stethoscope } from 'lucide-react';
+import { Activity, Calendar, FileText, Users, Heart, TrendingUp, X, ExternalLink, MessageSquare, Bell, Stethoscope, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/toast';
@@ -350,6 +350,12 @@ export default function DashboardPage() {
                                             <Users className="mr-2 h-4 w-4" />
                                             {t('emergencyContacts')}
                                         </Button>
+                                        <Link href="/emergency">
+                                            <Button className="w-full justify-start bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-500/30 hover:from-red-500/30 hover:to-orange-500/30" variant="glassmorphism" animated>
+                                                <AlertTriangle className="mr-2 h-4 w-4 text-red-400" />
+                                                Emergency Center
+                                            </Button>
+                                        </Link>
                                     </CardContent>
                                 </Card>
                             </FadeIn>
