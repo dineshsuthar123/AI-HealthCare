@@ -2,6 +2,16 @@
 
 import mongoose from 'mongoose';
 
+export interface IBlockchainMetadata {
+    isOnChain: boolean;
+    txHash?: string;
+    blockNumber?: number;
+    recordHash?: string;
+    registeredAt?: Date;
+    isRevoked?: boolean;
+    revokedAt?: Date;
+}
+
 export interface IHealthRecord {
     userId: mongoose.Types.ObjectId;
     title: string;
@@ -12,9 +22,23 @@ export interface IHealthRecord {
     attachmentUrl?: string;
     isShared: boolean;
     notes?: string;
+    blockchainMetadata?: IBlockchainMetadata;
     createdAt: Date;
     updatedAt: Date;
 }
+
+const BlockchainMetadataSchema = new mongoose.Schema<IBlockchainMetadata>(
+    {
+        isOnChain: { type: Boolean, default: false },
+        txHash: { type: String },
+        blockNumber: { type: Number },
+        recordHash: { type: String },
+        registeredAt: { type: Date },
+        isRevoked: { type: Boolean, default: false },
+        revokedAt: { type: Date }
+    },
+    { _id: false }
+);
 
 const HealthRecordSchema = new mongoose.Schema<IHealthRecord>(
     {
@@ -57,6 +81,10 @@ const HealthRecordSchema = new mongoose.Schema<IHealthRecord>(
         },
         notes: {
             type: String
+        },
+        blockchainMetadata: {
+            type: BlockchainMetadataSchema,
+            default: () => ({ isOnChain: false })
         }
     },
     {
